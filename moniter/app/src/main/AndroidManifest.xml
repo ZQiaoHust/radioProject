@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.administrator.testsliding">
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+
+    <!--<application-->
+        <!--android:name=".map.RadioFeeler"-->
+        <!--android:allowBackup="true"-->
+        <!--android:icon="@drawable/app"-->
+        <!--android:label="@string/app_name"-->
+        <!--android:supportsRtl="true"-->
+        <!--android:theme="@style/AppTheme">-->
+    <application
+        android:name=".GlobalConstants.MyApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/app"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+
+        <service android:name=".Mina.MinaClientService"></service>
+        <service android:name=".Mina.ToServerMinaService"></service>
+        <service android:name=".Mina.ToFileMinaService"></service>
+        <activity
+            android:name=".start.SplashActivity"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Mina.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
+        </activity>
+
+        <activity android:name=".SlideMenu.SetPara"></activity>
+        <activity android:name=".SlideMenu.Work_model"></activity>
+        <activity android:name=".SlideMenu.ConnectPCB"></activity>
+        <activity android:name=".SlideMenu.UploadData"></activity>
+        <activity android:name=".SlideMenu.FinalStationState"></activity>
+        <activity android:name=".start.LoginActivity"></activity>
+        <activity android:name=".tab1.Service_map"></activity>
+        <activity android:name=".tab1.Service_abnormal"></activity>
+        <activity
+            android:name=".map.Service_abnormal_map"
+            android:theme="@style/MapTheme"
+            android:label="异常频点辐射源位置图">
+        </activity>
+        <activity android:name=".tab1.Service_locationResult"></activity>
+        <activity android:name=".tab1.Service_stations"></activity>
+        <activity android:name=".tab1.Stations_currentResult"></activity>
+        <activity android:name=".map.Stations_CurrentResult_map"
+            android:theme="@style/MapTheme"
+            android:label="登记台站当前位置图">
+        </activity>
+
+        <activity android:name=".map.Stations_registerResult_map"
+            android:theme="@style/MapTheme"
+            android:label="登记台站位置图">
+        </activity>
+        <activity android:name=".map.Station_all_map"
+            android:theme="@style/MapTheme"
+            android:label="全部终端位置图">
+        </activity>
+        <activity android:name=".map.Terminal_allregister_map"
+            android:theme="@style/MapTheme"
+            android:label="注册终端位置图">
+        </activity>
+        <activity android:name=".map.Terminal_online_map"
+            android:theme="@style/MapTheme"
+            android:label="在网终端位置图">
+        </activity>
+        <activity android:name=".tab1.Stations_registerResult"></activity>
+        <activity android:name=".tab1.Station_AllResult"></activity>
+        <activity android:name=".tab1.Service_Terminal"></activity>
+        <activity android:name=".tab1.Service_radio"></activity>
+        <activity android:name=".tab1.Service_radioResult"></activity>
+        <activity android:name=".tab1.Service_IQ"
+            android:label="@string/IQ_name"
+            android:theme="@android:style/Theme.Holo.Light"
+            >
+        </activity>
+        <activity android:name=".tab1.Service_Interact"></activity>
+        <activity android:name=".tab1.Service_ModifyChart"></activity>
+        <activity android:name=".tab1.ModifyIngainChart"></activity>
+        <activity android:name=".tab1.ModifyAntennaChart"></activity>
+        <activity android:name=".tab2.Chart_spectrum"></activity>
+        <activity android:name=".tab2.Chart_waterfall"></activity>
+        <activity android:name=".tab2.Chart_Abnormal"></activity>
+
+
+        <activity android:name="org.achartengine.GraphicalActivity" />
+
+        <activity android:name=".tab1.Map_Heat_Result"></activity>
+        <activity android:name=".tab1.Map_Route_Result"></activity>
+        <activity android:name=".map.Map_StationMap"
+            android:theme="@style/MapTheme"
+            android:label="@string/demo_name_dianci"
+            >
+        </activity>
+        <activity android:name=".map.Map_RouteMap"
+            android:theme="@style/MapTheme"
+            android:label="@string/demo_name_geometry">
+        </activity>
+        <activity
+            android:name=".map.Map_offline"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/demo_name_offline"
+            android:screenOrientation="portrait"
+            >
+        </activity>
+
+        <activity
+            android:name=".map.Map_HeatMap"
+            android:label="@string/demo_name_radio"
+            android:theme="@style/MapTheme"
+            android:logo="@drawable/radio_map">
+        </activity>
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="AMduMXVXXoGG7UQgyM07vbTS" />
+    </application>
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" >
+    </uses-permission>
+    <!-- SDK1.5需要android.permission.GET_TASKS权限判断本程序是否为当前运行的应用? -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- 这个权限用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 这个权限用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!-- 用于读取手机当前的状态 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- SD卡读取权限，用户写入离线定位数据 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <!-- 允许应用读取低级别的系统日志文件 -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="false"
+        android:resizeable="true"
+        android:smallScreens="true" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+</manifest>

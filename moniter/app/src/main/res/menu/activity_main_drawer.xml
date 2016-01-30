@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:title="Setting">
+        <menu>
+                <item
+                    android:id="@+id/zengyimenxian"
+                    android:icon="@drawable/ic_menu_camera"
+                    android:title="增益门限" />
+                <item
+                    android:id="@+id/gongzuomoshi"
+                    android:icon="@drawable/ic_menu_gallery"
+                    android:title="工作模式" />
+                <item
+                    android:id="@+id/lianjie"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="连接方式" />
+                <item
+                    android:id="@+id/taizhanzhuangtai"
+                    android:icon="@drawable/ic_menu_manage"
+                    android:title="终端状态" />
+
+        </menu>
+
+    </item>
+
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/shujushangchuan"
+                android:icon="@drawable/ic_menu_send"
+                android:title="数据上传" />
+        </menu>
+    </item>
+
+</menu>

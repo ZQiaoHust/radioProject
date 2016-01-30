@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/item_data1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#011"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+            <TextView
+                android:id="@+id/item_data2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:textColor="#191"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:id="@+id/item_data3"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#101"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:id="@+id/item_data4"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#111"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:id="@+id/item_data5"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#071"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:id="@+id/item_data6"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#910"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+            <TextView
+                android:id="@+id/item_data7"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#011"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:id="@+id/item_data8"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#191"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:id="@+id/item_data9"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#101"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:id="@+id/item_data10"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#111"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:id="@+id/item_data11"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#071"
+                android:gravity="center" />
+
+
+        </LinearLayout>
+
+
+
+</LinearLayout>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.administrator.testsliding.view.MyTopBar
+        android:id="@+id/topbar_radioResult"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        custom:leftBackground="@drawable/ic_menu_back"
+        custom:titleText="接收通道增益修正表"
+        custom:titleText_Color="#ffffff"
+        custom:titleTextSize="8sp">
+
+    </com.example.administrator.testsliding.view.MyTopBar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:text="@string/FPGAID"
+            android:layout_width="0dp"
+            android:textColor="#850"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+        <View
+            android:background="#cccccc"
+            android:layout_height="40dp"
+            android:layout_width="1dp">
+
+        </View>
+        <TextView
+            android:id="@+id/tv_FPGAID"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+    </LinearLayout>
+    <View
+        android:background="#cccccc"
+        android:layout_height="1dp"
+        android:layout_width="match_parent">
+
+    </View>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:text="@string/workFreq"
+            android:layout_width="0dp"
+            android:textColor="#850"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+        <View
+            android:background="#cccccc"
+            android:layout_height="40dp"
+            android:layout_width="1dp">
+
+        </View>
+        <TextView
+            android:id="@+id/tv_freq"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+    </LinearLayout>
+    <View
+        android:background="#cccccc"
+        android:layout_height="1dp"
+        android:layout_width="match_parent">
+
+    </View>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:text="@string/segFreq"
+            android:layout_width="0dp"
+            android:textColor="#850"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+        <View
+            android:background="#cccccc"
+            android:layout_height="40dp"
+            android:layout_width="1dp">
+
+        </View>
+        <TextView
+            android:text="@string/ModifyInGainValue"
+            android:layout_width="0dp"
+            android:textColor="#850"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+    </LinearLayout>
+    <View
+        android:background="#cccccc"
+        android:layout_height="1dp"
+        android:layout_width="match_parent">
+
+    </View>
+    <ListView
+        android:id="@+id/modifyIngain_listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
+</LinearLayout>

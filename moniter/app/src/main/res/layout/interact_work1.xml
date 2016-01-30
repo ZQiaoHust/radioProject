@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!--<ScrollView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content">-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ID号："
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/et_work1_ID"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:text="@string/text_recv"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/et_testRecv"
+            android:text="7"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:maxLines="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="#ffffff"
+
+        >
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:text="@string/text_send"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <EditText
+            android:text="0"
+            android:id="@+id/et_testSend"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="#ffffff"
+        android:orientation="vertical"
+
+        >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/test_Gate"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbtn_guding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:checked="true"
+                android:text="固定门限"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/rbtn_zidingyi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:text="自适应门限"
+                android:textSize="18sp"
+
+                />
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#D3D3D3" />
+
+    <LinearLayout
+        android:id="@+id/reLayout_testGate1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#ffffff">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="@string/text_gate1"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/et_testGate1"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1" />
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/reLayout_testGate2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:layout_gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_gate2"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="55dp"
+            android:layout_marginStart="33dp"
+            android:layout_toEndOf="@+id/textView6"
+            android:layout_toRightOf="@+id/textView6" />
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#a3cf62"
+        android:text="文件上传模式:"
+        android:textSize="20sp" />
+
+    <RadioGroup
+        android:id="@+id/rg_sendMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbtn_sendHand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手动传输"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/rbtn_sendAuto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自动传输"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/lilay_autoSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="功率谱变化判断门限(dB)"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/spinner_autoSend"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content">
+
+            </Spinner>
+
+        </LinearLayout>
+
+        <RadioButton
+            android:id="@+id/rbtn_sendSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="抽取传输"
+            android:textSize="18sp" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/lilay_selectSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="抽取倍率(1~63)："
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/et_select"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#a3cf62"
+        android:text="扫频模式"
+        android:textSize="20sp" />
+
+    <RadioGroup
+        android:id="@+id/rg_sweep"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbtn_whole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="全频段扫描"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/rbtn_specify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="指定扫描"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/rbtn_many"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="多频段扫描"
+            android:textSize="18sp" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/bt_setoutgain"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="设置" />
+
+        <Button
+            android:id="@+id/bt_getoutgain"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="查询" />
+    </LinearLayout>
+
+    <!--</ScrollView>-->
+
+</LinearLayout>

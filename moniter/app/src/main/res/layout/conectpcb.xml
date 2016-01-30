@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/connetpcb_back" />
+
+
+    <TextView
+        android:background="#a3cf62"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="第一步： 选择连接方式"
+        android:textSize="20sp"/>
+    <Button
+
+        android:id="@+id/wifi"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:drawableLeft="@drawable/wifi"
+
+        android:text="WIFI" />
+
+    <Button
+        android:id="@+id/bt"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/bt"
+        android:text="BlueTooth" />
+
+    <Button
+        android:id="@+id/usb"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/usb"
+        android:text="USB" />
+
+    <TextView
+        android:background="#a3cf62"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="第二步： 开启后台连接硬件线程"
+        android:textSize="20sp"/>
+
+    <Button
+        android:id="@+id/ConnectPCB"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="连接硬件" />
+    <TextView
+        android:layout_marginTop="20dp"
+        android:id="@+id/tv_remote_ip"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/getConnectPCB"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="查询当前连接方式" />
+
+
+</LinearLayout>

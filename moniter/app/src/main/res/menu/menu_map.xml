@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".service.MainActivity">
+
+    <item
+        android:id="@+id/id_map_freq_settings"
+        android:icon="@drawable/map_settings"
+        app:showAsAction="always"
+        android:title="设置"/>
+
+
+    <item
+        android:id="@+id/id_map_HeatMap"
+        android:title="打开态势图"/>
+
+    <item
+        android:id="@+id/id_map_offline"
+        android:title="下载离线地图"/>
+</menu>

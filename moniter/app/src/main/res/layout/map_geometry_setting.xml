@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="选择频段范围"
+        android:textSize="18sp"
+        android:gravity="bottom"
+        android:textColor="#000000"
+        android:background="#73b9a2"
+
+        />
+
+    <RadioGroup
+        android:id = "@+id/radioGroup_selectModel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RadioButton
+            android:id="@+id/munual_select"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:text="@string/handSetting"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/midiuFreq" />
+            <EditText
+                android:id="@+id/edit_center"
+                android:layout_width="80dp"
+                android:textSize="15sp"
+                android:focusable="false"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="@string/aband" />
+            <EditText
+                android:id="@+id/bandwidth"
+                android:textSize="15sp"
+                android:focusable="false"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <RadioButton
+            android:id="@+id/straight_select"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/chooseSeg"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_marginStart="10dp"
+                android:text="@string/freqBand" />
+            <Spinner
+                android:id="@+id/Spinner_route"
+                android:layout_width="220dp"
+                style="@style/spinner_style"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </RadioGroup>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="获取数据方式"
+        android:textSize="18sp"
+        android:gravity="bottom"
+        android:textColor="#000000"
+        android:background="#73b9a2"
+        />
+    <RadioGroup
+        android:id="@+id/radioGroup_selectCoordinates"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_local"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="从本地获取数据" />
+
+        <RadioButton
+            android:id="@+id/radio_centerstation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="从中心站获取数据" />
+
+    </RadioGroup>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="历史/实时数据"
+        android:textSize="18sp"
+        android:gravity="bottom"
+        android:textColor="#000000"
+        android:background="#73b9a2"
+        />
+    <RadioGroup
+        android:id="@+id/selectCoordinates01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="历史路径分布" />
+
+        <RadioButton
+            android:id="@+id/radio_timely"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="实时路径分布" />
+
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="查看时间段"
+        android:textSize="18sp"
+        android:gravity="bottom"
+        android:textColor="#000000"
+        android:background="#73b9a2"
+
+        />
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            android:text="起始时间："
+            android:background= "#11000044"/>
+        <EditText
+            android:id="@+id/inputTime1_start"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:focusable="false"
+            android:inputType="none"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            android:text="终止时间："
+            android:background= "#11000044"/>
+        <EditText
+            android:id="@+id/inputTime2_end"
+            android:layout_width="fill_parent"
+            android:textSize="10sp"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:inputType="none"/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/btn_maproute_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="确定"/>
+
+</LinearLayout>

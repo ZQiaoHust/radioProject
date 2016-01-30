@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".service.MainActivity">
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/bmapView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true" />
+
+    <ImageButton
+        android:id="@+id/RouteMap_heat"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="300dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/routemap_button" />
+
+    <TextView
+        android:id="@+id/RouteMap_heat_text"
+        android:layout_marginLeft="302dp"
+        android:layout_marginTop="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="路径图" />
+    <ImageButton
+        android:id="@+id/radioMap_heat"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="100dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/radio_map" />
+    <TextView
+        android:id="@+id/radioMap_heat_text"
+        android:layout_marginLeft="302dp"
+        android:layout_marginTop="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="态势图"/>
+</RelativeLayout>

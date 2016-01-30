@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/lilay_terminal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="40dip"
+        android:background="#ccc"
+        android:orientation="horizontal" >
+
+
+        <TextView
+            android:text="@string/stationNum"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:textColor="#850"
+            android:gravity="center" />
+        <View
+            android:background="#cccccc"
+            android:layout_width="1dp"
+            android:layout_height="match_parent">
+
+        </View>
+        <TextView
+            android:text="@string/ID"
+            android:layout_width="0dp"
+            android:textColor="#850"
+            android:layout_height="fill_parent"
+            android:layout_weight="3"
+            android:gravity="center" />
+        <View
+            android:background="#cccccc"
+            android:layout_width="1dp"
+            android:layout_height="match_parent">
+
+        </View>
+
+        <TextView
+            android:text="@string/location"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="4"
+            android:textColor="#850"
+            android:gravity="center" />
+
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/slistview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:cacheColorHint="@android:color/transparent"
+        android:scrollbars="none" >
+    </ListView>
+
+</LinearLayout>

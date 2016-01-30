@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/item_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="#011"
+            android:gravity="center" />
+        <View
+            android:background="#cccccc"
+            android:layout_width="1dp"
+            android:layout_height="match_parent">
+
+        </View>
+
+        <TextView
+            android:id="@+id/item_location"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#910" />
+        <View
+            android:background="#cccccc"
+            android:layout_width="1dp"
+            android:layout_height="match_parent">
+
+        </View>
+
+        <TextView
+            android:id="@+id/item_power"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#191" />
+        <View
+            android:background="#cccccc"
+            android:layout_width="1dp"
+            android:layout_height="match_parent">
+
+        </View>
+        <TextView
+            android:id="@+id/item_radio"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#191" />
+    </LinearLayout>
+
+</LinearLayout>

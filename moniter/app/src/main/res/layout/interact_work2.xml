@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!--<ScrollView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ID号："
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/et_work2_ID"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#ffffff"
+            >
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_recv"
+                android:textSize="18sp"
+                android:gravity="bottom"
+                android:textColor="#000000"
+                android:background="#73b9a2"
+
+                />
+            <SeekBar
+                android:id="@+id/seekBar_recv_interact"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:max="73"
+                android:progress="7"
+                />
+
+            <TextView
+                android:id="@+id/tv_recvGain_interact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="当前值：7"
+                android:textColor="#000000"
+                android:layout_gravity="center_horizontal"
+                />
+        </LinearLayout>
+
+<include android:id="@+id/work2" layout="@layout/fragment_fragment_work_model2"/>
+
+    <!--</ScrollView>-->
+</LinearLayout>

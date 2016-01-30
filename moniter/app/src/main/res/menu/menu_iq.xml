@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/item_IQ"
+        android:orderInCategory="100"
+        android:title="@string/IQ_wave"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/item_IQpara"
+        android:title="@string/IQ_para"/>
+    <item
+        android:id="@+id/item_starChart"
+        android:title="@string/IQ_starChart"/>
+</menu>

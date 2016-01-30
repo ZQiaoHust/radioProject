@@ -1,0 +1,115 @@
+<resources>
+    <string name="app_name">电磁频谱管控</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+
+    <string name="shouye">首页</string>
+    <string name="fenxiang">分享</string>
+    <string name="wo">我</string>
+    <string name="faxian">发现</string>
+    <color name="green">#32CD32</color>
+
+    <string name="recv_Gain">接收通道增益</string>
+    <string name="send_Gain">发射通道衰减</string>
+    <string name="test_Gate">检测门限系数</string>
+    <string name="text_recv">接受通道增益(-1dB~73dB)</string>
+    <string name="text_send">发射通道衰减(0dB~89dB)</string>
+    <string name="text_gate1">固定门限(3dB~39dB)</string>
+    <string name="text_gate2">自适应门限(dB)</string>
+    <string name="save">保存</string>
+    <string name="check">查询</string>
+
+
+    <string name="cb_sweepModel">扫频工作模式</string>
+    <string name="cb_fixModel">定频工作模式</string>
+
+    <string name="wholeSweep">全频段扫描</string>
+    <string name="specifySweep">指定频段扫描</string>
+    <string name="manySweep">多频段扫描</string>
+    <string name="discreteSweep">离散频段扫描</string>
+    <string name="seq_num">序号</string>
+    <string name="freq">频率</string>
+    <string name="PowerSpectrum">功率谱值</string>
+
+    <string name="idtxthint">用户名</string>
+    <string name="pwdtxthint">密码</string>
+    <string name="loginbtntext">登录</string>
+    <string name="forgot_pwd">找回密码</string>
+    <string name="loading">正在登录</string>
+    <string name="register">注册账号</string>
+
+
+
+    <string name="demo_name_dianci">电磁辐射态势图</string>
+    <string name="demo_name_offline">离线地图模块</string>
+    <string name="demo_name_geometry">电磁路径图</string>
+    <string name="demo_name_radio">电磁辐射图</string>
+    <string name="demo_name_stationMap">台站分布图</string>
+
+    <string name="service">服务</string>
+    <string name="chart">图表</string>
+    <string name="abnormal_location">异常频点定位</string>
+    <string name="station_state">台站状态</string>
+    <string name="radio">无线电规划</string>
+    <string name="location_way">定位方法</string>
+    <string name="radio_frequency">辐射源中心频率</string>
+    <string name="IQ">IQ复信号</string>
+    <string name="band_radio">带宽/数据率(MHz/Msps)</string>
+    <string name="block">上传数据块</string>
+    <string name="time">起始时刻</string>
+    <string name="year_month">年/月/日</string>
+    <string name="hour">时/分/秒</string>
+    <string name="setting">设置</string>
+
+    <string name="spectrum_history">功率谱数据类型</string>
+
+    <string name="IQ_wave">IQ波形</string>
+    <string name="IQ_para">更多参数</string>
+    <string name="IQ_starChart">星座图</string>
+<string name="IQ_name">历史IQ波</string>
+
+    <string name="stationNum">序号</string>
+    <string name="organizer">归属单位</string>
+    <string name="IDcard">识别码</string>
+    <string name="location">经纬度，高度</string>
+    <string name="range">中心频率许可范围（MHz）</string>
+    <string name="power">额定功率(dBm)</string>
+    <string name="band">额定带宽(dBm)</string>
+    <string name="modem">调制方式</string>
+    <string name="modemPara">调制参数</string>
+    <string name="attributes">业务属性</string>
+    <string name="radius">标称半径(Km)</string>
+    <string name="liveness">活跃度</string>
+    <string name="ID">ID号</string>
+    <string name="terminalStyle">终端类型</string>
+    <string name="midiuFreq">中心频率(MHz)</string>
+    <string name="equalPower">等效发射功率(dBm)</string>
+    <string name="radioR">电波传播路径损耗指数r</string>
+    <string name="aband">带宽(MHz)</string>
+    <string name="rule">是否合法</string>
+    <string name="FPGAID">终端硬件型号</string>
+    <string name="workFreq">接收通道工作频率(MHz)</string>
+    <string name="segFreq">频段范围(MHz)</string>
+    <string name="ModifyInGainValue">接收通道增益值(dB)</string>
+    <string name="AntennaID">接收天线型号</string>
+    <string name="AntennaFreq">接收天线工作频率(MHz)</string>
+    <string name="AntennaValue">接收天线增益值(MHz)</string>
+    <string name="handSetting">手动设置</string>
+    <string name="chooseSeg">选择频段</string>
+    <string name="freqBand">频段选择：</string>
+    <string name="freshTime">刷新间隔</string>
+    <string name="radiuShow">查看半径(Km)</string>
+    <string name="dieta">经纬度分辨率△(0.1~31.7分)</string>
+    <string name="dataFrom">数据来源</string>
+    <string name="ftime">刷新时刻</string>
+    <string name="tlocation">位置信息</string>
+    <string name="pow">功率(dBm)</string>
+
+    <string name="chaxunzhong">正在查询中...</string>
+    <string name="ok">确定</string>
+
+</resources>

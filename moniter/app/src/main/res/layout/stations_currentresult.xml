@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <com.example.administrator.testsliding.view.MyTopBar
+        android:id="@+id/topbar_currentResult"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        custom:leftBackground="@drawable/ic_menu_back"
+        custom:rightBackground="@drawable/iconfont_earth2"
+        custom:titleText="台站当前属性表"
+        custom:titleText_Color="#ffffff"
+        custom:titleTextSize="8sp">
+
+    </com.example.administrator.testsliding.view.MyTopBar>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+            <TextView
+                android:text="@string/organizer"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#850"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+            <TextView
+                android:text="@string/IDcard"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+            <TextView
+                android:text="@string/location"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#850"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:text="@string/midiuFreq"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:text="@string/equalPower"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+            <TextView
+                android:text="@string/radioR"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+            <TextView
+                android:text="@string/aband"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+            <TextView
+                android:text="@string/modem"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+            <TextView
+                android:text="@string/modemPara"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+            <TextView
+                android:text="@string/attributes"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+
+            <TextView
+                android:text="@string/liveness"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+            <TextView
+                android:text="@string/rule"
+                android:layout_width="match_parent"
+                android:textColor="#850"
+                android:layout_height="40dp"
+                android:gravity="center" />
+            <View
+                android:background="#cccccc"
+                android:layout_height="1dp"
+                android:layout_width="match_parent">
+
+            </View>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="492dp"
+            android:background="#ccc"/>
+
+        <ListView
+            android:id="@+id/listview_stationCurrent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:cacheColorHint="@android:color/transparent"
+            android:scrollbars="none" >
+        </ListView>
+
+    </LinearLayout>
+
+
+
+
+
+</LinearLayout>

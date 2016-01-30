@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <include layout="@layout/station_back"/>
+    <TextView
+        android:layout_marginTop="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请输入入网的硬件型号："
+        android:textSize="23sp"/>
+    <Spinner
+        android:id="@+id/spinner_FPGA"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp">
+
+    </Spinner>
+    <Button
+        android:id="@+id/btn_requestNetwork"
+        android:text="申请入网"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/btn_getpcbinfo"
+        android:text="查询终端"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+
+        android:gravity="center"
+        android:background="#cdcdcd"
+        android:id="@+id/pcbinfo"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/tv_ID"
+            android:layout_marginLeft="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="设备ID：0x546dae3"
+            />
+        <TextView
+            android:id="@+id/tv_style"
+            android:layout_marginLeft="20dp"
+            android:text="终端类型：0x01"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_marginLeft="20dp"
+            android:text="位置：北纬30度  东经108度   海拔59米"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+    </LinearLayout>
+
+

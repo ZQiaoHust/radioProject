@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="#C5DAED">
+    <com.example.administrator.testsliding.view.MyTopBar
+        android:id="@+id/topbar_servicestation"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+       custom:leftBackground="@drawable/ic_menu_back"
+        custom:titleText="台站状态信息表"
+        custom:titleText_Color="#ffffff"
+        custom:titleTextSize="8sp">
+
+    </com.example.administrator.testsliding.view.MyTopBar>
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#C5DAED"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_station"
+            app:tabSelectedTextColor="@android:color/holo_blue_bright"
+            app:tabTextColor="@android:color/black"
+            app:tabIndicatorColor="@android:color/holo_blue_bright"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        </android.support.design.widget.TabLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/stations_viewpager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+    </android.support.v4.view.ViewPager>
+
+</LinearLayout>

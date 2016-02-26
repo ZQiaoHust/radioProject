@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
+import com.bigkoo.pickerview.TimePickerView;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.Mina.Broadcast;
@@ -22,7 +23,9 @@ import com.example.administrator.testsliding.map.Service_abnormal_map;
 import com.example.administrator.testsliding.view.DateTimePickDialogUtil2Mius;
 import com.example.administrator.testsliding.view.MyTopBar;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,6 +38,7 @@ public class Service_abnormal extends Activity {
     private Spinner spinner_location,spinner_IQ;
     private List<String> list1,list2;
     private ArrayAdapter<String> adapter1,adapter2;
+    TimePickerView pvTime;
 
     private EditText et_IQblock,et_inputtime,et_miao;
     private byte locationWay=0;
@@ -63,6 +67,23 @@ public class Service_abnormal extends Activity {
         et_IQblock=(EditText)findViewById(R.id.et_IQblock);
 
         et_inputtime= (EditText) findViewById(R.id.inputDate_abnormal);
+        //时间选择器
+        pvTime = new TimePickerView(this, TimePickerView.Type.ALL);
+        pvTime = new TimePickerView(this, TimePickerView.Type.ALL);
+        //控制时间范围
+//        Calendar calendar = Calendar.getInstance();
+//        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
+        pvTime.setTime(new Date());
+        pvTime.setCyclic(false);
+        pvTime.setCancelable(true);
+        //时间选择后回调
+        pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                et_inputtime.setText(getTime(date));
+            }
+        });
     }
 
     private  void initspinnerSetting() {
@@ -113,13 +134,21 @@ public class Service_abnormal extends Activity {
                 startActivity(intent);
             }
         });
+//        et_inputtime.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                DateTimePickDialogUtil2Mius dateTimePicKDialog = new DateTimePickDialogUtil2Mius(Service_abnormal.this);
+//                dateTimePicKDialog.dateTimePicKDialog(et_inputtime);
+//            }
+//        });
         et_inputtime.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                DateTimePickDialogUtil2Mius dateTimePicKDialog = new DateTimePickDialogUtil2Mius(Service_abnormal.this);
-                dateTimePicKDialog.dateTimePicKDialog(et_inputtime);
+                pvTime.show();
             }
         });
+
         spinner_location.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -197,6 +226,10 @@ public class Service_abnormal extends Activity {
             }
         });
 
+    }
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        return format.format(date);
     }
 
 }

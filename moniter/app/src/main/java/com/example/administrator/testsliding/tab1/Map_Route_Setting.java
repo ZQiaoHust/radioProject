@@ -15,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.bigkoo.pickerview.TimePickerView;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.Mina.Broadcast;
@@ -23,7 +24,9 @@ import com.example.administrator.testsliding.bean2server.MapRoute;
 import com.example.administrator.testsliding.compute.ComputePara;
 import com.example.administrator.testsliding.view.DateTimePickDialogUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,6 +41,7 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
     private Button btn_setting;
     private EditText et_bandwidth,et_centerfreq;
     private  RadioGroup select_mode,radio_selectData;
+    TimePickerView pvTime1 ,pvTime2;
 
     ///组帧参数
     private int centralFreq=98,band=20;//中心频率和带宽(初始化界面同步)
@@ -67,6 +71,34 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
         btn_setting= (Button) getActivity().findViewById(R.id.btn_maproute_setting);
 
         radio_selectData=(RadioGroup)getActivity().findViewById(R.id.radioGroup_selectCoordinates);
+        //时间选择器
+        pvTime1 = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
+        pvTime2 = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
+        //控制时间范围
+//        Calendar calendar = Calendar.getInstance();
+//        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
+        pvTime1.setTime(new Date());
+        pvTime1.setCyclic(false);
+        pvTime1.setCancelable(true);
+        //时间选择后回调
+        pvTime1.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                iuputtime1.setText(getTime(date));
+            }
+        });
+        pvTime2.setTime(new Date());
+        pvTime2.setCyclic(false);
+        pvTime2.setCancelable(true);
+        //时间选择后回调
+        pvTime2.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                inputtime2.setText(getTime(date));
+            }
+        });
     }
     private void InitSpinnerSetting(){
         FreqSelectList.add("FM调频广播频段（88-108MHz）");
@@ -185,22 +217,37 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
 
             }
         });
+        //弹出时间选择器
         iuputtime1.setOnClickListener(new View.OnClickListener() {
+
+            @Override
             public void onClick(View v) {
-
-                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(getActivity());
-                dateTimePicKDialog.dateTimePicKDialog(iuputtime1);
-
+                pvTime1.show();
             }
         });
-
         inputtime2.setOnClickListener(new View.OnClickListener() {
 
+            @Override
             public void onClick(View v) {
-                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(getActivity());
-                dateTimePicKDialog.dateTimePicKDialog(inputtime2);
+                pvTime2.show();
             }
         });
+//        iuputtime1.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//
+//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(getActivity());
+//                dateTimePicKDialog.dateTimePicKDialog(iuputtime1);
+//
+//            }
+//        });
+//
+//        inputtime2.setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(getActivity());
+//                dateTimePicKDialog.dateTimePicKDialog(inputtime2);
+//            }
+//        });
 
        btn_setting.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -290,6 +337,10 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
                 break;
 
         }
+    }
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
+        return format.format(date);
     }
 }
 

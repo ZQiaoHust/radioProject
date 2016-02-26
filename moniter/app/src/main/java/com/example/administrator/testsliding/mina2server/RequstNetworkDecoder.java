@@ -33,25 +33,41 @@ public class RequstNetworkDecoder implements MessageDecoder {
     public MessageDecoderResult decode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput out)
             throws Exception {
         RequstNetworkReply reply=new RequstNetworkReply();
-        byte [] bytes=null ;
-        byte[] byte1=new byte[4];
-        byte[] byte2=new byte[2];
-        in.get(bytes);
-        reply.setEquipmentID((bytes[2] & 0xff) + ((bytes[3] & 0xff) << 8));
-        reply.setIsagreen(bytes[4]);
-        reply.setStyle(bytes[5]);
-        //取经度
-        System.arraycopy(bytes,6,byte1,0,4);
-        reply.setLongtitude(byte1);
+        IoBuffer buffer = IoBuffer.allocate(18);
+        int receiveCount = 0;
 
-        System.arraycopy(bytes, 10, byte1, 0, 4);
-        reply.setLatitude(byte1);
+        while (in.hasRemaining()) {
+            byte b = in.get();
+            buffer.put(b);
+            receiveCount++;
+            if (receiveCount == 18) {
+                buffer.flip();
+                byte [] bytes=new byte[18] ;
+                buffer.get(bytes);
+                byte[] byte1=new byte[4];
+                byte[] byte2=new byte[3];
+                byte[] byte3=new byte[2];
+                reply.setEquipmentID((bytes[2] & 0xff) + ((bytes[3] & 0xff) << 8));
+                reply.setIsagreen(bytes[4]);
+                reply.setStyle(bytes[5]);
+                //取经度
+                System.arraycopy(bytes,6,byte1,0,4);
+                reply.setLongtitude(byte1);
 
-        System.arraycopy(bytes,2,byte2,0,2);
-        reply.setHeight(byte1);
+                System.arraycopy(bytes, 10, byte2, 0, 3);
+                reply.setLatitude(byte2);
 
-        out.write(reply);
-        return MessageDecoderResult.OK;
+                System.arraycopy(bytes,13,byte3,0,2);
+                reply.setHeight(byte3);
+
+                out.write(reply);
+                return MessageDecoderResult.OK;
+
+            }
+        }
+        return MessageDecoderResult.NOT_OK;
+
+
     }
 
     @Override

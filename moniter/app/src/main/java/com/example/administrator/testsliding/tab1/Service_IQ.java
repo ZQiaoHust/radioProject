@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.bigkoo.pickerview.TimePickerView;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.Mina.Broadcast;
@@ -14,6 +15,9 @@ import com.example.administrator.testsliding.R;
 import com.example.administrator.testsliding.bean2server.HistoryIQRequest;
 import com.example.administrator.testsliding.compute.ComputePara;
 import com.example.administrator.testsliding.view.DateTimePickDialogUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -25,6 +29,7 @@ public class Service_IQ extends Activity {
     private EditText et_ID;
     private Button btn_set;
     private ComputePara compute=new ComputePara();
+    TimePickerView pvTime1 ,pvTime2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,24 +58,68 @@ public class Service_IQ extends Activity {
         startDateTime = (EditText)findViewById(R.id.inputDate);
         endDateTime = (EditText)findViewById(R.id.inputDate2);
         btn_set= (Button) findViewById(R.id.btn_ID_time);
-    }
+        //时间选择器
+        pvTime1 = new TimePickerView(this, TimePickerView.Type.ALL);
+        pvTime2 = new TimePickerView(this, TimePickerView.Type.ALL);
+        //控制时间范围
+//        Calendar calendar = Calendar.getInstance();
+//        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
+        pvTime1.setTime(new Date());
+        pvTime1.setCyclic(false);
+        pvTime1.setCancelable(true);
+        //时间选择后回调
+        pvTime1.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
-    private void InitEvent() {
-        startDateTime.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+            public void onTimeSelect(Date date) {
+                startDateTime.setText(getTime(date));
+            }
+        });
+        pvTime2.setTime(new Date());
+        pvTime2.setCyclic(false);
+        pvTime2.setCancelable(true);
+        //时间选择后回调
+        pvTime2.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
-                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil( Service_IQ.this);
-                dateTimePicKDialog.dateTimePicKDialog(startDateTime);
-
+            @Override
+            public void onTimeSelect(Date date) {
+                endDateTime.setText(getTime(date));
             }
         });
 
+    }
+
+    private void InitEvent() {
+//        startDateTime.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//
+//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil( Service_IQ.this);
+//                dateTimePicKDialog.dateTimePicKDialog(startDateTime);
+//
+//            }
+//        });
+//
+//        endDateTime.setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(
+//                        Service_IQ.this);
+//                dateTimePicKDialog.dateTimePicKDialog(endDateTime);
+//            }
+//        });
+        //弹出时间选择器
+        startDateTime.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                pvTime1.show();
+            }
+        });
         endDateTime.setOnClickListener(new View.OnClickListener() {
 
+            @Override
             public void onClick(View v) {
-                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(
-                        Service_IQ.this);
-                dateTimePicKDialog.dateTimePicKDialog(endDateTime);
+                pvTime2.show();
             }
         });
 
@@ -107,5 +156,10 @@ public class Service_IQ extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_iq, menu);
         return true;
+    }
+
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
+        return format.format(date);
     }
 }

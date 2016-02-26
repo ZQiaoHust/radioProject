@@ -71,6 +71,7 @@ import com.example.administrator.testsliding.bean2server.ModifyAntenna;
 import com.example.administrator.testsliding.bean2server.ModifyInGain;
 import com.example.administrator.testsliding.bean2server.ModifyIngainView;
 import com.example.administrator.testsliding.bean2server.RequstNetwork;
+import com.example.administrator.testsliding.bean2server.RequstNetworkReply;
 import com.example.administrator.testsliding.bean2server.Send_ServiceRadio;
 import com.example.administrator.testsliding.bean2server.StationCurrentReply;
 import com.example.administrator.testsliding.bean2server.Station_CurrentRequst;
@@ -383,6 +384,7 @@ public class ToServerMinaService extends Service {
 //                    ConnectFuture future = connector.connect(new InetSocketAddress(
 //                            Constants.IPValue, Constants.PORTValue));
                     future.awaitUninterruptibly();// 等待连接创建完成
+
                     session = future.getSession();
                     Constants.SERVERsession=session;
                     session.getCloseFuture().awaitUninterruptibly();// 等待连接断开
@@ -432,10 +434,16 @@ public class ToServerMinaService extends Service {
         @Override
         public void messageReceived(IoSession session, Object message)
                 throws Exception {
+            if(message instanceof RequstNetworkReply){
+                RequstNetworkReply networkReply= (RequstNetworkReply) message;
+                Thread.sleep(1000);
+                Broadcast.sendBroadCast(getBaseContext(),
+                        ConstantValues.RREQUSTNETWORK,"requstNet",networkReply);
+            }
             //处理从服务端接收到的消息
             if(message instanceof MapRadioResult){
                 MapRadioResult map= (MapRadioResult) message;
-                Thread.sleep(1000);
+                Thread.sleep(1500);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RMAPRADIO,"map_radio",map);
                 Log.d("MAP", "收到态势");

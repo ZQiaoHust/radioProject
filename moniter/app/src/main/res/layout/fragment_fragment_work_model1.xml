@@ -137,12 +137,7 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/bt_failed"
-            android:text="失败重发"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
 

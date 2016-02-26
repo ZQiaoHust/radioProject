@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import com.bigkoo.pickerview.TimePickerView;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.R;
 import com.example.administrator.testsliding.bean2server.HistorySpectrumRequest;
@@ -32,7 +33,9 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -56,6 +59,7 @@ public class Chart_spectrum extends Activity {
     private EditText et_ID;
     private LinearLayout lilay_spectrum;
     private ComputePara computePara = new ComputePara();
+    TimePickerView pvTime1 ,pvTime2;
 
     private Timer timer = new Timer();
     private TimerTask task;
@@ -135,6 +139,34 @@ public class Chart_spectrum extends Activity {
         // 两个输入框
         startDateTime = (EditText)findViewById(R.id.inputDate);
         endDateTime = (EditText)findViewById(R.id.inputDate2);
+        //时间选择器
+        pvTime1 = new TimePickerView(this, TimePickerView.Type.ALL);
+        pvTime2 = new TimePickerView(this, TimePickerView.Type.ALL);
+        //控制时间范围
+//        Calendar calendar = Calendar.getInstance();
+//        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
+        pvTime1.setTime(new Date());
+        pvTime1.setCyclic(false);
+        pvTime1.setCancelable(true);
+        //时间选择后回调
+        pvTime1.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                startDateTime.setText(getTime(date));
+            }
+        });
+        pvTime2.setTime(new Date());
+        pvTime2.setCyclic(false);
+        pvTime2.setCancelable(true);
+        //时间选择后回调
+        pvTime2.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                endDateTime.setText(getTime(date));
+            }
+        });
 
     }
 
@@ -274,21 +306,36 @@ public class Chart_spectrum extends Activity {
 
     }
     private void DateEvent() {
+//        startDateTime.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//
+//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(Chart_spectrum.this);
+//                dateTimePicKDialog.dateTimePicKDialog(startDateTime);
+//
+//            }
+//        });
+//
+//        endDateTime.setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(
+//                        Chart_spectrum.this);
+//                dateTimePicKDialog.dateTimePicKDialog(endDateTime);
+//            }
+//        });
+        //弹出时间选择器
         startDateTime.setOnClickListener(new View.OnClickListener() {
+
+            @Override
             public void onClick(View v) {
-
-                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(Chart_spectrum.this);
-                dateTimePicKDialog.dateTimePicKDialog(startDateTime);
-
+                pvTime1.show();
             }
         });
-
         endDateTime.setOnClickListener(new View.OnClickListener() {
 
+            @Override
             public void onClick(View v) {
-                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(
-                        Chart_spectrum.this);
-                dateTimePicKDialog.dateTimePicKDialog(endDateTime);
+                pvTime2.show();
             }
         });
     }
@@ -371,7 +418,10 @@ public class Chart_spectrum extends Activity {
         renderer.setBackgroundColor(Color.BLACK);
         //renderer.setBarSpacing(1);
     }
-
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
+        return format.format(date);
+    }
 
 }
 

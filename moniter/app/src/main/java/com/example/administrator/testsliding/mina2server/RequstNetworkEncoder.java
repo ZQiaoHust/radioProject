@@ -17,18 +17,17 @@ public class RequstNetworkEncoder implements MessageEncoder<RequstNetwork>{
             throws Exception {
         if (requstNetwork != null) {
             byte[] bytes1 = GetBytes(requstNetwork);
-            int capacity = bytes1.length;
-            IoBuffer buffer = IoBuffer.allocate(capacity, false);
-            buffer.setAutoExpand(true);
+          
+            IoBuffer buffer = IoBuffer.allocate(17);
+           
             buffer.put(bytes1);
-
             buffer.flip();
             out.write(buffer);
         }
     }
 
     /**
-     * ç»ˆç«¯å…¥ç½‘è¯·æ±‚æ•°æ®å¸§
+     * ÖÕ¶ËÈëÍøÇëÇóÊı¾İÖ¡
      * @return
      */
     private byte[] GetBytes(RequstNetwork net){
@@ -37,7 +36,7 @@ public class RequstNetworkEncoder implements MessageEncoder<RequstNetwork>{
         byte[] byte1;
         data[0]=0x55;
         data[1]= (byte) 0xA1;
-        data[2]= (byte) (net.getEquipmentID()&0xff);  //IDå·ä½å­—èŠ‚
+        data[2]= (byte) (net.getEquipmentID()&0xff);  //IDºÅµÍ×Ö½Ú
         data[3]= (byte) ((net.getEquipmentID()>>8)&0xff);
         data[4]=net.getStyle();
         bytes=net.getLongtitude();
@@ -49,7 +48,7 @@ public class RequstNetworkEncoder implements MessageEncoder<RequstNetwork>{
         byte1=net.getHeight();
         System.arraycopy(byte1,0,data,12,2);
 
-        data[16]= (byte) 0xAA;//å¸§å°¾
+        data[16]= (byte) 0xAA;//Ö¡Î²
         return data;
     }
 }

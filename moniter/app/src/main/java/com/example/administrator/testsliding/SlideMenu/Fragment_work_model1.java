@@ -199,7 +199,7 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
 
         mSetButton = (Button) getActivity().findViewById(R.id.bt_setoutgain);
         mGetButton = (Button) getActivity().findViewById(R.id.bt_getoutgain);
-        mFailed = (Button) getActivity().findViewById(R.id.bt_failed);
+       // mFailed = (Button) getActivity().findViewById(R.id.bt_failed);
         ReceivedWrong[0]= (byte) 0x55;
         ReceivedWrong[1]= (byte) 0xf0;
         ReceivedWrong[2]= (byte) 0x0f;
@@ -246,12 +246,12 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
 //        sp_autoSend.setOnItemSelectedListener(this);//spinner监听在fragment中失效
         seekBar_select.setOnSeekBarChangeListener(this);
 
-        mFailed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Constants.FPGAsession.write(mReceiveWrong);//下发重传帧
-            }
-        });
+//        mFailed.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Constants.FPGAsession.write(mReceiveWrong);//下发重传帧
+//            }
+//        });
 
         sp_autoSend.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

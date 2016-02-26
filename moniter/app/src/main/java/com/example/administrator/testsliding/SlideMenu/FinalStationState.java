@@ -23,6 +23,7 @@ import com.example.administrator.testsliding.Mina.Broadcast;
 import com.example.administrator.testsliding.R;
 import com.example.administrator.testsliding.bean2server.QueryFPGANetwork;
 import com.example.administrator.testsliding.bean2server.RequstNetwork;
+import com.example.administrator.testsliding.bean2server.RequstNetworkReply;
 
 
 import java.util.ArrayList;
@@ -93,6 +94,18 @@ public class FinalStationState extends Activity {
                 toast.show();
 
 
+            }
+            else  if(action.equals(ConstantValues.RREQUSTNETWORK)){
+                RequstNetworkReply reply=intent.getParcelableExtra("requstNet");
+                if(reply==null){
+                    Toast.makeText(FinalStationState.this,"入网失败！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(reply.getIsagreen()==0x0F){
+                    Toast.makeText(FinalStationState.this,"入网成功！",Toast.LENGTH_SHORT).show();
+                }
+            }else {
+                Toast.makeText(FinalStationState.this,"入网失败！",Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -174,19 +187,20 @@ public class FinalStationState extends Activity {
 //                    net.setHeight(fpgaInfo.getHeight());
                     net.setEquipmentID(Constants.ID);
                     net.setStyle((byte) 1);
-
+//经度
                     byte[] bytes=new byte[4];
                     bytes[0]=0;
-
-                    bytes[1]=30;
-                    bytes[2]= (byte) (132&0xff);
-                    bytes[3]=95;
-                    net.setLatitude(bytes);
+                    bytes[1]=114&0xff;
+                    bytes[2]=108;
+                    bytes[3]= (byte) (174&0xff);
+                   net.setLongtitude(bytes);
+				   //纬度
                     byte[] bytes1=new byte[3];
-                    bytes1[0]=114&0xff;
-                    bytes1[1]=108;
-                    bytes1[2]= (byte) (174&0xff);
-                    net.setLongtitude(bytes1);
+					bytes1[0]=30;
+                    bytes1[1]= (byte) (132&0xff);
+                    bytes1[2]=95; 
+                    net.setLatitude(bytes1);					
+                    
                     byte[] bytes2=new byte[2];
                     net.setHeight(bytes2);
                     Broadcast.sendBroadCast(FinalStationState.this,

@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.administrator.testsliding.Bean.BackgroundPowerSpectrum;
 import com.example.administrator.testsliding.Bean.Connect;
 import com.example.administrator.testsliding.Bean.FixCentralFreq;
 import com.example.administrator.testsliding.Bean.FixSetting;
@@ -79,7 +80,7 @@ public class MinaClientService extends Service {
     private int h;
     private int y;
     private int z;
-    private int fileIsChanged=0;
+    private int fileIsChanged = 0;
 
 
     public static final String PSFILE_PATH = Environment.getExternalStorageDirectory().
@@ -591,7 +592,7 @@ public class MinaClientService extends Service {
             if (message instanceof PowerSpectrumAndAbnormalPonit) {
                 SweepParaList_length = Constants.SweepParaList.size();
                 final int firstart = Constants.SweepParaList.get(0).getStartNum();//输入扫频范围第一组的起点对应的段号
-                 final int lastend = Constants.SweepParaList.get(SweepParaList_length - 1).getEndNum();//输入扫频范围最后
+                final int lastend = Constants.SweepParaList.get(SweepParaList_length - 1).getEndNum();//输入扫频范围最后
 
                 final PowerSpectrumAndAbnormalPonit PSAP = (PowerSpectrumAndAbnormalPonit) message;
                 if (PSAP != null) {
@@ -601,20 +602,55 @@ public class MinaClientService extends Service {
                         public void run() {
 
                             total = PSAP.getTotalBand();
+                            /**
+                             * 扫频范围只跨越一个25MHz
+                             */
+                            if (firstart == lastend) {
+                                temp_powerSpectrum = new ArrayList<>();
+                                temp_abnormalPoint = new ArrayList<>();
+                                temp_drawSpectrum = new ArrayList<float[]>();
+                                temp_drawWaterfall = new ArrayList<float[]>();
+                                //判断是否为有变化的文件
+                                if (PSAP.getIsChange() == 0x0f) {
+                                    fileIsChanged = 1;
+                                }
+                                //存数据
+                                byte[] byte1 = powerSpec2File(true, PSAP);//填入频段序号和功率谱值
+                                temp_powerSpectrum.add(byte1);
+                                //异常频点存入写文件
+                                byte[] byteAb1 = aP2File(PSAP);
+                                temp_abnormalPoint.add(byteAb1);
+                                //存入画频谱图图
+                                float[] pow = new float[1026];
+                                pow[0] = PSAP.getTotalBand();//填入总段数
+                                pow[1] = PSAP.getPSbandNum();//输入段序号
+                                float[] f1 = computePara.Bytes2Power(PSAP.getPSpower());
+                                System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
+                                temp_drawSpectrum.add(pow);
+                                //存入画瀑布图
+                                float[] water = new float[1025];
+                                water[0] = PSAP.getTotalBand();//填入总段数
+                                System.arraycopy(f1, 0, water, 1, 1024);//填入功率谱值
+                                temp_drawWaterfall.add(water);
 
-                            if (PSAP.getFunctionID() == 0x0D) {//区分功率谱数据类型
+                                writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
+                                Constants.Queue_DrawRealtimewaterfall.offer(temp_drawWaterfall);
+
+                            } else {
                                 /**
-                                 * 扫频范围只跨越一个25MHz
+                                 * 扫频跨越多个25MHz
                                  */
-                                if (firstart == lastend) {
+                                if (firstart == PSAP.getPSbandNum()) {
+                                    //判断起始段
                                     temp_powerSpectrum = new ArrayList<>();
                                     temp_abnormalPoint = new ArrayList<>();
                                     temp_drawSpectrum = new ArrayList<float[]>();
                                     temp_drawWaterfall = new ArrayList<float[]>();
-                                    //判断是否为有变化的文件
                                     if (PSAP.getIsChange() == 0x0f) {
                                         fileIsChanged = 1;
                                     }
+                                    //==========第一段存入数据不一样，要单独列================
                                     //存数据
                                     byte[] byte1 = powerSpec2File(true, PSAP);//填入频段序号和功率谱值
                                     temp_powerSpectrum.add(byte1);
@@ -634,30 +670,21 @@ public class MinaClientService extends Service {
                                     System.arraycopy(f1, 0, water, 1, 1024);//填入功率谱值
                                     temp_drawWaterfall.add(water);
 
-                                    writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
-                                    Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
-                                    Constants.Queue_DrawRealtimewaterfall.offer(temp_drawWaterfall);
-
+                                    Constants.spectrumCount++;
                                 } else {
-                                    /**
-                                     * 扫频跨越多个25MHz
-                                     */
-                                    if (firstart == PSAP.getPSbandNum()) {
-                                        //判断起始段
-                                        temp_powerSpectrum = new ArrayList<>();
-                                        temp_abnormalPoint = new ArrayList<>();
-                                        temp_drawSpectrum = new ArrayList<float[]>();
-                                        temp_drawWaterfall = new ArrayList<float[]>();
+                                    if ((firstart + Constants.spectrumCount) == PSAP.getPSbandNum()) {
+                                        //===========从第二段开始===============
                                         if (PSAP.getIsChange() == 0x0f) {
                                             fileIsChanged = 1;
                                         }
-                                        //==========第一段存入数据不一样，要单独列================
-                                        //存数据
-                                        byte[] byte1 = powerSpec2File(true, PSAP);//填入频段序号和功率谱值
+
+                                        //频谱数据存入写文件
+                                        byte[] byte1 = powerSpec2File(false, PSAP);//填入频段序号和功率谱值
                                         temp_powerSpectrum.add(byte1);
                                         //异常频点存入写文件
                                         byte[] byteAb1 = aP2File(PSAP);
                                         temp_abnormalPoint.add(byteAb1);
+
                                         //存入画频谱图图
                                         float[] pow = new float[1026];
                                         pow[0] = PSAP.getTotalBand();//填入总段数
@@ -665,76 +692,37 @@ public class MinaClientService extends Service {
                                         float[] f1 = computePara.Bytes2Power(PSAP.getPSpower());
                                         System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
                                         temp_drawSpectrum.add(pow);
-                                        //存入画瀑布图
-                                        float[] water = new float[1025];
-                                        water[0] = PSAP.getTotalBand();//填入总段数
-                                        System.arraycopy(f1, 0, water, 1, 1024);//填入功率谱值
-                                        temp_drawWaterfall.add(water);
-
+                                        //瀑布图
+                                        temp_drawWaterfall.add(f1);
                                         Constants.spectrumCount++;
-                                    }
-                                    else {
-                                        if ((firstart + Constants.spectrumCount) == PSAP.getPSbandNum()) {
-                                            //===========从第二段开始===============
-                                            if (PSAP.getIsChange() == 0x0f) {
-                                                fileIsChanged = 1;
-                                            }
-
-                                            //频谱数据存入写文件
-                                            byte[] byte1 = powerSpec2File(false, PSAP);//填入频段序号和功率谱值
-                                            temp_powerSpectrum.add(byte1);
-                                            //异常频点存入写文件
-                                            byte[] byteAb1 = aP2File(PSAP);
-                                            temp_abnormalPoint.add(byteAb1);
-
-                                            //存入画频谱图图
-                                            float[] pow = new float[1026];
-                                            pow[0] = PSAP.getTotalBand();//填入总段数
-                                            pow[1] = PSAP.getPSbandNum();//输入段序号
-                                            float[] f1 = computePara.Bytes2Power(PSAP.getPSpower());
-                                            System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
-                                            temp_drawSpectrum.add(pow);
-                                            //瀑布图
-                                            temp_drawWaterfall.add(f1);
-                                            Constants.spectrumCount++;
-                                        } else {
-                                            if(temp_powerSpectrum!=null) {
-                                                temp_powerSpectrum.clear();
-                                            }
-                                            if(temp_abnormalPoint!=null) {
-                                                temp_abnormalPoint.clear();
-                                            }
-                                            if(temp_drawSpectrum!=null) {
-                                                temp_drawSpectrum.clear();
-                                            }
-                                            if(temp_drawWaterfall!=null) {
-                                                temp_drawWaterfall.clear();
-                                            }
-                                            fileIsChanged = 0;
-                                            Constants.spectrumCount = 0;
+                                    } else {
+                                        if (temp_powerSpectrum != null) {
+                                            temp_powerSpectrum.clear();
                                         }
-                                    }
-
-                                    if ((Constants.spectrumCount+firstart )== lastend + 1) {
-                                        //结束
-                                        writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
-                                        Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
-                                        Constants.Queue_DrawRealtimewaterfall.offer(temp_drawWaterfall);
-
+                                        if (temp_abnormalPoint != null) {
+                                            temp_abnormalPoint.clear();
+                                        }
+                                        if (temp_drawSpectrum != null) {
+                                            temp_drawSpectrum.clear();
+                                        }
+                                        if (temp_drawWaterfall != null) {
+                                            temp_drawWaterfall.clear();
+                                        }
                                         fileIsChanged = 0;
                                         Constants.spectrumCount = 0;
                                     }
                                 }
 
+                                if ((Constants.spectrumCount + firstart) == lastend + 1) {
+                                    //结束
+                                    writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                    Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
+                                    Constants.Queue_DrawRealtimewaterfall.offer(temp_drawWaterfall);
 
-                            } else {//背景功率只画图
-                                float[] pow = new float[1025];
-                                pow[0] = PSAP.getPSbandNum();//输入段序号
-                                float[] f1 = computePara.Bytes2Power(PSAP.getPSpower());
-                                System.arraycopy(f1, 0, pow, 1, 1024);//填入功率谱值
-                                Constants.Queue_BackgroundSpectrum.offer(pow);
+                                    fileIsChanged = 0;
+                                    Constants.spectrumCount = 0;
+                                }
                             }
-
                             //=============================异常频点=================================================
                             ////////////////存入显示列表
                             int length = PSAP.getAPnum() * 3;
@@ -745,14 +733,27 @@ public class MinaClientService extends Service {
                                 System.arraycopy(allPow, 0, abnormalList, 1, length);
                                 Constants.Queue_AbnormalFreq_List.offer(abnormalList);
                             }
+
                         }
-
                     }).start();
+                    Log.d("abcd", "写文件结束时间：" + String.valueOf(System.currentTimeMillis()));
+
+
                 }
-                Log.d("abcd", "写文件结束时间：" + String.valueOf(System.currentTimeMillis()));
-
-
             }
+            /**
+             * 背景功率谱
+             */
+            if (message instanceof BackgroundPowerSpectrum) {
+                BackgroundPowerSpectrum back = (BackgroundPowerSpectrum) message;
+                float[] pow = new float[1026];
+                pow[0] = back.getTotalBand();//总段数
+                pow[1] = back.getPSbandNum();//输入段序号
+                float[] f1 = back.getPSpower();
+                System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
+                Constants.Queue_BackgroundSpectrum.offer(pow);
+            }
+
 
             if (message instanceof InGain) {
                 InGain data = (InGain) message;
@@ -970,31 +971,30 @@ public class MinaClientService extends Service {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         String time = sdf.format(new Date());
-        String fname = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "fine", "pwr");
+        String fname = null;
         //String name = null;
+        int count = 0;
         //创建文件
-//        if (PASP.getStyle() == 0) {
+        if (PASP.getStyle() == 0) {
 //        name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day, hour, min, sec,
 //                0, Constants.ID, "fine", "pwr");
-        int count = 0;
+            fname = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "fine", "pwr");
 
-
-        //判断是否是一秒内的文件，如果是，需要加上1s序号
-        File[] PSFile = PSdir.listFiles();
-        if (PSFile.length > 0) {
-            for (int j = 0; j < PSFile.length; j++) {
-                if (fname.equals(PSFile[j].getName())) {
-                    count++;
+            //判断是否是一秒内的文件，如果是，需要加上1s序号
+            File[] PSFile = PSdir.listFiles();
+            if (PSFile.length > 0) {
+                for (int j = 0; j < PSFile.length; j++) {
+                    if (fname.equals(PSFile[j].getName())) {
+                        count++;
 //                    name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day,
 //                            hour, min, sec, count, Constants.ID, "fine", "pwr");
-                    fname = time + "-" + String.format("%d-%d-%s.%s", count, Constants.ID, "fine", "pwr");
+                        fname = time + "-" + String.format("%d-%d-%s.%s", count, Constants.ID, "fine", "pwr");
+                    }
                 }
             }
-        }
 
 
-        // }
-//        else if (PASP.getStyle() == 1) {
+        } else if (PASP.getStyle() == 1) {
 //            name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day, hour, min, sec,
 //                    0, Constants.ID, "coarse", "pwr");
 //
@@ -1010,7 +1010,22 @@ public class MinaClientService extends Service {
 //                    }
 //                }
 //            }
-//        }
+
+            fname = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "coarse", "pwr");
+
+            //判断是否是一秒内的文件，如果是，需要加上1s序号
+            File[] PSFile = PSdir.listFiles();
+            if (PSFile.length > 0) {
+                for (int j = 0; j < PSFile.length; j++) {
+                    if (fname.equals(PSFile[j].getName())) {
+                        count++;
+//                    name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day,
+//                            hour, min, sec, count, Constants.ID, "fine", "pwr");
+                        fname = time + "-" + String.format("%d-%d-%s.%s", count, Constants.ID, "coarse", "pwr");
+                    }
+                }
+            }
+        }
         if (fname != null) {
             File file = new File(PSdir, fname);
 //                                        if (!file.exists()) {

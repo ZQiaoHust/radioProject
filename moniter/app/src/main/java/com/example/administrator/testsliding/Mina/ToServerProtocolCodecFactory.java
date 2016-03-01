@@ -124,8 +124,7 @@ public class ToServerProtocolCodecFactory extends DemuxingProtocolCodecFactory {
        //无线电规划
         super.addMessageEncoder(Send_ServiceRadio.class, RequestWirlessPlanEncode.class);
         super.addMessageDecoder(RequestWirlessPlanDecode.class);
-        //历史IQ波
-        super.addMessageEncoder(HistoryIQRequest.class,HistoryIQEncoder.class);
+
         //三种交互模式
         super.addMessageEncoder(InteractionSweepModeRequest.class, InteractionSweepmodeEncoder.class);
         super.addMessageEncoder(InteractionFixmodeRequest.class,InteractionFixmodelEncoder.class);

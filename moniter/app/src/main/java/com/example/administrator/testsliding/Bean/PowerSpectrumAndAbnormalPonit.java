@@ -4,16 +4,16 @@ package com.example.administrator.testsliding.Bean;
  * Created by jinaghao on 15/12/24.
  */
 public class PowerSpectrumAndAbnormalPonit {
-
+    private int style;//区分fine和coarse(0表示fine，1表示coarse)
     private byte functionID;//区分背景频谱和实时频谱
     private byte[] locationandTime;//地理位置坐标数组和时间
     private int sweepModel;
     private int fileSendmodel;
     private int IsChange;
-    private int totalBand;
+    private int totalBand;//扫频的频段总数
+    private int numN;//扫频总数据帧的序号
     private int PSbandNum;//频段序号
     private byte[] PSpower;//功率值
-
 
     //异常频点的内容
     private int APbandNum;//所在段序号
@@ -21,7 +21,13 @@ public class PowerSpectrumAndAbnormalPonit {
     private byte[] APpower;
 
     public PowerSpectrumAndAbnormalPonit(){}
+    public int getStyle() {
+        return style;
+    }
 
+    public void setStyle(int style) {
+        this.style = style;
+    }
     public void setFunctionID(byte functionID) {
         this.functionID = functionID;
     }
@@ -44,6 +50,14 @@ public class PowerSpectrumAndAbnormalPonit {
 
     public void setTotalBand(int totalBand) {
         this.totalBand = totalBand;
+    }
+
+    public int getNumN() {
+        return numN;
+    }
+
+    public void setNumN(int numN) {
+        this.numN = numN;
     }
 
     public void setPSbandNum(int PSbandNum) {

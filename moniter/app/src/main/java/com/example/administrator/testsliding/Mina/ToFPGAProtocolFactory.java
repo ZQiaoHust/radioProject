@@ -39,13 +39,16 @@ import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Si
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_Threshold;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_UploadDataEnd;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_UploadDataStart;
+import com.example.administrator.testsliding.mina2FPGA.Decode.BackgroundPowerSpectrumCoarseDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.ConnectDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.FixCentralFreqDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.FixSettingDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.IQwaveDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.InGainDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.OutGainDecoder;
+import com.example.administrator.testsliding.mina2FPGA.Decode.PowerSpectrumAndAbnormalPonitCoarseDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.PowerSpectrumAndAbnormalPonitDecoder;
+import com.example.administrator.testsliding.mina2FPGA.Decode.PowerSpectrumAndAbnormalPonitFineDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.PressDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.PressSettingDecoder;
 import com.example.administrator.testsliding.mina2FPGA.Decode.StationStateDecoder;
@@ -152,50 +155,53 @@ public class ToFPGAProtocolFactory extends DemuxingProtocolCodecFactory {
 
 
        // ==============================数据转发=====================================================
-//        super.addMessageEncoder(Query_Connect.class, Query_ConnectEncoder.class);
-//        super.addMessageEncoder(Query_FixCentralFreq.class, Query_FixCentralFreqEncoder.class);
-//        super.addMessageEncoder(Query_FixSetting.class, Query_FixSettingEncoder.class);
-//        super.addMessageEncoder(Query_InGain.class, Query_InGainEncoder.class);
-//        super.addMessageEncoder(Query_IsTerminalOnline.class, Query_IsTerminalOnlineEncoder.class);
-//        super.addMessageEncoder(Query_OutGain.class, Query_OutGainEncoder.class);
-//        super.addMessageEncoder(Query_Press.class, Query_PressEncoder.class);
-//        super.addMessageEncoder(Query_PressSetting.class, Query_PressSettingEncoder.class);
-//        super.addMessageEncoder(Query_StationState.class, Query_StationStateEncoder.class);
-//        super.addMessageEncoder(Query_SweepRange.class, Query_SweepRangeEncoder.class);
-//        super.addMessageEncoder(Query_Threshold.class, Query_ThresholdEncoder.class);
-//        super.addMessageEncoder(Query_UploadDataStart.class, Query_UploadDataStartEncoder.class);
-//        super.addMessageEncoder(Query_UploadDataEnd.class, Query_UploadDataEndEncoder.class);
-//
-//        super.addMessageEncoder(Simple_Connect.class, Simple_ConnectEncoder.class);
-//        super.addMessageEncoder(Simple_FixCentralFreq.class, Simple_FixCentralFreqEncoder.class);
-//        super.addMessageEncoder(Simple_FixSetting.class, Simple_FixSettingEncoder.class);
-//        super.addMessageEncoder(Simple_InGain.class, Simple_InGainEncoder.class);
-//        super.addMessageEncoder(Simple_OutGain.class,Simple_OutGainEncoder.class);
-//        super.addMessageEncoder(Simple_Press.class, Simple_PressEncoder.class);
-//        super.addMessageEncoder(Simple_PressSetting.class, Simple_PressSettingEncoder.class);
-//        super.addMessageEncoder(Simple_StationState.class,Simple_StationStateEncoder.class);
-//        super.addMessageEncoder(Simple_SweepRange.class,Simple_SweepRangeEncoder.class);
-//        super.addMessageEncoder(Simple_Threshold.class, Simple_ThresholdEncoder.class);
-//        super.addMessageEncoder(Simple_UploadDataStart.class, Simple_UploadDataStartEncoder.class);
-//        super.addMessageEncoder(Simple_UploadDataEnd.class, Simple_UploadDataEndEncoder.class);
-//
-//
-//        super.addMessageDecoder(Reply_ConnectDecoder.class);
-//        super.addMessageDecoder(Reply_FixCentralFreqDecoder.class);
-//        super.addMessageDecoder(Reply_FixSettingDecoder.class);
-//        super.addMessageDecoder(Reply_InGainDecoder.class);
-//        super.addMessageDecoder(Reply_IsTerminalOnlineDecoder.class);
-//        super.addMessageDecoder(Reply_OutGainDecoder.class);
-//        super.addMessageDecoder(Reply_PressDecoder.class);
-//        super.addMessageDecoder(Reply_PressSettingDecoder.class);
-//        super.addMessageDecoder(Reply_SweepRangeDecoder.class);
-//        super.addMessageDecoder(Reply_ThresholdDecoder.class);
-//        super.addMessageDecoder(Reply_UploadDataEndDecoder.class);
-//        super.addMessageDecoder(Reply_UploadDataStartDecoder.class);
+        super.addMessageEncoder(Query_Connect.class, Query_ConnectEncoder.class);
+        super.addMessageEncoder(Query_FixCentralFreq.class, Query_FixCentralFreqEncoder.class);
+        super.addMessageEncoder(Query_FixSetting.class, Query_FixSettingEncoder.class);
+        super.addMessageEncoder(Query_InGain.class, Query_InGainEncoder.class);
+        super.addMessageEncoder(Query_IsTerminalOnline.class, Query_IsTerminalOnlineEncoder.class);
+        super.addMessageEncoder(Query_OutGain.class, Query_OutGainEncoder.class);
+        super.addMessageEncoder(Query_Press.class, Query_PressEncoder.class);
+        super.addMessageEncoder(Query_PressSetting.class, Query_PressSettingEncoder.class);
+        super.addMessageEncoder(Query_StationState.class, Query_StationStateEncoder.class);
+        super.addMessageEncoder(Query_SweepRange.class, Query_SweepRangeEncoder.class);
+        super.addMessageEncoder(Query_Threshold.class, Query_ThresholdEncoder.class);
+        super.addMessageEncoder(Query_UploadDataStart.class, Query_UploadDataStartEncoder.class);
+        super.addMessageEncoder(Query_UploadDataEnd.class, Query_UploadDataEndEncoder.class);
+
+        super.addMessageEncoder(Simple_Connect.class, Simple_ConnectEncoder.class);
+        super.addMessageEncoder(Simple_FixCentralFreq.class, Simple_FixCentralFreqEncoder.class);
+        super.addMessageEncoder(Simple_FixSetting.class, Simple_FixSettingEncoder.class);
+        super.addMessageEncoder(Simple_InGain.class, Simple_InGainEncoder.class);
+        super.addMessageEncoder(Simple_OutGain.class,Simple_OutGainEncoder.class);
+        super.addMessageEncoder(Simple_Press.class, Simple_PressEncoder.class);
+        super.addMessageEncoder(Simple_PressSetting.class, Simple_PressSettingEncoder.class);
+        super.addMessageEncoder(Simple_StationState.class,Simple_StationStateEncoder.class);
+        super.addMessageEncoder(Simple_SweepRange.class,Simple_SweepRangeEncoder.class);
+        super.addMessageEncoder(Simple_Threshold.class, Simple_ThresholdEncoder.class);
+        super.addMessageEncoder(Simple_UploadDataStart.class, Simple_UploadDataStartEncoder.class);
+        super.addMessageEncoder(Simple_UploadDataEnd.class, Simple_UploadDataEndEncoder.class);
+
+
+        super.addMessageDecoder(Reply_ConnectDecoder.class);
+        super.addMessageDecoder(Reply_FixCentralFreqDecoder.class);
+        super.addMessageDecoder(Reply_FixSettingDecoder.class);
+        super.addMessageDecoder(Reply_InGainDecoder.class);
+        super.addMessageDecoder(Reply_IsTerminalOnlineDecoder.class);
+        super.addMessageDecoder(Reply_OutGainDecoder.class);
+        super.addMessageDecoder(Reply_PressDecoder.class);
+        super.addMessageDecoder(Reply_PressSettingDecoder.class);
+        super.addMessageDecoder(Reply_SweepRangeDecoder.class);
+        super.addMessageDecoder(Reply_ThresholdDecoder.class);
+        super.addMessageDecoder(Reply_UploadDataEndDecoder.class);
+        super.addMessageDecoder(Reply_UploadDataStartDecoder.class);
 
         //最优先
         super.addMessageDecoder(IQwaveDecoder.class);
-        super.addMessageDecoder(PowerSpectrumAndAbnormalPonitDecoder.class);//功率谱异常频点
-
+        //super.addMessageDecoder(PowerSpectrumAndAbnormalPonitDecoder.class);//功率谱异常频点
+        super.addMessageDecoder(PowerSpectrumAndAbnormalPonitCoarseDecoder.class);//功率谱异常频点
+        super.addMessageDecoder(PowerSpectrumAndAbnormalPonitFineDecoder.class);//功率谱异常频点
+        super.addMessageDecoder(BackgroundPowerSpectrumCoarseDecoder.class);//功率谱异常频点
+        super.addMessageDecoder(BackgroundPowerSpectrumCoarseDecoder.class);//功率谱异常频点
     }
 }

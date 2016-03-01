@@ -67,12 +67,12 @@ public class Chart_spectrum extends Activity {
     private XYMultipleSeriesDataset mDataset;
     private GraphicalView chart;
     private XYMultipleSeriesRenderer renderer;
-    private int color = Color.GREEN;
+    private int[] color =new int[]{ Color.GREEN,Color.RED};
     private PointStyle style = PointStyle.CIRCLE;
     double[] xv = new double[1024];
     double[] yv = new double[1024];
     int count = 0;//段数计数器
-    private  int totalseries=1;//画图线条总数
+    private  int totalseries=2;//画图线条总数
 
     private Handler handler=new Handler(){
         @Override
@@ -213,6 +213,7 @@ public class Chart_spectrum extends Activity {
                     lilay_spectrum.setVisibility(View.GONE);
                     int firstart=0 ,end=0;
                     Constants.Queue_DrawRealtimeSpectrum.clear();
+                    Constants.Queue_BackgroundSpectrum.clear();
                     if (Constants.SweepParaList.size() != 0) {
                         firstart= Constants.SweepParaList.get(0).getStartNum();
                         end= Constants.SweepParaList.get(Constants.SweepParaList.size() - 1).getEndNum();
@@ -228,7 +229,7 @@ public class Chart_spectrum extends Activity {
                                 if((finalFirstart&finalEnd)!=0) {
                                     info.start = 70+(finalFirstart-1)*25;
                                     info.end =  70+finalEnd*25;
-                                    info.total = totalseries;
+                                    info.total = totalseries+1;
                                     message.obj = info;
                                     handler.sendMessage(message);
                                 }
@@ -254,6 +255,10 @@ public class Chart_spectrum extends Activity {
     }
     private void updateChart() {
         List<float[]> listdata = new ArrayList<>();
+        double[] xv_back = new double[1024];
+        double[] yv_back = new double[1024];
+
+        //实时频谱（整段画）
         Lock lock = new ReentrantLock(); //锁对象
         lock.lock();
         try {
@@ -302,6 +307,39 @@ public class Chart_spectrum extends Activity {
                 chart.invalidate();
             }
 
+        }
+        //背景频谱（分段画）
+        if (!Constants.Queue_BackgroundSpectrum.isEmpty()) {
+            float[] data =Constants.Queue_BackgroundSpectrum.poll();
+            int total = (int) data[0];
+            if (count == total) {
+                count = 0;
+            }
+            count++;
+            double dataX = (data[1] - 1) * 25 + 70;
+            int circle = 1024 / total;
+            int flag = 0;
+            for (int i = 0; i < circle; i++) {
+                float max = data[2 + i * total];
+                for (int j = 0; j < total; j++) {
+                    if (data[i * total + j + 2] >= max) {
+                        max = data[i * total + j + 2];
+                        flag = i * total + j + 2;
+                    }
+                }
+                xv_back[i] = dataX + flag * 25.0 / 1024.0;
+                yv_back[i] = max;
+            }
+
+            series = mDataset.getSeriesAt(count-1);
+            mDataset.removeSeries(count-1);
+            series.clear();
+            for (int k = 0; k < circle; k++) {
+                series.add(xv_back[k], yv_back[k]);
+            }
+            // 在数据集中添加新的点集
+            mDataset.addSeries(count-1, series);
+            chart.invalidate();
         }
 
     }
@@ -368,23 +406,46 @@ public class Chart_spectrum extends Activity {
         }
         return dataset;
     }
-
-    protected XYMultipleSeriesRenderer buildRenderer(int color, int totalseries,
-                                                     PointStyle style, boolean fill) {
-        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-        // 设置图表中曲线本身的样式，包括颜色、点的大小以及线的粗细等
-        int length = totalseries;
-        for (int i = 0; i < length; i++) {
-            XYSeriesRenderer r = new XYSeriesRenderer();
-            r.setColor(color);
-            r.setPointStyle(style);
-            r.setFillPoints(fill);
-            r.setLineWidth(5);
-            renderer.addSeriesRenderer(r);
-        }
-
-        return renderer;
+//
+//    protected XYMultipleSeriesRenderer buildRenderer(int color, int totalseries,
+//                                                     PointStyle style, boolean fill) {
+//        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+//        // 设置图表中曲线本身的样式，包括颜色、点的大小以及线的粗细等
+//        int length = totalseries;
+//        for (int i = 0; i < length; i++) {
+//            XYSeriesRenderer r = new XYSeriesRenderer();
+//            r.setColor(color);
+//            r.setPointStyle(style);
+//            r.setFillPoints(fill);
+//            r.setLineWidth(5);
+//            renderer.addSeriesRenderer(r);
+//        }
+//
+//        return renderer;
+//    }
+protected XYMultipleSeriesRenderer buildRenderer(int[] color,int totalseries,
+                                                 PointStyle style, boolean fill) {
+    XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+    // 设置图表中曲线本身的样式，包括颜色、点的大小以及线的粗细等
+    int length = totalseries;
+    for (int i = 0; i < length-1; i++) {
+        XYSeriesRenderer rBack = new XYSeriesRenderer();
+        rBack.setColor(color[1]);
+        rBack.setPointStyle(style);
+        rBack.setFillPoints(fill);
+        rBack.setLineWidth(5);
+        renderer.addSeriesRenderer(rBack);
     }
+    //实时频谱
+    XYSeriesRenderer r = new XYSeriesRenderer();
+    r.setColor(color[0]);
+    r.setPointStyle(style);
+    r.setFillPoints(fill);
+    r.setLineWidth(5);
+    renderer.addSeriesRenderer(r);
+
+    return renderer;
+}
     protected void setChartSettings(XYMultipleSeriesRenderer renderer,
                                     String xTitle, String yTitle, double xMin, double xMax,
                                     double yMin, double yMax, int axesColor, int labelsColor) {

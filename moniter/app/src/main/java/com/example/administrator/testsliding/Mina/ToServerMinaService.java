@@ -378,9 +378,9 @@ public class ToServerMinaService extends Service {
                     connector.setHandler(dataHandler);
                     // 这里是异步操作 连接后立即返回
 			ConnectFuture future = connector.connect(new InetSocketAddress(
-						"27.17.8.142",9123));
-//                    ConnectFuture future = connector.connect(new InetSocketAddress(
-//                            "115.156.208.218",9988));
+						"27.17.8.142",9000));
+// ConnectFuture future = connector.connect(new InetSocketAddress(
+//                            "115.156.208.51",9123));
 //                    ConnectFuture future = connector.connect(new InetSocketAddress(
 //                            Constants.IPValue, Constants.PORTValue));
                     future.awaitUninterruptibly();// 等待连接创建完成
@@ -587,7 +587,7 @@ public class ToServerMinaService extends Service {
                 Simple_Connect connect = new Simple_Connect();
                 connect = (Simple_Connect) message;
                 Constants.FPGAsession.write(connect);
-                Log.d("xyz", Arrays.toString(connect.getContent()));
+                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(connect.getContent()));
             }
 
             //================================================
@@ -596,12 +596,14 @@ public class ToServerMinaService extends Service {
                 Simple_FixCentralFreq fixCentral = new Simple_FixCentralFreq();
                 fixCentral = (Simple_FixCentralFreq) message;
                 Constants.FPGAsession.write(fixCentral);
+                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(fixCentral.getContent()));
             }
             /////////////////////////////////
             if (message instanceof Simple_FixSetting) {
                 Simple_FixSetting fixSetting = new Simple_FixSetting();
                 fixSetting = (Simple_FixSetting) message;
                 Constants.FPGAsession.write(fixSetting);
+                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(fixSetting.getContent()));
             }
 
             ///////////////////////////////////////////////////
@@ -610,18 +612,21 @@ public class ToServerMinaService extends Service {
                 Simple_InGain inGain = new Simple_InGain();
                 inGain = (Simple_InGain) message;
                 Constants.FPGAsession.write(inGain);
+                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(inGain.getContent()));
             }
             /////////////////////////////////////////////////////
             if (message instanceof Simple_OutGain) {
                 Simple_OutGain outGain = new Simple_OutGain();
                 outGain = (Simple_OutGain) message;
                 Constants.FPGAsession.write(outGain);
+                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(outGain.getContent()));
             }
             //////////////////////////////////////
             if (message instanceof Simple_Press) {
                 Simple_Press press = new Simple_Press();
                 press = (Simple_Press) message;
                Constants.FPGAsession.write(press);
+                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(press.getContent()));
             }
             ///////////////////////////////////////////
 
@@ -629,6 +634,7 @@ public class ToServerMinaService extends Service {
                 Simple_PressSetting pressSetting = new Simple_PressSetting();
                 pressSetting = (Simple_PressSetting) message;
                Constants.FPGAsession.write(pressSetting);
+                Log.d("trans","SeverSession 转发设置"+ Arrays.toString(pressSetting.getContent()));
             }
             ////////////////////////////////////////////////
 
@@ -636,6 +642,7 @@ public class ToServerMinaService extends Service {
                 Simple_StationState simple_stationState = new Simple_StationState();
                 simple_stationState = (Simple_StationState) message;
                 Constants.FPGAsession.write(simple_stationState);
+                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(simple_stationState.getContent()));
             }
             ///////////////////////////////////////////////////
 
@@ -643,6 +650,7 @@ public class ToServerMinaService extends Service {
                 Simple_SweepRange sweep = new Simple_SweepRange();
                 sweep = (Simple_SweepRange) message;
                 Constants.FPGAsession.write(sweep);
+                Log.d("trans","SeverSession 转发设置"+ Arrays.toString(sweep.getContent()));
             }
             ////////////////////////////////////////////////
 
@@ -650,6 +658,7 @@ public class ToServerMinaService extends Service {
                 Simple_Threshold threshold = new Simple_Threshold();
                 threshold = (Simple_Threshold) message;
                 Constants.FPGAsession.write(threshold);
+                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(threshold.getContent()));
             }
 
             ////////////////////////////////////////////////
@@ -658,6 +667,7 @@ public class ToServerMinaService extends Service {
                 Simple_UploadDataStart data = new Simple_UploadDataStart();
                 data = (Simple_UploadDataStart) message;
                 Constants.FPGAsession.write(data);
+                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(data.getContent()));
             }
             /////////////////////////////////////////////////////
 
@@ -665,6 +675,7 @@ public class ToServerMinaService extends Service {
                 Simple_UploadDataEnd dataend = new Simple_UploadDataEnd();
                 dataend = (Simple_UploadDataEnd) message;
                 Constants.FPGAsession.write(dataend);
+                Log.d("trans","SeverSession 转发设置"+ Arrays.toString(dataend.getContent()));
             }
 
             //======================================数据转发（查询）===================
@@ -673,6 +684,7 @@ public class ToServerMinaService extends Service {
                 Query_Connect query_connect = new Query_Connect();
                 query_connect = (Query_Connect) message;
                 Constants.FPGAsession.write(query_connect);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_connect.getContent()));
             }
 
             ////////////////////////////
@@ -681,6 +693,7 @@ public class ToServerMinaService extends Service {
                 Query_FixCentralFreq query_fixCentralFreq = new Query_FixCentralFreq();
                 query_fixCentralFreq = (Query_FixCentralFreq) message;
                 Constants.FPGAsession.write(query_fixCentralFreq);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_fixCentralFreq.getContent()));
             }
             //////////////////////////
 
@@ -688,6 +701,7 @@ public class ToServerMinaService extends Service {
                 Query_FixSetting query_fixSetting = new Query_FixSetting();
                 query_fixSetting = (Query_FixSetting) message;
                 Constants.FPGAsession.write(query_fixSetting);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_fixSetting.getContent()));
             }
 
             ///////////////////
@@ -696,6 +710,7 @@ public class ToServerMinaService extends Service {
                 Query_InGain query_inGain = new Query_InGain();
                 query_inGain = (Query_InGain) message;
                 Constants.FPGAsession.write(query_inGain);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_inGain.getContent()));
             }
 
             ///////////////////////////////////
@@ -704,6 +719,7 @@ public class ToServerMinaService extends Service {
                 Query_OutGain query_outGain = new Query_OutGain();
                 query_outGain = (Query_OutGain) message;
                 Constants.FPGAsession.write(query_outGain);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_outGain.getContent()));
             }
 
             ///////////////////////////////////////
@@ -712,6 +728,7 @@ public class ToServerMinaService extends Service {
                 Query_IsTerminalOnline query_isTerminalOnline = new Query_IsTerminalOnline();
                 query_isTerminalOnline = (Query_IsTerminalOnline) message;
                 Constants.FPGAsession.write(query_isTerminalOnline);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_isTerminalOnline.getContent()));
             }
             //////////////////////////////////////////
 
@@ -719,6 +736,7 @@ public class ToServerMinaService extends Service {
                 Query_Press query_press = new Query_Press();
                 query_press = (Query_Press) message;
                 Constants.FPGAsession.write(query_press);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_press.getContent()));
             }
             /////////////////////////////////////////////////////
 
@@ -726,6 +744,7 @@ public class ToServerMinaService extends Service {
                 Query_PressSetting query_pressSetting = new Query_PressSetting();
                 query_pressSetting = (Query_PressSetting) message;
                 Constants.FPGAsession.write(query_pressSetting);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_pressSetting.getContent()));
             }
 
             //////////////////////////////////////////
@@ -734,6 +753,7 @@ public class ToServerMinaService extends Service {
                 Query_SweepRange query_sweepRange = new Query_SweepRange();
                 query_sweepRange = (Query_SweepRange) message;
                 Constants.FPGAsession.write(query_sweepRange);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_sweepRange.getContent()));
             }
 
             /////////////////////////////////////////
@@ -742,6 +762,7 @@ public class ToServerMinaService extends Service {
                 Query_Threshold query_threshold = new Query_Threshold();
                 query_threshold = (Query_Threshold) message;
                 Constants.FPGAsession.write(query_threshold);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_threshold.getContent()));
             }
 
             ////////////////////////////////////////////
@@ -749,7 +770,8 @@ public class ToServerMinaService extends Service {
             if (message instanceof Query_UploadDataStart) {
                 Query_UploadDataStart uploadData = new Query_UploadDataStart();
                 uploadData = (Query_UploadDataStart) message;
-               // Constants.FPGAsession.write(uploadData);
+                Constants.FPGAsession.write(uploadData);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(uploadData.getContent()));
             }
             ////////////////////////////////////////////
 
@@ -757,6 +779,7 @@ public class ToServerMinaService extends Service {
                 Query_UploadDataEnd query_uploadDataEnd = new Query_UploadDataEnd();
                 query_uploadDataEnd = (Query_UploadDataEnd) message;
                 Constants.FPGAsession.write(query_uploadDataEnd);
+                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_uploadDataEnd.getContent()));
             }
 
                 //======================================================================================================

@@ -7,17 +7,23 @@ import android.os.Parcelable;
  * Created by jinaghao on 15/11/23.
  */
 public class FixCentralFreq implements Parcelable{
+    private byte packetHead;
     private int number;
     private double fix1;
     private double fix2;
     private double fix3;
+    private byte[] content;
 
     public FixCentralFreq(){}
+
+
     protected FixCentralFreq(Parcel in) {
+        packetHead = in.readByte();
         number = in.readInt();
         fix1 = in.readDouble();
         fix2 = in.readDouble();
         fix3 = in.readDouble();
+        content = in.createByteArray();
     }
 
     public static final Creator<FixCentralFreq> CREATOR = new Creator<FixCentralFreq>() {
@@ -31,19 +37,6 @@ public class FixCentralFreq implements Parcelable{
             return new FixCentralFreq[size];
         }
     };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(number);
-        dest.writeDouble(fix1);
-        dest.writeDouble(fix2);
-        dest.writeDouble(fix3);
-    }
 
     public void setNumber(int number) {
         this.number = number;
@@ -76,5 +69,36 @@ public class FixCentralFreq implements Parcelable{
 
     public double getFix3() {
         return fix3;
+    }
+
+    public byte getPacketHead() {
+        return packetHead;
+    }
+
+    public void setPacketHead(byte packetHead) {
+        this.packetHead = packetHead;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(packetHead);
+        dest.writeInt(number);
+        dest.writeDouble(fix1);
+        dest.writeDouble(fix2);
+        dest.writeDouble(fix3);
+        dest.writeByteArray(content);
     }
 }

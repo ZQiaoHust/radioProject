@@ -6,7 +6,8 @@ import android.os.Parcelable;
 /**
  * Created by jinaghao on 15/11/24.
  */
-public class FixSetting implements  Parcelable {
+public class FixSetting implements Parcelable  {
+    private byte packetHead;
     private double IQwidth;
     private int blockNum;
     private int year;
@@ -15,11 +16,14 @@ public class FixSetting implements  Parcelable {
     private int hour;
     private int minute;
     private int second;
+    private String timeString;
+    private byte[] content;
 
     public FixSetting(){}
 
 
     protected FixSetting(Parcel in) {
+        packetHead = in.readByte();
         IQwidth = in.readDouble();
         blockNum = in.readInt();
         year = in.readInt();
@@ -28,6 +32,8 @@ public class FixSetting implements  Parcelable {
         hour = in.readInt();
         minute = in.readInt();
         second = in.readInt();
+        timeString = in.readString();
+        content = in.createByteArray();
     }
 
     public static final Creator<FixSetting> CREATOR = new Creator<FixSetting>() {
@@ -41,6 +47,22 @@ public class FixSetting implements  Parcelable {
             return new FixSetting[size];
         }
     };
+
+    public byte getPacketHead() {
+        return packetHead;
+    }
+
+    public void setPacketHead(byte packetHead) {
+        this.packetHead = packetHead;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 
     public void setIQwidth(double IQwidth) {
         this.IQwidth = IQwidth;
@@ -107,6 +129,14 @@ public class FixSetting implements  Parcelable {
         return second;
     }
 
+    public String getTimeString() {
+        return timeString;
+    }
+
+    public void setTimeString(String timeString) {
+        this.timeString = timeString;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -114,6 +144,7 @@ public class FixSetting implements  Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(packetHead);
         dest.writeDouble(IQwidth);
         dest.writeInt(blockNum);
         dest.writeInt(year);
@@ -122,5 +153,7 @@ public class FixSetting implements  Parcelable {
         dest.writeInt(hour);
         dest.writeInt(minute);
         dest.writeInt(second);
+        dest.writeString(timeString);
+        dest.writeByteArray(content);
     }
 }

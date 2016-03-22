@@ -18,7 +18,7 @@ public class FixCentralFreqDecoder implements MessageDecoder {
             return MessageDecoderResult.NEED_DATA;
         }else{
             byte frameHead=in.get();
-            if(frameHead==(byte)0x55){
+            if((frameHead==(byte)0x55)||(frameHead==(byte)0x66)){
                 byte functionCode=in.get();
                 if (functionCode==0x22){
                     return MessageDecoderResult.OK;
@@ -46,11 +46,12 @@ public class FixCentralFreqDecoder implements MessageDecoder {
                 buffer.flip();
                 byte[] accept=new byte[17];
                 buffer.get(accept);
+                fixCentralFreq.setPacketHead(accept[0]);
                 fixCentralFreq.setNumber(accept[4]);
-                fixCentralFreq.setFix1(getCentralFreq1(accept));
-                fixCentralFreq.setFix2(getCentralFreq2(accept));
-                fixCentralFreq.setFix3(getCentralFreq3(accept));
-
+                fixCentralFreq.setFix1(getCentralFreq(accept,5,6,7));
+                fixCentralFreq.setFix2(getCentralFreq(accept,8,9,10));
+                fixCentralFreq.setFix3(getCentralFreq(accept,11,12,13));
+                fixCentralFreq.setContent(accept);
                 out.write(fixCentralFreq);
 
                 return  MessageDecoderResult.OK;
@@ -64,25 +65,12 @@ public class FixCentralFreqDecoder implements MessageDecoder {
 
     }
 
-    //计算第一个中心频率
-    private double getCentralFreq1(byte[] bytes){
-        int zhenshu=(bytes[5]<<6)+(bytes[6]&0x3f);
-        double xiaoshu=(bytes[6]>>6)/4.0+((bytes[7]&0xff)/1024.0);
+    //计算中心频率
+    private double getCentralFreq(byte[] bytes,int a,int b,int c){
+        int zhenshu=(bytes[a]<<6)+(bytes[b]&0x3f);
+        double xiaoshu=(bytes[b]>>6)/4.0+((bytes[c]&0xff)/1024.0);
         double centralFreq=zhenshu+xiaoshu;
         return centralFreq;
     }
-    //计算第二个中心频率
-    private double getCentralFreq2(byte[] bytes){
-        int zhenshu=(bytes[8]<<6)+(bytes[9]&0x3f);
-        double xiaoshu=(bytes[9]>>6)/4.0+((bytes[10]&0xff)/1024.0);
-        double centralFreq=zhenshu+xiaoshu;
-        return centralFreq;
-    }
-    //计算第三个中心频率
-    private double getCentralFreq3(byte[] bytes){
-        int zhenshu=(bytes[11]<<6)+(bytes[12]&0x3f);
-        double xiaoshu=(bytes[12]>>6)/4.0+((bytes[13]&0xff)/1024.0);
-        double centralFreq=zhenshu+xiaoshu;
-        return centralFreq;
-    }
+
 }

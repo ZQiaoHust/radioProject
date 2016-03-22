@@ -54,7 +54,7 @@ public class Chart_waterfall extends Activity {
     private boolean hasLabels = false;
     private boolean hasLabelForSelected = false;
     private int dataType = DEFAULT_DATA;
-
+    private int startFrq,endFreq;
     private Timer timer = new Timer();
     private TimerTask task;
 //         ColumnChartRenderer ren=new ColumnChartRenderer();
@@ -118,23 +118,18 @@ public class Chart_waterfall extends Activity {
     public void onResume() {
         super.onResume();
         Constants.Queue_DrawRealtimewaterfall.clear();
-        int firstart = 0, end = 0;
+
         if (Constants.SweepParaList.size() != 0) {
-            firstart = Constants.SweepParaList.get(0).getStartNum();
-            end = Constants.SweepParaList.get(Constants.SweepParaList.size() - 1).getEndNum();
+            startFrq = (int)Constants.SweepParaList.get(0).getSegStart();
+            endFreq =(int) Constants.SweepParaList.get(Constants.SweepParaList.size() - 1).getSegEnd();
         }
-        final int finalFirstart = firstart;
-        final int finalEnd = end;
         new Thread() {
             @Override
             public void run() {
                 Message message = new Message();
-                Info info = new Info();
-                if ((finalFirstart & finalEnd) != 0) {
-                    message.arg1 = 70 + (finalFirstart - 1) * 25;
-                    message.arg2 = 70 + finalEnd * 25;
+                    message.arg1 = startFrq;
+                    message.arg2 = endFreq;
                     handler.sendMessage(message);
-                }
             }
         }.start();
 
@@ -143,7 +138,12 @@ public class Chart_waterfall extends Activity {
             public void run() {
                 Message message = new Message();
                 message.what = 1;
-                message.arg1=finalEnd-finalFirstart+1;
+                int mdata=endFreq-startFrq;
+                if(mdata<=250){//fine
+                    message.arg1 =mdata/25+1 ;
+                }else {//coarse
+                    message.arg1= mdata/800 + 1;
+                }
                 handler.sendMessage(message);
             }
         };
@@ -193,7 +193,15 @@ public class Chart_waterfall extends Activity {
                         values.set(j, values.get(j - 1));
                     }
                     // int color=ChartUtils.pickColor();
-                    int color = colors[(int) ((ff1[i] + 150) / 8)];
+                    int index= (int) ((ff1[i] + 150)/8);
+                    int color=0;
+                    if(index>=20){
+                        color=colors[19];
+                    }else if(index<0){
+                        color=colors[0];
+                    }else {
+                        color = colors[(int) ((ff1[i] + 150) / 8)];
+                    }
                     values.set(0, new SubcolumnValue(1, color));
 
                     Column column = new Column(values);
@@ -226,7 +234,6 @@ public class Chart_waterfall extends Activity {
     private void generateStackedData(int start, int end) {
         int numSubcolumns = 60;
         int numColumns = 1000;
-
         List<Column> columns = new ArrayList<Column>();
         List<SubcolumnValue> values;
         Lvalues = new ArrayList<>();
@@ -321,6 +328,7 @@ public class Chart_waterfall extends Activity {
 
         return data;
     }
+
 }
 
 

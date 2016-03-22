@@ -8,20 +8,15 @@ import android.os.Parcelable;
  */
 public class UploadData implements Parcelable {
     int func;
+    private byte packetHead;
+    private byte[] content;
 
     public UploadData(){}
 
-    public int getFunc() {
-        return func;
-    }
-
-    public void setFunc(int func) {
-
-        this.func = func;
-    }
-
     protected UploadData(Parcel in) {
         func = in.readInt();
+        packetHead = in.readByte();
+        content = in.createByteArray();
     }
 
     public static final Creator<UploadData> CREATOR = new Creator<UploadData>() {
@@ -36,6 +31,31 @@ public class UploadData implements Parcelable {
         }
     };
 
+    public int getFunc() {
+        return func;
+    }
+
+    public void setFunc(int func) {
+
+        this.func = func;
+    }
+
+    public byte getPacketHead() {
+        return packetHead;
+    }
+
+    public void setPacketHead(byte packetHead) {
+        this.packetHead = packetHead;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -44,5 +64,7 @@ public class UploadData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(func);
+        dest.writeByte(packetHead);
+        dest.writeByteArray(content);
     }
 }

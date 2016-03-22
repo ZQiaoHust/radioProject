@@ -1,5 +1,6 @@
 package com.example.administrator.testsliding.mina_transmit.FPGA2serverEncoder;
 
+import com.example.administrator.testsliding.Bean.FixSetting;
 import com.example.administrator.testsliding.bean2Transmit.FPGA2server.Reply_FixSetting;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGAQuery.Query_FixSetting;
 
@@ -11,9 +12,9 @@ import org.apache.mina.filter.codec.demux.MessageEncoder;
 /**
  * Created by Administrator on 2015/12/1.
  */
-public class Reply_FixSettingEncoder implements MessageEncoder<Reply_FixSetting> {
+public class Reply_FixSettingEncoder implements MessageEncoder<FixSetting> {
     @Override
-    public void encode(IoSession ioSession, Reply_FixSetting fix,
+    public void encode(IoSession ioSession, FixSetting fix,
                        ProtocolEncoderOutput out) throws Exception {
 
         if(fix!=null){

@@ -6,11 +6,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -22,7 +18,6 @@ import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.R;
 import com.example.administrator.testsliding.bean2server.HistorySpectrumRequest;
 import com.example.administrator.testsliding.compute.ComputePara;
-import com.example.administrator.testsliding.view.DateTimePickDialogUtil;
 import com.example.administrator.testsliding.view.MyTopBar;
 
 import org.achartengine.ChartFactory;
@@ -59,7 +54,7 @@ public class Chart_spectrum extends Activity {
     private EditText et_ID;
     private LinearLayout lilay_spectrum;
     private ComputePara computePara = new ComputePara();
-    TimePickerView pvTime1 ,pvTime2;
+    TimePickerView pvTime1, pvTime2;
 
     private Timer timer = new Timer();
     private TimerTask task;
@@ -67,23 +62,22 @@ public class Chart_spectrum extends Activity {
     private XYMultipleSeriesDataset mDataset;
     private GraphicalView chart;
     private XYMultipleSeriesRenderer renderer;
-    private int[] color =new int[]{ Color.GREEN,Color.RED};
+    private int[] color = new int[]{Color.RED, Color.GREEN};
     private PointStyle style = PointStyle.CIRCLE;
-    double[] xv = new double[1024];
-    double[] yv = new double[1024];
-    int count = 0;//段数计数器
-    private  int totalseries=2;//画图线条总数
 
-    private Handler handler=new Handler(){
+    int count = 0;//段数计数器
+    private int totalseries = 2;//画图线条总数
+    private double startFrq = 0, endFrq = 0;
+
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-              if(msg.obj instanceof Info){
-                  Info info= (Info) msg.obj;
-
-                  InitView(info.start,info.end,info.total);
-              }
-            if(msg.what==1) {
+//            if (msg.obj instanceof Info) {
+//                Info info = (Info) msg.obj;
+//                InitView(info.start, info.end);
+//            }
+            if (msg.what == 1) {
                 updateChart();
             }
         }
@@ -96,17 +90,17 @@ public class Chart_spectrum extends Activity {
         initSetting();
         initspinnerSetting();
         InitEvent();
-        layout = (LinearLayout)findViewById(R.id.linearLayout1);
+        layout = (LinearLayout) findViewById(R.id.linearLayout1);
         series = new XYSeries("");
-        mDataset = buildDataset("",totalseries);
-        renderer = buildRenderer(color,totalseries, style, true);
+        mDataset = buildDataset("", totalseries);
+        renderer = buildRenderer(color, totalseries, style, true);
         // 设置好图表的样式
         setChartSettings(renderer, "频率值", "功率值", 95, 110, -150, 10, Color.WHITE, Color.WHITE);
         chart = ChartFactory.getLineChartView(Chart_spectrum.this, mDataset, renderer);
         layout.addView(chart, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        MyTopBar topBar= (MyTopBar) findViewById(R.id.topbar_chartspec);
+        MyTopBar topBar = (MyTopBar) findViewById(R.id.topbar_chartspec);
         topBar.setOnTopBarClickListener(new MyTopBar.TopBarClickListener() {
             @Override
             public void leftclick() {
@@ -120,31 +114,17 @@ public class Chart_spectrum extends Activity {
         });
     }
 
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        return inflater.inflate(R.layout.chart_spectrum, container, false);
-//    }
-
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//
-//
-//    }
-
 
     private void initSetting() {
         spin = (Spinner) findViewById(R.id.spinner_spectrum);
-        lilay_spectrum = (LinearLayout)findViewById(R.id.lilay_history);
-        et_ID = (EditText)findViewById(R.id.et_ID);
+        lilay_spectrum = (LinearLayout) findViewById(R.id.lilay_history);
+        et_ID = (EditText) findViewById(R.id.et_ID);
         // 两个输入框
-        startDateTime = (EditText)findViewById(R.id.inputDate);
-        endDateTime = (EditText)findViewById(R.id.inputDate2);
+        startDateTime = (EditText) findViewById(R.id.inputDate);
+        endDateTime = (EditText) findViewById(R.id.inputDate2);
         //时间选择器
         pvTime1 = new TimePickerView(this, TimePickerView.Type.ALL);
         pvTime2 = new TimePickerView(this, TimePickerView.Type.ALL);
-        //控制时间范围
-//        Calendar calendar = Calendar.getInstance();
-//        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
         pvTime1.setTime(new Date());
         pvTime1.setCyclic(false);
         pvTime1.setCancelable(true);
@@ -211,30 +191,15 @@ public class Chart_spectrum extends Activity {
                     }
                 } else if (id == 1) {
                     lilay_spectrum.setVisibility(View.GONE);
-                    int firstart=0 ,end=0;
                     Constants.Queue_DrawRealtimeSpectrum.clear();
                     Constants.Queue_BackgroundSpectrum.clear();
                     if (Constants.SweepParaList.size() != 0) {
-                        firstart= Constants.SweepParaList.get(0).getStartNum();
-                        end= Constants.SweepParaList.get(Constants.SweepParaList.size() - 1).getEndNum();
-                        totalseries=end-firstart+1;
+                        startFrq = (int) Constants.SweepParaList.get(0).getSegStart();
+                        endFrq = (int) Constants.SweepParaList.get(Constants.SweepParaList.size() - 1).getSegEnd();
                     }
-                    final int finalFirstart = firstart;
-                    final int finalEnd = end;
-                    new Thread(){
-                        @Override
-                        public void run() {
-                                Message message=new Message();
-                                Info info=new Info();
-                                if((finalFirstart&finalEnd)!=0) {
-                                    info.start = 70+(finalFirstart-1)*25;
-                                    info.end =  70+finalEnd*25;
-                                    info.total = totalseries+1;
-                                    message.obj = info;
-                                    handler.sendMessage(message);
-                                }
-                        }
-                    }.start();
+                    setChartSettings(renderer, "频率值", "功率值", startFrq, endFrq, -150, 10, Color.WHITE, Color.WHITE);
+
+
                     task = new TimerTask() {
                         @Override
                         public void run() {
@@ -253,14 +218,67 @@ public class Chart_spectrum extends Activity {
             }
         });
     }
+
     private void updateChart() {
         List<float[]> listdata = new ArrayList<>();
+        List<float[]> backdata = new ArrayList<>();
+        double[] xv = new double[1024];
+        double[] yv = new double[1024];
         double[] xv_back = new double[1024];
         double[] yv_back = new double[1024];
-
-        //实时频谱（整段画）
+        //背景频谱（整段画）
         Lock lock = new ReentrantLock(); //锁对象
         lock.lock();
+        try {
+            if (!Constants.Queue_BackgroundSpectrum.isEmpty()) {
+                backdata = Constants.Queue_BackgroundSpectrum.poll();
+            }
+        } catch (Exception e) {
+
+        } finally {
+            lock.unlock();
+        }
+
+        if (backdata.size() != 0) {
+            for (int mj = 0; mj < backdata.size(); mj++) {
+                float[] data = backdata.get(mj);
+                int total = (int) data[0];
+                int circle = 1024 / total;
+                double dataX = (data[1] - 1) * 25 + 70;
+                int flag = 0;
+                //抽取
+                for (int i = 0; i < circle; i++) {
+                    float max = data[i * total + 2];
+                    for (int j = 0; j < total; j++) {
+                        if (data[j + i * total + 2] >= max) {
+                            max = data[j + i * total + 2];
+                            flag = j + i * total + 2;
+                        }
+                    }
+                    if (endFrq - startFrq <= 250) {
+                        //细扫频
+                        xv_back[i + mj * circle] = dataX + flag * 25.0 / 1024.0;
+                    } else {
+                        //粗扫频
+                        xv_back[i + mj * circle] = dataX + flag * 800 / 1024.0;
+                    }
+                    yv_back[i + mj * circle] = max;
+                }
+            }
+            series = mDataset.getSeriesAt(0);
+            mDataset.removeSeries(0);
+            series.clear();
+            for (int k = 0; k < 1024; k++) {
+                series.add(xv_back[k], yv_back[k]);
+            }
+            // 在数据集中添加新的点集
+            mDataset.addSeries(0, series);
+            chart.invalidate();
+        }
+
+        //实时频谱（整段画）
+        Lock lock1 = new ReentrantLock(); //锁对象
+        lock1.lock();
         try {
             if (!Constants.Queue_DrawRealtimeSpectrum.isEmpty()) {
                 listdata = Constants.Queue_DrawRealtimeSpectrum.poll();
@@ -268,99 +286,53 @@ public class Chart_spectrum extends Activity {
         } catch (Exception e) {
 
         } finally {
-            lock.unlock();
+            lock1.unlock();
         }
-        if (listdata != null) {
-            int flag = 0;
-            for (int mj = 0; mj < listdata.size(); mj++) {
-                float[] data =listdata.get(mj);
-                int total = (int) data[0];
+        if (listdata.size() != 0) {
 
+            for (int mj = 0; mj < listdata.size(); mj++) {
+                float[] data = listdata.get(mj);
+                int total = (int) data[0];
                 int circle = 1024 / total;
                 double dataX = (data[1] - 1) * 25 + 70;
-                float max = data[2];
+                int flag = 0;
                 //抽取
                 for (int i = 0; i < circle; i++) {
-                    max = data[i * total + 2];
+                    float max = data[i * total + 2];
                     for (int j = 0; j < total; j++) {
-                        if (data[j + i * total + 2] >=max) {
+                        if (data[j + i * total + 2] >= max) {
                             max = data[j + i * total + 2];
                             flag = j + i * total + 2;
                         }
                     }
-                    xv[i] = dataX + flag * 25.0 / 1024.0;
-                    yv[i] = max;
-                }
-
-                    series = mDataset.getSeriesAt(mj);
-                    mDataset.removeSeries(mj);
-
-
-                // 点集先清空，为了做成新的点集而准备
-                series.clear();
-                for (int k = 0; k < circle; k++) {
-                    series.add(xv[k], yv[k]);
-                }
-                // 在数据集中添加新的点集
-
-                mDataset.addSeries(mj, series);
-                chart.invalidate();
-            }
-
-        }
-        //背景频谱（分段画）
-        if (!Constants.Queue_BackgroundSpectrum.isEmpty()) {
-            float[] data =Constants.Queue_BackgroundSpectrum.poll();
-            int total = (int) data[0];
-            if (count == total) {
-                count = 0;
-            }
-            count++;
-            double dataX = (data[1] - 1) * 25 + 70;
-            int circle = 1024 / total;
-            int flag = 0;
-            for (int i = 0; i < circle; i++) {
-                float max = data[2 + i * total];
-                for (int j = 0; j < total; j++) {
-                    if (data[i * total + j + 2] >= max) {
-                        max = data[i * total + j + 2];
-                        flag = i * total + j + 2;
+                    if (endFrq - startFrq <= 250) {
+                        //细扫频
+                        xv[i + mj * circle] = dataX + flag * 25.0 / 1024.0;
+                    } else {
+                        //粗扫频
+                        xv[i + mj * circle] = dataX + flag * 800 / 1024.0;
                     }
+                    yv[i + mj * circle] = max;
                 }
-                xv_back[i] = dataX + flag * 25.0 / 1024.0;
-                yv_back[i] = max;
             }
-
-            series = mDataset.getSeriesAt(count-1);
-            mDataset.removeSeries(count-1);
+            //加上背景频谱;最后一条是实时频谱
+            series = mDataset.getSeriesAt(1);
+            mDataset.removeSeries(1);
+            // 点集先清空，为了做成新的点集而准备
             series.clear();
-            for (int k = 0; k < circle; k++) {
-                series.add(xv_back[k], yv_back[k]);
+            for (int k = 0; k < 1024; k++) {
+                series.add(xv[k], yv[k]);
             }
             // 在数据集中添加新的点集
-            mDataset.addSeries(count-1, series);
+            mDataset.addSeries(1, series);
             chart.invalidate();
+
         }
 
     }
+
     private void DateEvent() {
-//        startDateTime.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//
-//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(Chart_spectrum.this);
-//                dateTimePicKDialog.dateTimePicKDialog(startDateTime);
-//
-//            }
-//        });
-//
-//        endDateTime.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(
-//                        Chart_spectrum.this);
-//                dateTimePicKDialog.dateTimePicKDialog(endDateTime);
-//            }
-//        });
+
         //弹出时间选择器
         startDateTime.setOnClickListener(new View.OnClickListener() {
 
@@ -386,66 +358,52 @@ public class Chart_spectrum extends Activity {
         super.onDestroy();
     }
 
-    private void InitView( int start,int end,int total ){
+    private void InitView(int start, int end) {
         layout.removeAllViews();
         series = new XYSeries("");
-        mDataset = buildDataset("",totalseries);
-        renderer = buildRenderer(color,totalseries, style, true);
-        setChartSettings(renderer, "频率值", "功率值",start, end , -150, 10, Color.WHITE, Color.WHITE);
+        mDataset = buildDataset("", 2);
+        renderer = buildRenderer(color, 2, style, true);
+        setChartSettings(renderer, "频率值", "功率值", start, end, -150, 10, Color.WHITE, Color.WHITE);
         chart = ChartFactory.getLineChartView(Chart_spectrum.this, mDataset, renderer);
         layout.addView(chart, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
     }
-    protected XYMultipleSeriesDataset buildDataset(String titles, int totalseries) {
+
+    protected XYMultipleSeriesDataset buildDataset(String titles, int mtotalseries) {
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        int length = totalseries;            //有几条线
+        int length = mtotalseries;            //有几条线
         for (int i = 0; i < length; i++) {
             XYSeries series = new XYSeries(titles);    //根据每条线的名称创建
             dataset.addSeries(series);
         }
         return dataset;
     }
-//
-//    protected XYMultipleSeriesRenderer buildRenderer(int color, int totalseries,
-//                                                     PointStyle style, boolean fill) {
-//        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-//        // 设置图表中曲线本身的样式，包括颜色、点的大小以及线的粗细等
-//        int length = totalseries;
-//        for (int i = 0; i < length; i++) {
-//            XYSeriesRenderer r = new XYSeriesRenderer();
-//            r.setColor(color);
-//            r.setPointStyle(style);
-//            r.setFillPoints(fill);
-//            r.setLineWidth(5);
-//            renderer.addSeriesRenderer(r);
-//        }
-//
-//        return renderer;
-//    }
-protected XYMultipleSeriesRenderer buildRenderer(int[] color,int totalseries,
-                                                 PointStyle style, boolean fill) {
-    XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-    // 设置图表中曲线本身的样式，包括颜色、点的大小以及线的粗细等
-    int length = totalseries;
-    for (int i = 0; i < length-1; i++) {
-        XYSeriesRenderer rBack = new XYSeriesRenderer();
-        rBack.setColor(color[1]);
-        rBack.setPointStyle(style);
-        rBack.setFillPoints(fill);
-        rBack.setLineWidth(5);
-        renderer.addSeriesRenderer(rBack);
-    }
-    //实时频谱
-    XYSeriesRenderer r = new XYSeriesRenderer();
-    r.setColor(color[0]);
-    r.setPointStyle(style);
-    r.setFillPoints(fill);
-    r.setLineWidth(5);
-    renderer.addSeriesRenderer(r);
 
-    return renderer;
-}
+
+    protected XYMultipleSeriesRenderer buildRenderer(int[] color, int totalseries,
+                                                     PointStyle style, boolean fill) {
+        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+        // 设置图表中曲线本身的样式，包括颜色、点的大小以及线的粗细等
+        for (int i = 0; i < totalseries - 1; i++) {
+            XYSeriesRenderer rBack = new XYSeriesRenderer();
+            rBack.setColor(color[0]);
+            rBack.setPointStyle(style);
+            rBack.setFillPoints(fill);
+            rBack.setLineWidth(5);
+            renderer.addSeriesRenderer(rBack);
+        }
+        //实时频谱
+        XYSeriesRenderer r = new XYSeriesRenderer();
+        r.setColor(color[1]);
+        r.setPointStyle(style);
+        r.setFillPoints(fill);
+        r.setLineWidth(5);
+        renderer.addSeriesRenderer(r);
+
+        return renderer;
+    }
+
     protected void setChartSettings(XYMultipleSeriesRenderer renderer,
                                     String xTitle, String yTitle, double xMin, double xMax,
                                     double yMin, double yMax, int axesColor, int labelsColor) {
@@ -479,6 +437,7 @@ protected XYMultipleSeriesRenderer buildRenderer(int[] color,int totalseries,
         renderer.setBackgroundColor(Color.BLACK);
         //renderer.setBarSpacing(1);
     }
+
     public static String getTime(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
         return format.format(date);
@@ -486,12 +445,11 @@ protected XYMultipleSeriesRenderer buildRenderer(int[] color,int totalseries,
 
 }
 
-class Info{
-    public int start=1;
-    public int end=1;
-    public int total=1;
+class Info {
+    public int start = 1;
+    public int end = 1;
+    public int total = 1;
 }
-
 
 
 

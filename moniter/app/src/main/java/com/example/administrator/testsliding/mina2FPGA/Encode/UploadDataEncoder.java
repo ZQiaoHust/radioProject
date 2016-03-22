@@ -14,12 +14,9 @@ public class UploadDataEncoder implements MessageEncoder<UploadData> {
     @Override
     public void encode(IoSession ioSession, UploadData message, ProtocolEncoderOutput out) throws Exception {
         byte[] bytes=new byte[7];
-
         bytes[0]=0x55;
         bytes[1]= (byte) message.getFunc();
         bytes[6]= (byte) 0xaa;
-
-
 
         IoBuffer buffer= IoBuffer.allocate(7);
         buffer.put(bytes);

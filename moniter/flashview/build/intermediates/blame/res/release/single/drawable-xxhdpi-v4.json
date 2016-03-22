@@ -2,5 +2,9 @@
     {
         "merged": "E:\\Android project\\project_over\\testSliding_0130_combined V1.0\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-xxhdpi-v4\\ic_launcher.png",
         "source": "E:\\Android project\\project_over\\testSliding_0130_combined V1.0\\flashview\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-xxhdpi-v4\\ic_launcher.png",
+        "source": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
     }
 ]

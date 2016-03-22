@@ -49,11 +49,14 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -72,15 +75,17 @@ public class MinaClientService extends Service {
     List<byte[]> temp_abnormalPoint;
     List<float[]> temp_drawSpectrum;
     List<float[]> temp_drawWaterfall;
+    List<float[]> temp_drawBackSpectrum;
 
     List<byte[]> temp_IQwave = new ArrayList<>();
     int SweepParaList_length;
 
     private int total;
+    private int num;
     private int h;
     private int y;
     private int z;
-    private int fileIsChanged = 0;
+    private int fileIsChanged=0;
 
 
     public static final String PSFILE_PATH = Environment.getExternalStorageDirectory().
@@ -441,7 +446,19 @@ public class MinaClientService extends Service {
                 }
                 return;
             }
-
+            if (action.equals(ConstantValues.ConnectPCB)) {
+                Connect data = intent.getParcelableExtra("connectPCB");
+                if (data == null) {
+                    return;
+                }
+                try {
+                    session.write(data);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
             if (action.equals(ConstantValues.ConnectPCBQuery)) {
                 Query data = intent.getParcelableExtra("ConnectPCBQuery");
                 /**
@@ -501,7 +518,7 @@ public class MinaClientService extends Service {
 
         filter.addAction(ConstantValues.uploadDataSet);
         filter.addAction(ConstantValues.uploadQuery);
-
+        filter.addAction(ConstantValues.ConnectPCB);
         filter.addAction(ConstantValues.ConnectPCBQuery);
 
         filter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -535,15 +552,8 @@ public class MinaClientService extends Service {
                      * Fpga的IP
                      */
                     ConnectFuture future = connector.connect
-                            (new InetSocketAddress("192.168.43.112", 8080));
-                    /**
-                     * Fpga的IP
-                     */
+                            (new InetSocketAddress("192.168.43.35", 8899));
 
-//                    ArrayList ipList=getConnectIp();
-//                    String FpgaIP= (String) ipList.get(1);
-//                    ConnectFuture future = connector.connect
-//                            (new InetSocketAddress(FpgaIP, 8080));
                     /**
                      * Fpga的IP
                      */
@@ -602,10 +612,11 @@ public class MinaClientService extends Service {
                         public void run() {
 
                             total = PSAP.getTotalBand();
+                            num=PSAP.getNumN();
                             /**
                              * 扫频范围只跨越一个25MHz
                              */
-                            if (firstart == lastend) {
+                            if (total==1) {
                                 temp_powerSpectrum = new ArrayList<>();
                                 temp_abnormalPoint = new ArrayList<>();
                                 temp_drawSpectrum = new ArrayList<float[]>();
@@ -622,8 +633,8 @@ public class MinaClientService extends Service {
                                 temp_abnormalPoint.add(byteAb1);
                                 //存入画频谱图图
                                 float[] pow = new float[1026];
-                                pow[0] = PSAP.getTotalBand();//填入总段数
-                                pow[1] = PSAP.getPSbandNum();//输入段序号
+                                pow[0] = PSAP.getTotalBand();//填入总帧数
+                                pow[1] = PSAP.getPSbandNum();//输入第一个频率段序号
                                 float[] f1 = computePara.Bytes2Power(PSAP.getPSpower());
                                 System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
                                 temp_drawSpectrum.add(pow);
@@ -641,7 +652,7 @@ public class MinaClientService extends Service {
                                 /**
                                  * 扫频跨越多个25MHz
                                  */
-                                if (firstart == PSAP.getPSbandNum()) {
+                                if ( num==1) {
                                     //判断起始段
                                     temp_powerSpectrum = new ArrayList<>();
                                     temp_abnormalPoint = new ArrayList<>();
@@ -669,10 +680,10 @@ public class MinaClientService extends Service {
                                     water[0] = PSAP.getTotalBand();//填入总段数
                                     System.arraycopy(f1, 0, water, 1, 1024);//填入功率谱值
                                     temp_drawWaterfall.add(water);
-
                                     Constants.spectrumCount++;
                                 } else {
-                                    if ((firstart + Constants.spectrumCount) == PSAP.getPSbandNum()) {
+
+                                    if (num== (Constants.spectrumCount+1)) {
                                         //===========从第二段开始===============
                                         if (PSAP.getIsChange() == 0x0f) {
                                             fileIsChanged = 1;
@@ -713,25 +724,28 @@ public class MinaClientService extends Service {
                                     }
                                 }
 
-                                if ((Constants.spectrumCount + firstart) == lastend + 1) {
+                                if ((num==total)&&(Constants.spectrumCount ==total)) {
                                     //结束
-                                    writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
-                                    Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
-                                    Constants.Queue_DrawRealtimewaterfall.offer(temp_drawWaterfall);
-
+                                    if((temp_powerSpectrum.size()==total)&&(temp_abnormalPoint.size()==total)) {
+                                        writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                        Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
+                                        Constants.Queue_DrawRealtimewaterfall.offer(temp_drawWaterfall);
+                                    }
                                     fileIsChanged = 0;
                                     Constants.spectrumCount = 0;
                                 }
                             }
                             //=============================异常频点=================================================
                             ////////////////存入显示列表
-                            int length = PSAP.getAPnum() * 3;
-                            if (length != 0) {
-                                byte[] abnormalList = new byte[length + 1];
-                                abnormalList[0] = (byte) PSAP.getAPbandNum();//段序号
-                                byte[] allPow = PSAP.getAPpower();
-                                System.arraycopy(allPow, 0, abnormalList, 1, length);
-                                Constants.Queue_AbnormalFreq_List.offer(abnormalList);
+                            if(PSAP.getAPnum()>0&&PSAP.getAPnum()<=10) {
+                                int length = PSAP.getAPnum() * 3;
+                                if (length != 0) {
+                                    byte[] abnormalList = new byte[length + 1];
+                                    abnormalList[0] = (byte) PSAP.getAPbandNum();//段序号
+                                    byte[] allPow = PSAP.getAPpower();
+                                    System.arraycopy(allPow, 0, abnormalList, 1, length);
+                                    Constants.Queue_AbnormalFreq_List.offer(abnormalList);
+                                }
                             }
 
                         }
@@ -746,76 +760,147 @@ public class MinaClientService extends Service {
              */
             if (message instanceof BackgroundPowerSpectrum) {
                 BackgroundPowerSpectrum back = (BackgroundPowerSpectrum) message;
-                float[] pow = new float[1026];
-                pow[0] = back.getTotalBand();//总段数
-                pow[1] = back.getPSbandNum();//输入段序号
-                float[] f1 = back.getPSpower();
-                System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
-                Constants.Queue_BackgroundSpectrum.offer(pow);
-            }
 
+                if (back.getTotalBand()==1) {
+                    temp_drawBackSpectrum = new ArrayList<>();
+                    float[] pow = new float[1026];
+                    pow[0] = back.getTotalBand();//总段数
+                    pow[1] = back.getPSbandNum();//输入段序号
+                    float[] f1 = back.getPSpower();
+                    System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
+                    temp_drawBackSpectrum.add(pow);
+                    Constants.Queue_BackgroundSpectrum.offer(temp_drawBackSpectrum);
+                }else {
+                    if(back.getNumN()==1){
+                        float[] pow = new float[1026];
+                        pow[0] = back.getTotalBand();//总段数
+                        pow[1] = back.getPSbandNum();//输入段序号
+                        float[] f1 = back.getPSpower();
+                        System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
+                        temp_drawBackSpectrum.add(pow);
+                        Constants.BackgroundCount++;
+                    }else {
+                        if(back.getNumN()==(Constants.BackgroundCount+1)){
+                            float[] pow = new float[1026];
+                            pow[0] = back.getTotalBand();//总段数
+                            pow[1] = back.getPSbandNum();//输入段序号
+                            float[] f1 = back.getPSpower();
+                            System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
+                            temp_drawBackSpectrum.add(pow);
+                            Constants.BackgroundCount++;
+                        }else {
+                            if(temp_drawBackSpectrum!=null){
+                                temp_drawBackSpectrum.clear();
+                            }
+                        }
+                    }
+                    if((back.getNumN()==back.getTotalBand())&&(Constants.spectrumCount ==total)) {
+                        //结束
+                        Constants.Queue_BackgroundSpectrum.offer(temp_drawBackSpectrum);
+
+                        Constants.BackgroundCount = 0;
+                    }
+
+                }
+
+            }
 
             if (message instanceof InGain) {
                 InGain data = (InGain) message;
-                Broadcast.sendBroadCast(getBaseContext(),
-                        ConstantValues.InGainQuery, "data", data);
+                if(data.getPacketHead()==0x66){
+                   Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(),
+                            ConstantValues.InGainQuery, "data", data);
+                }
             }
 
             if (message instanceof SweepRange) {
                 SweepRange data = (SweepRange) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.SweepRangeQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.SweepRangeQuery, "data", data);
+                }
             }
 
             if (message instanceof OutGain) {
                 OutGain data = (OutGain) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.OutGainQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.OutGainQuery, "data", data);
+                }
             }
 
             if (message instanceof Threshold) {
                 Threshold data = (Threshold) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.ThresholdQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.ThresholdQuery, "data", data);
+                }
             }
 
             if (message instanceof FixCentralFreq) {
                 FixCentralFreq data = (FixCentralFreq) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.FixCentralFreqQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.FixCentralFreqQuery, "data", data);
+                }
             }
 
             if (message instanceof FixSetting) {
                 FixSetting data = (FixSetting) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.FixSettingQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.FixSettingQuery, "data", data);
+                }
             }
             if (message instanceof Press) {
                 Press data = (Press) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.PressQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.PressQuery, "data", data);
+                }
             }
             if (message instanceof PressSetting) {
                 PressSetting data = (PressSetting) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.PressSettingQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.PressSettingQuery, "data", data);
+                }
             }
             if (message instanceof StationState) {
                 StationState data = (StationState) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.StationStateQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.StationStateQuery, "data", data);
+                }
             }
 
             if (message instanceof UploadData) {
                 UploadData data = (UploadData) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.uploadQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.uploadQuery, "data", data);
+                }
             }
 
             if (message instanceof Connect) {
                 Connect data = (Connect) message;
-                Broadcast.sendBroadCast(getBaseContext(), ConstantValues.ConnectPCBQuery, "data", data);
-
+                if(data.getPacketHead()==0x66){
+                    //zhuanfa
+                    Constants.SERVERsession.write(data);
+                }else {
+                    Broadcast.sendBroadCast(getBaseContext(), ConstantValues.ConnectPCBQuery, "data", data);
+                }
             }
 
 
@@ -857,6 +942,8 @@ public class MinaClientService extends Service {
                     }
                 }
             }
+            //==========================数据转发=======================
+
         }
 
         @Override
@@ -877,19 +964,41 @@ public class MinaClientService extends Service {
         @Override
         public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
             super.sessionIdle(session, status);
-            ReceiveWrong mReceiveWrong = new ReceiveWrong();
-            ReceiveRight mReceiveRight = new ReceiveRight();
+             final ReceiveWrong mReceiveWrong = new ReceiveWrong();
+             final ReceiveRight mReceiveRight = new ReceiveRight();
             //频谱数据超时重传
-//            if (((System.currentTimeMillis() - Constants.startTime) > 300)) {
             if (Constants.NotFill) {
                 Constants.FPGAsession.write(mReceiveWrong);
                 Constants.NotFill = false;
                 Constants.ctx.reset();
-                h++;
-                Log.d("abcd", "重传次数：" + h);
-
-
+                Constants.failCount++;
+                Log.d("fail", "重传次数：" +  Constants.failCount);
             }
+            if (Constants.Backfail) {
+//                TimerTask task = new TimerTask() {
+//                    public void run() {
+                        //实现自己的延时执行任务
+                        Constants.FPGAsession.write(mReceiveWrong);
+//                    }
+//                };
+//                Timer timer = new Timer();
+//                timer.schedule(task, 500);
+                Constants.Backfail = false;
+                Constants.IsJump=true;
+                Constants.ctxBack.reset();
+            }
+           if (Constants.Isstop) {
+               //没找到解码器，数据传输截止
+//               TimerTask task = new TimerTask() {
+//                   public void run() {
+                       //实现自己的延时执行任务
+                       Constants.FPGAsession.write(mReceiveWrong);
+//                   }
+//               };
+//               Timer timer = new Timer();
+//               timer.schedule(task, 500);
+               Constants.Isstop = false;
+           }
         }
 
         @Override

@@ -2,6 +2,8 @@ package com.example.administrator.testsliding.mina_transmit.server2FPGADecoder;
 
 import android.util.Log;
 
+import com.example.administrator.testsliding.GlobalConstants.Constants;
+import com.example.administrator.testsliding.GlobalConstants.SweepRangeInfo;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGAQuery.Query_SweepRange;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -55,4 +57,6 @@ public class Query_SweepRangeDecoder implements MessageDecoder {
     public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput) throws Exception {
 
     }
+
+
 }

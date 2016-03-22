@@ -3,6 +3,10 @@ package com.example.administrator.testsliding.mina2FPGA.Decode;
 import android.util.Log;
 
 import com.example.administrator.testsliding.Bean.BackgroundPowerSpectrum;
+import com.example.administrator.testsliding.Bean.ReceiveRight;
+import com.example.administrator.testsliding.Bean.ReceiveWrong;
+import com.example.administrator.testsliding.GlobalConstants.Constants;
+import com.example.administrator.testsliding.GlobalConstants.ContextBackground;
 import com.example.administrator.testsliding.compute.ComputePara;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -12,45 +16,65 @@ import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.demux.MessageDecoder;
 import org.apache.mina.filter.codec.demux.MessageDecoderResult;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  * Created by jinaghao on 15/12/24.
  */
 public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
-    private int i;
-    private boolean flag = false;
-    private int positionValue = 0;
     private final AttributeKey CONTEXT = new AttributeKey(getClass(),
             "context");
-    private int k;
-    private boolean fail = false;//是否收满
     private ComputePara computePara=new ComputePara();
-
+    private ReceiveRight mReceiveRight = new ReceiveRight();
+    private ReceiveWrong mReceiveWrong = new ReceiveWrong();
+    private String TAG="BackgroundPowerSpectrumCoarseDecoder";
 
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
-        Log.d("abcd", "尝试功率谱解码器");
+        Log.d("abcd", "尝试背景功率谱解码器");
 
-        if (flag == true) {
-            in.limit(positionValue);
-            in.flip();
-        }
-        if (in.remaining() < 2) {
-            return MessageDecoderResult.NEED_DATA;
-        } else {
-            i = 0;
-            while (in.get() != (byte) 0x55) {
-                i++;
-                if (i >= in.remaining()) {
-                    break;
-                }
-            }
-            byte functionCode = in.get();
+        if(Constants.flag ){
+            Constants.buffer.flip();
+            Constants.buffer.limit(Constants.positionValue);
+            byte headtail=Constants.buffer.get();
+//            while (headtail != (byte) 0x55) {
+//                i++;
+//                headtail=Constants.buffer.get();
+//                if (i >= in.remaining()) {
+//                    break;
+//                }
+//            }
+            byte functionCode = Constants.buffer.get();
             if (functionCode == 0x57) {
+                Constants.Isstop=false;
                 return MessageDecoderResult.OK;
-
             } else {
+                Constants.Isstop=true;
                 return MessageDecoderResult.NOT_OK;
+            }
+        }else {
+            if (in.remaining() < 2) {
+                return MessageDecoderResult.NEED_DATA;
+            } else {
+                byte b=in.get();
+//                while (in.get() != (byte) 0x55) {
+//                    i++;
+//                    if (i >= in.remaining()) {
+//                        break;
+//                    }
+//                }
+                byte functionCode = in.get();
+                Log.d(TAG, "functionCode: "+functionCode);
+                if (functionCode == 0x57) {
+                    Constants.Isstop=false;
+                    return MessageDecoderResult.OK;
+
+                } else {
+                    Constants.Isstop=true;
+                    return MessageDecoderResult.NOT_OK;
+                }
             }
         }
     }
@@ -58,56 +82,62 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
     @Override
     public MessageDecoderResult decode(IoSession session, IoBuffer in,
                                        final ProtocolDecoderOutput out) throws Exception {
+        if(Constants.IsJump&&(!Constants.Backfail)){
+            Constants.IsJump=false;
+            Constants.flag = true;
+            Constants.positionValue=in.limit();
+            Constants.buffer.clear();
+            Constants.buffer.put(in);
+            Log.d("back", "jump");
+            return MessageDecoderResult.OK;
+        }
+        Constants.ctxBack = getContext(session);//获取session  的context
+        long matchCount =  Constants.ctxBack .getMatchLength();//目前已获取的数据
+        long length =  Constants.ctxBack .getLength();//数据总长度
+        IoBuffer buffer =  Constants.ctxBack .getBuffer();//数据存入buffer
 
-        if (flag == true) {
-            in.limit(positionValue);
-            in.flip();
-        }
-        Context ctx = getContext(session);//获取session  的context
-        long matchCount = ctx.getMatchLength();//目前已获取的数据
-        long length = ctx.getLength();//数据总长度
-        IoBuffer buffer = ctx.getBuffer();//数据存入buffer
-        flag = false;
-        /////////////
-        if (i > 0) {
-            in.position(i);
-            i = 0;
-        }
 ///////////////////////////////////////////////////
         matchCount += in.remaining();
-        Log.d("abcd", "共收到字节：" + String.valueOf(matchCount));
-        ctx.setMatchLength(matchCount);
+        Log.d("back", "共收到字节：" + String.valueOf(matchCount));
+        Constants.ctxBack .setMatchLength(matchCount);
 
         if (in.hasRemaining()) {// 如果in中还有数据
-            buffer.put(in);// 添加到保存数据的buffer中
+            if(matchCount< length) {
+                buffer.put(in);// 添加到保存数据的buffer中
+            }
             if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
-                final byte[] b = new byte[1560];
+                final byte[] b = new byte[(int)length];
+                byte[] temp = new byte[(int)length];
+                in.get(temp,0, (int) (length-buffer.position()));//最后一次in的数据可能有多的
+                buffer.put(temp);
                 // 一定要添加以下这一段，否则不会有任何数据,因为，在执行in.put(buffer)时buffer的起始位置已经移动到最后，所有需要将buffer的起始位置移动到最开始
                 buffer.flip();
                 buffer.get(b);
                 if (b[0] == (byte) 0x55 && b[1559] == (byte) 0xaa) {
                     BackgroundPowerSpectrum back = byte2Object(b);
                     if (back != null) {
+                        TimerTask task = new TimerTask() {
+                            public void run() {
+                                //实现自己的延时任务
+                                //不管正确与否，都下发帧提醒FPGA；背景频谱不作重传
+                                Constants.FPGAsession.write(mReceiveRight);
+                            }
+                        };
+                        Timer timer = new Timer();
+                        timer.schedule(task, 200);
                         out.write(back);
+                        Constants.Backfail=false;//成功
                         System.out.println("背景功率谱解码完成.......");
                     }
 
+                }else {
+                    Constants.FPGAsession.write(mReceiveWrong);
                 }
-                //粘包的处理
-                if (buffer.remaining() > 0) {
-                    IoBuffer temp = IoBuffer.allocate(1024).setAutoExpand(true);
-                    temp.put(buffer);
-                    temp.flip();
-                    in.sweep();
-                    in.put(temp);
-                    positionValue = in.position();
-                    flag = true;
-                }
-                ctx.reset();
-                i = 0;
+                Constants.ctxBack .reset();
                 return MessageDecoderResult.OK;
             } else {
-                ctx.setBuffer(buffer);
+                Constants.ctxBack .setBuffer(buffer);
+                Constants.Backfail=true;
                 return MessageDecoderResult.NEED_DATA;
             }
         }
@@ -132,68 +162,13 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
     }
 
     //获取session的context
-    public Context getContext(IoSession session) {
-        Context ctx = (Context) session.getAttribute(CONTEXT);
+    public ContextBackground getContext(IoSession session) {
+        ContextBackground ctx = (ContextBackground) session.getAttribute(CONTEXT);
         if (ctx == null) {
-            ctx = new Context();
+            ctx = new ContextBackground();
             session.setAttribute(CONTEXT, ctx);
         }
         return ctx;
     }
 
-    /**
-     * 定义一个内部类，用来封转当前解码器中的一些公共数据，主要是用于大数据解析
-     * //
-     */
-    private class Context {
-        public IoBuffer buffer;
-        public long length = 1560;
-        public long matchLength = 0;
-        public long startTime = 0;
-
-        public Context() {
-            buffer = IoBuffer.allocate(1024).setAutoExpand(true);
-        }
-
-        public void setBuffer(IoBuffer buffer) {
-            this.buffer = buffer;
-        }
-
-        public void setLength(long length) {
-            this.length = length;
-        }
-
-        public void setMatchLength(long matchLength) {
-            this.matchLength = matchLength;
-        }
-
-        public IoBuffer getBuffer() {
-
-            return buffer;
-        }
-
-        public long getLength() {
-            return length;
-        }
-
-        public long getMatchLength() {
-            return matchLength;
-        }
-
-        public long getStartTime() {
-            return startTime;
-        }
-
-        public void setStartTime(long startTime) {
-
-            this.startTime = startTime;
-        }
-
-        public void reset() {
-            this.buffer.clear();
-            this.length = 1560;
-            this.matchLength = 0;
-            this.startTime = 0;
-        }
-    }
 }

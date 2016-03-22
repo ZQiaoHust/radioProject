@@ -7,12 +7,16 @@ import android.os.Parcelable;
  * Created by jinaghao on 15/11/25.
  */
 public class Press implements Parcelable {
+    private byte packetHead;
+    private byte[] content;
     private int number;
     private double fix1;
     private double fix2;
     public Press(){}
 
     protected Press(Parcel in) {
+        packetHead = in.readByte();
+        content = in.createByteArray();
         number = in.readInt();
         fix1 = in.readDouble();
         fix2 = in.readDouble();
@@ -29,6 +33,22 @@ public class Press implements Parcelable {
             return new Press[size];
         }
     };
+
+    public byte getPacketHead() {
+        return packetHead;
+    }
+
+    public void setPacketHead(byte packetHead) {
+        this.packetHead = packetHead;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 
     public void setNumber(int number) {
         this.number = number;
@@ -55,6 +75,7 @@ public class Press implements Parcelable {
         return fix2;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -62,6 +83,8 @@ public class Press implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(packetHead);
+        dest.writeByteArray(content);
         dest.writeInt(number);
         dest.writeDouble(fix1);
         dest.writeDouble(fix2);

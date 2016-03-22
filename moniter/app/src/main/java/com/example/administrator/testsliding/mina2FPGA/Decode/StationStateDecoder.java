@@ -14,15 +14,15 @@ import org.apache.mina.filter.codec.demux.MessageDecoderResult;
 public class StationStateDecoder implements MessageDecoder {
     @Override
     public MessageDecoderResult decodable(IoSession ioSession, IoBuffer in) {
-        if(in.remaining()<2){
+        if (in.remaining() < 2) {
             return MessageDecoderResult.NEED_DATA;
-        }else{
-            byte frameHead=in.get();
-            if(frameHead==0x55){
-                byte functionCode=in.get();
-                if(functionCode==0x2c){
+        } else {
+            byte frameHead = in.get();
+            if ((frameHead == (byte) 0x55) || (frameHead == (byte) 0x66)) {
+                byte functionCode = in.get();
+                if (functionCode == 0x2c) {
                     return MessageDecoderResult.OK;
-                }else
+                } else
                     return MessageDecoderResult.NOT_OK;
             }
             return MessageDecoderResult.NOT_OK;
@@ -31,20 +31,21 @@ public class StationStateDecoder implements MessageDecoder {
 
     @Override
     public MessageDecoderResult decode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
-        IoBuffer buffer= IoBuffer.allocate(17);
-        StationState stationState=new StationState();
-        int receiveCount=0;
+        IoBuffer buffer = IoBuffer.allocate(17);
+        StationState stationState = new StationState();
+        int receiveCount = 0;
 
-        while (in.hasRemaining()){
-            byte b=in.get();
+        while (in.hasRemaining()) {
+            byte b = in.get();
             buffer.put(b);
             receiveCount++;
 
-            if(receiveCount==17){
+            if (receiveCount == 17) {
                 buffer.flip();
-                byte[] accept=new byte[17];
+                byte[] accept = new byte[17];
                 buffer.get(accept);
-                stationState.setEquipmentID((accept[2]&0xff)+((accept[3]&0xff)<<8));
+                stationState.setPacketHead(accept[0]);
+                stationState.setEquipmentID((accept[2] & 0xff) + ((accept[3] & 0xff) << 8));
                 stationState.setOnNet(accept[4]);
                 stationState.setModel(accept[5]);
                 stationState.setEastORwest(accept[6]);
@@ -53,7 +54,7 @@ public class StationStateDecoder implements MessageDecoder {
                 stationState.setLatitude((accept[10] & 0xef) + accept[11] / 256 + accept[12] / 65536);
                 stationState.setIsAboveHrizon(accept[13] >> 7);
                 stationState.setAtitude(((accept[13] & 0xef) << 8) + accept[14]);
-
+                stationState.setContent(accept);
                 out.write(stationState);
 
                 return MessageDecoderResult.OK;

@@ -18,7 +18,7 @@ public class UploadDataDecoder implements MessageDecoder {
             return MessageDecoderResult.NEED_DATA;
         }else{
             byte frameHead=in.get();
-            if(frameHead==(byte)0x55){
+            if((frameHead==(byte)0x55)||(frameHead==(byte)0x66)){
                 byte functionCode=in.get();
                 if (functionCode==0x2A){
                     return MessageDecoderResult.OK;

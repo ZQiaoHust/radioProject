@@ -21,10 +21,15 @@ public class InGainDecoder implements MessageDecoder {
             return MessageDecoderResult.NEED_DATA;
         } else {
 
-            in.position(1);
-            byte b = in.get();
-            if (b == 0x24) {
-                return MessageDecoderResult.OK;
+            byte b1 = in.get();
+            if ((b1 == (byte) 0x55) || (b1 == (byte) 0x66)) {
+                byte b = in.get();
+                if (b == 0x24) {
+                    return MessageDecoderResult.OK;
+                } else {
+                    return MessageDecoderResult.NOT_OK;
+                }
+
             } else {
                 return MessageDecoderResult.NOT_OK;
             }
@@ -48,7 +53,9 @@ public class InGainDecoder implements MessageDecoder {
                 buffer.flip();
                 byte[] accept = new byte[17];
                 buffer.get(accept);
+                inGain.setPacketHead(accept[0]);
                 inGain.setIngain(accept[4] & 0xff);
+                inGain.setContent(accept);
                 out.write(inGain);
                 return MessageDecoderResult.OK;
             }

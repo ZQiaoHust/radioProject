@@ -7,6 +7,8 @@ import android.os.Parcelable;
  * Created by jinaghao on 15/11/25.
  */
 public class StationState  implements Parcelable{
+    private byte packetHead;
+    private byte[] content;
    private int equipmentID;
     private  int onNet;
     private  int model;
@@ -20,6 +22,8 @@ public class StationState  implements Parcelable{
 
 
     protected StationState(Parcel in) {
+        packetHead = in.readByte();
+        content = in.createByteArray();
         equipmentID = in.readInt();
         onNet = in.readInt();
         model = in.readInt();
@@ -114,6 +118,21 @@ public class StationState  implements Parcelable{
         return atitude;
     }
 
+    public byte getPacketHead() {
+        return packetHead;
+    }
+
+    public void setPacketHead(byte packetHead) {
+        this.packetHead = packetHead;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 
     @Override
     public int describeContents() {
@@ -122,6 +141,8 @@ public class StationState  implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(packetHead);
+        dest.writeByteArray(content);
         dest.writeInt(equipmentID);
         dest.writeInt(onNet);
         dest.writeInt(model);

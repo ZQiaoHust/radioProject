@@ -1,5 +1,6 @@
 package com.example.administrator.testsliding.mina_transmit.FPGA2serverEncoder;
 
+import com.example.administrator.testsliding.Bean.UploadData;
 import com.example.administrator.testsliding.bean2Transmit.FPGA2server.Reply_UploadDataEnd;
 import com.example.administrator.testsliding.bean2Transmit.FPGA2server.Reply_UploadDataStart;
 
@@ -11,9 +12,9 @@ import org.apache.mina.filter.codec.demux.MessageEncoder;
 /**
  * Created by Administrator on 2015/12/1.
  */
-public class Reply_UploadDataStartEncoder implements MessageEncoder<Reply_UploadDataStart> {
+public class Reply_UploadDataStartEncoder implements MessageEncoder<UploadData> {
     @Override
-    public void encode(IoSession ioSession, Reply_UploadDataStart data,
+    public void encode(IoSession ioSession, UploadData data,
                        ProtocolEncoderOutput out) throws Exception {
 
         if(data!=null){

@@ -24,43 +24,60 @@ import java.util.TimerTask;
  */
 public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder {
 
-
-    private int i;
-    private boolean flag = false;
-    private int positionValue = 0;
     private final AttributeKey CONTEXT = new AttributeKey(getClass(),
             "context");
     private int k;
-    private ReceiveRight mReceiveRight=new ReceiveRight();
-    private ReceiveWrong mReceiveWrong=new ReceiveWrong();
-    private boolean fail=false;//是否收满
-
+    private ReceiveRight mReceiveRight = new ReceiveRight();
+    private ReceiveWrong mReceiveWrong = new ReceiveWrong();
 
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
-        Log.d("abcd", "尝试功率谱解码器");
-
-        if (flag == true) {
-            in.limit(positionValue);
-            in.flip();
-        }
-        if (in.remaining() < 2) {
-            return MessageDecoderResult.NEED_DATA;
-        } else {
-            i = 0;
-            while (in.get() != (byte) 0x55) {
-                i++;
-                if (i >= in.remaining()) {
-                    break;
-                }
-            }
-            byte functionCode = in.get();
-            if (functionCode == 0x51 ||functionCode == 0x53) {
+        Log.d("abcd", "尝试实时功率谱解码器");
+        if(Constants.flag ) {
+            Constants.buffer.flip();
+            Constants.buffer.limit(Constants.positionValue);
+            byte headtail = Constants.buffer.get();
+//            while (headtail != (byte) 0x55) {
+//                i++;
+//                headtail = in.get();
+//                Log.d("abcd", "Constants.buffer实时功率谱解码器找帧头" + headtail);
+//                if (i >= in.remaining()) {
+//                    break;
+//                }
+//            }
+            byte functionCode = Constants.buffer.get();
+            Log.d("abcd", "Constants.buffer实时功率谱解码器functionCode" + functionCode);
+            if (functionCode == 0x51 || functionCode == 0x53) {
+                Constants.Isstop=false;
                 return MessageDecoderResult.OK;
 
-
             } else {
+                Constants.Isstop=true;
                 return MessageDecoderResult.NOT_OK;
+            }
+        }else {
+            if (in.remaining() < 2) {
+                return MessageDecoderResult.NEED_DATA;
+            } else {
+                byte head=in.get();
+                Log.d("abcd", "实时功率谱解码器找帧头" + head);
+//                while (head != (byte) 0x55) {
+//                    i++;
+//                    head=in.get();
+//                    Log.d("abcd", "实时功率谱解码器找帧头" + head);
+//                    if (i >= in.remaining()) {
+//                        break;
+//                    }
+//                }
+                byte functionCode = in.get();
+                Log.d("abcd", "实时功率谱解码器functionCode" + functionCode);
+                if (functionCode == 0x51 || functionCode == 0x53) {
+                    Constants.Isstop=false;
+                    return MessageDecoderResult.OK;
+                } else {
+                    Constants.Isstop=true;
+                    return MessageDecoderResult.NOT_OK;
+                }
             }
         }
     }
@@ -68,109 +85,73 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
     @Override
     public MessageDecoderResult decode(IoSession session, IoBuffer in,
                                        final ProtocolDecoderOutput out) throws Exception {
-
-
-        if (flag == true) {
-            in.limit(positionValue);
-            in.flip();
-        }
-
         Constants.ctx = getContext(session);//获取session  的context
-        long matchCount =  Constants.ctx .getMatchLength();//目前已获取的数据
-        long length =  Constants.ctx .getLength();//数据总长度
-        long sTime= Constants.ctx .getStartTime();//开始时间
-        IoBuffer buffer =  Constants.ctx .getBuffer();//数据存入buffer
+        long matchCount = Constants.ctx.getMatchLength();//目前已获取的数据
+        long length = Constants.ctx.getLength();//数据总长度
+        IoBuffer buffer = Constants.ctx.getBuffer();//数据存入buffer
 
-        flag = false;
+        if (Constants.flag) {
+            Constants.buffer.flip();
+            Constants.buffer.limit(Constants.positionValue);
+            buffer.put(Constants.buffer);
+            matchCount=Constants.positionValue;
+            Constants.buffer.clear();
+            Constants.flag=false;
+            Constants.positionValue=0;
+        }
 
-        /////////////
-        if (i > 0) {
-            in.position(i);
-            i = 0;
-        }
-        ///////////////////////////////////////////
-        if(matchCount==0){//第一次收到数据
-            sTime=System.currentTimeMillis();
-            Constants.ctx .setStartTime(sTime);//存储时间
-            Log.d("abcd", "起始时间："+String.valueOf(sTime));
-            Constants.startTime=sTime;
-        }
 ///////////////////////////////////////////////////
         matchCount += in.remaining();
-        Log.d("abcd", "共收到字节："+String.valueOf(matchCount));
-        Constants.ctx .setMatchLength(matchCount);
+        Log.d("abcd", "共收到字节：" + String.valueOf(matchCount));
+        Constants.ctx.setMatchLength(matchCount);
 
         if (in.hasRemaining()) {// 如果in中还有数据
-
-            buffer.put(in);// 添加到保存数据的buffer中
+            if(matchCount< length) {
+                buffer.put(in);// 添加到保存数据的buffer中
+            }
             if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
                 final byte[] b = new byte[1613];
+                byte[] temp = new byte[1613];
+                in.get(temp,0, (int) (length-buffer.position()));//最后一次in的数据可能有多的
+                buffer.put(temp);
                 // 一定要添加以下这一段，否则不会有任何数据,因为，在执行in.put(buffer)时buffer的起始位置已经移动到最后，所有需要将buffer的起始位置移动到最开始
                 buffer.flip();
                 buffer.get(b);
-                if(b[0]==(byte)0x55 && b[1612]==(byte)0xaa ){
-                    Log.d("abcd", "结束时间："+String.valueOf(System.currentTimeMillis()));
 
-                    //Constants.FPGAsession .write(mReceiveRight);
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-
-                            long a=  System.currentTimeMillis();
-                            Log.d("abcd", "解码开始时间："+String.valueOf(System.currentTimeMillis()));
-                            PowerSpectrumAndAbnormalPonit PSAP =byte2Object(b);
+                if (b[1] == (byte) 0x51 && b[1612] == (byte) 0xaa) {
+                    long a = System.currentTimeMillis();
+                    PowerSpectrumAndAbnormalPonit PSAP = byte2Object(b);
                     Log.d("psap", Arrays.toString(PSAP.getPSpower()));
-                            if (PSAP!= null) {
 
-                                TimerTask task = new TimerTask(){
-                                         public void run(){
-                                             //实现自己的延时执行任务
-                                             Constants.FPGAsession.write(mReceiveRight);
-                                            }
-                                     };
-                                Timer timer = new Timer();
-                                timer.schedule(task,200);
-
-                                out.write(PSAP);
-                                Log.d("psap", Arrays.toString(b));
-
-                                Constants.Success=true;
-                                Constants.NotFill=false;//收成功，NotFill表示没满的变量
-                                k++;
-                                Log.d("abcd", "成功次数："+String.valueOf(k));
-                                System.out.println("功率谱和异常频点解码完成.......");
+                    if (PSAP != null) {
+                        TimerTask task = new TimerTask() {
+                            public void run() {
+                                //实现自己的延时执行任务
+                                Constants.FPGAsession.write(mReceiveRight);
                             }
-                            long c=System.currentTimeMillis();
-                            Log.d("abcd", "解码结束时间："+String.valueOf(c));
-                            Log.d("abcd", "解码器所用时间："+String.valueOf(c-a));
+                        };
+                        Timer timer = new Timer();
+                        timer.schedule(task, 200);
 
-//                    }).start();
-
-
-                }else {
-                    Constants.Success=false;
+                        out.write(PSAP);
+                        Log.d("psap", Arrays.toString(b));
+                        Log.d("psap", "当前帧总共段数：" + PSAP.getTotalBand());
+                        Log.d("psap", "当前帧所在序号：" + PSAP.getNumN());
+                        Constants.NotFill = false;//收成功，NotFill表示没满的变量
+                        k++;
+                        Log.d("sucess", "成功次数：" + String.valueOf(k));
+                        System.out.println("fine功率谱和异常频点解码完成.......");
+                    }
+                } else {
+                    Constants.failCount++;
+                    Log.d("fail", "重传次数：" +  Constants.failCount);
                     Constants.FPGAsession.write(mReceiveWrong);
-
                 }
-
-
-                //粘包的处理
-                if (buffer.remaining() > 0) {
-                    IoBuffer temp = IoBuffer.allocate(1024).setAutoExpand(true);
-                    temp.put(buffer);
-                    temp.flip();
-                    in.sweep();
-                    in.put(temp);
-                    positionValue = in.position();
-                    flag = true;
-                }
-                Constants.ctx .reset();
-                i = 0;
+                Constants.ctx.reset();
                 return MessageDecoderResult.OK;
             } else {
-                Constants.ctx .setBuffer(buffer);
-                Constants.NotFill=true;
-                Constants.Success=false;
+                Constants.ctx.setBuffer(buffer);
+                Constants.NotFill = true;
                 return MessageDecoderResult.NEED_DATA;
             }
         }
@@ -192,9 +173,9 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
         System.arraycopy(bytes, 4, b1, 0, 14);
         PSAP.setLocationandTime(b1);
         PSAP.setSweepModel(((bytes[18] >> 6) & 0x03));
-        PSAP.setFileSendmodel(((bytes[18]>> 4) & 0x03));
+        PSAP.setFileSendmodel(((bytes[18] >> 4) & 0x03));
         PSAP.setIsChange((bytes[18] & 0x0f));
-        PSAP.setTotalBand(((bytes[19]>>4) & 0x0f));
+        PSAP.setTotalBand(((bytes[19] >> 4) & 0x0f));
         PSAP.setNumN((bytes[19] & 0x0f));//扫频总段数的序号
         PSAP.setPSbandNum((bytes[20] & 0xff));
         byte[] b2 = new byte[1536];
@@ -225,7 +206,7 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
 
     /**
      * 定义一个内部类，用来封转当前解码器中的一些公共数据，主要是用于大数据解析
-//     */
+     //     */
 //    private class Context {
 //        public IoBuffer buffer;
 //        public long length = 1613 ;

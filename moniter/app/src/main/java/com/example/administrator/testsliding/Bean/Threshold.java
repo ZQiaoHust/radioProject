@@ -6,20 +6,23 @@ import android.os.Parcelable;
 /**
  * Created by jinaghao on 15/11/23.
  */
-public class Threshold implements Parcelable {
+public class Threshold implements Parcelable  {
+    private byte packetHead;
     private int equipmentId;
     private int autoThreshold;
     private int thresholdModel;
     private int fixThreshold;
+    private byte[] content;
 
     public Threshold(){}
 
-
     protected Threshold(Parcel in) {
+        packetHead = in.readByte();
         equipmentId = in.readInt();
         autoThreshold = in.readInt();
         thresholdModel = in.readInt();
         fixThreshold = in.readInt();
+        content = in.createByteArray();
     }
 
     public static final Creator<Threshold> CREATOR = new Creator<Threshold>() {
@@ -34,17 +37,20 @@ public class Threshold implements Parcelable {
         }
     };
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public byte getPacketHead() {
+        return packetHead;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(equipmentId);
-        dest.writeInt(autoThreshold);
-        dest.writeInt(thresholdModel);
-        dest.writeInt(fixThreshold);
+    public void setPacketHead(byte packetHead) {
+        this.packetHead = packetHead;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
     }
 
     public void setEquipmentId(int equipmentId) {
@@ -78,5 +84,20 @@ public class Threshold implements Parcelable {
 
     public int getFixThreshold() {
         return fixThreshold;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(packetHead);
+        dest.writeInt(equipmentId);
+        dest.writeInt(autoThreshold);
+        dest.writeInt(thresholdModel);
+        dest.writeInt(fixThreshold);
+        dest.writeByteArray(content);
     }
 }

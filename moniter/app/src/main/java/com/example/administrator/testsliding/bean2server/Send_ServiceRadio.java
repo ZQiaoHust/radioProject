@@ -12,11 +12,7 @@ public class Send_ServiceRadio implements Parcelable{
     private int startFrequency;
    private int endFrequency;
 
-//    public  Send_ServiceRadio(int equipmentID,int startFrequency,int endFrequency){
-//        this.equipmentID=equipmentID;
-//        this.startFrequency=startFrequency;
-//        this.endFrequency=endFrequency;
-//    }
+
 
     public Send_ServiceRadio(){
 

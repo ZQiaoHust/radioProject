@@ -11,8 +11,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
-import com.bigkoo.pickerview.utils.PickerViewAnimateUtil;
 import com.bigkoo.pickerview.R;
+import com.bigkoo.pickerview.utils.PickerViewAnimateUtil;
+//import com.bigkoo.pickerview.R;
 import com.bigkoo.pickerview.listener.OnDismissListener;
 
 /**

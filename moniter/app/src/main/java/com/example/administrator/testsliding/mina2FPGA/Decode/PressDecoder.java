@@ -18,7 +18,7 @@ public class PressDecoder implements MessageDecoder {
             return MessageDecoderResult.NEED_DATA;
         }else{
             byte frameHead=in.get();
-            if(frameHead==0x55){
+            if((frameHead==(byte)0x55)||(frameHead==(byte)0x66)){
                 byte functionCode=in.get();
                 if(functionCode==0x23){
                     return MessageDecoderResult.OK;
@@ -46,9 +46,11 @@ public class PressDecoder implements MessageDecoder {
                 buffer.flip();
                 byte[] accept=new byte[17];
                 buffer.get(accept);
+                press.setPacketHead(accept[0]);
                 press.setNumber(accept[4]);
                 press.setFix1(getPressFreq1(accept));
                 press.setFix2(getPressFreq2(accept));
+                press.setContent(accept);
 
                 out.write(press);
 

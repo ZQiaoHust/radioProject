@@ -27,7 +27,7 @@ public class RequstNetworkEncoder implements MessageEncoder<RequstNetwork>{
     }
 
     /**
-     * ÖÕ¶ËÈëÍøÇëÇóÊı¾İÖ¡
+     *
      * @return
      */
     private byte[] GetBytes(RequstNetwork net){
@@ -36,7 +36,7 @@ public class RequstNetworkEncoder implements MessageEncoder<RequstNetwork>{
         byte[] byte1;
         data[0]=0x55;
         data[1]= (byte) 0xA1;
-        data[2]= (byte) (net.getEquipmentID()&0xff);  //IDºÅµÍ×Ö½Ú
+        data[2]= (byte) (net.getEquipmentID()&0xff);  //IDï¿½Åµï¿½ï¿½Ö½ï¿½
         data[3]= (byte) ((net.getEquipmentID()>>8)&0xff);
         data[4]=net.getStyle();
         bytes=net.getLongtitude();

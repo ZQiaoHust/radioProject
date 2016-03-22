@@ -110,4 +110,5 @@ public interface ConstantValues {
 	public String uploadQuery= "COM.EXAMPLE.uploadQuery";
 
 	public String ConnectPCBQuery= "COM.EXAMPLE.ConnectPCBQuery";
+	public String ConnectPCB= "COM.EXAMPLE.ConnectPCB";
 }

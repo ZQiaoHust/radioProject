@@ -19,7 +19,7 @@ public class OutGainDecoder implements MessageDecoder {
             return MessageDecoderResult.NEED_DATA;
         }else{
             byte frameHead=in.get();
-            if(frameHead==(byte)0x55){
+            if((frameHead==(byte)0x55)||(frameHead==(byte)0x66)){
                 byte functionCode=in.get();
                 if (functionCode==0x25){
                     return MessageDecoderResult.OK;
@@ -51,6 +51,8 @@ public class OutGainDecoder implements MessageDecoder {
                 buffer.flip();
                 byte[] accept=new byte[17];
                 buffer.get(accept);
+                outGain.setPacketHead(accept[0]);
+                outGain.setContent(accept);
                 outGain.setOutGain(accept[4] & 0xff);
                 out.write(outGain);
                 return MessageDecoderResult.OK;

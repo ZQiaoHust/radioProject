@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.testsliding.Bean.Connect;
 import com.example.administrator.testsliding.Bean.Query;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
@@ -30,6 +31,7 @@ public class ConnectPCB extends Activity {
     StringBuilder resultList;
     ArrayList<String> connectedIP;
     private String PCBIP;
+    private int connectStyle;
 
     private BroadcastReceiver ConnectPCBReceiver = new BroadcastReceiver() {
         @Override
@@ -72,7 +74,7 @@ public class ConnectPCB extends Activity {
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(ConnectPCBReceiver, filter);
 
-        mIp = (TextView) findViewById(R.id.et_ID);
+       // mIp = (TextView) findViewById(R.id.et_ID);
         initEvent();
     }
 
@@ -99,14 +101,24 @@ public class ConnectPCB extends Activity {
 //                Constants.PCBIP=textString;
 //                mIp.setText(textString);
 
-                mIp.setText("");
+              //  mIp.setText("");
+                if(connectStyle==0){
+                    Toast.makeText(ConnectPCB.this, "请选择接入方式", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 try {
-                    //获取连接到手机热点的硬件ip
-                    PCBIP = getConnectIp();
-                    Constants.PCBIP = PCBIP;
-                    //启动后台service
-                    Intent startServiceIntent = new Intent(ConnectPCB.this, MinaClientService.class);
-                    startService(startServiceIntent);
+                    Connect connect=new Connect();
+                    connect.setConn(connectStyle);
+                    Broadcast.sendBroadCast(ConnectPCB.this,ConstantValues.ConnectPCB,"connectPCB",connect);
+                    if(connectStyle==1) {
+                        //获取连接到手机热点的硬件ip
+                        PCBIP = getConnectIp();
+                        Constants.PCBIP = PCBIP;
+                        //启动后台service
+                        Intent startServiceIntent = new Intent(ConnectPCB.this, MinaClientService.class);
+                        startService(startServiceIntent);
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -142,6 +154,7 @@ public class ConnectPCB extends Activity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                connectStyle=1;
             }
         });
 
@@ -149,6 +162,7 @@ public class ConnectPCB extends Activity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+                connectStyle=2;
             }
         });
 
@@ -156,6 +170,7 @@ public class ConnectPCB extends Activity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(ConnectPCB.this, "连接usb线", Toast.LENGTH_LONG).show();
+                connectStyle=3;
             }
         });
     }

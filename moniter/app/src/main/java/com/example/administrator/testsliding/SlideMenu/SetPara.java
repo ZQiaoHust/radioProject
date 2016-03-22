@@ -91,7 +91,7 @@ public class SetPara extends Activity implements SeekBar.OnSeekBarChangeListener
                 int a = data.getIngain() - 3;
 
                 Toast toast = Toast.makeText(SetPara.this, "接受通道增益：" + String.valueOf(a) + "dB",
-                        Toast.LENGTH_LONG);
+                        Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.TOP, 0, 400);
                 toast.show();
             }
@@ -103,7 +103,7 @@ public class SetPara extends Activity implements SeekBar.OnSeekBarChangeListener
                 int a = data.getOutGain();
 
                 Toast toast = Toast.makeText(SetPara.this, "发射通道增益：" + String.valueOf(a) + "dB",
-                        Toast.LENGTH_LONG);
+                        Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.TOP, 0, 800);
                 toast.show();
             }
@@ -119,7 +119,7 @@ public class SetPara extends Activity implements SeekBar.OnSeekBarChangeListener
 
                 if (model == 0) {
                     Toast toast = Toast.makeText(SetPara.this, "自适应门限检测：" + String.valueOf(findAutoThreshold(autoTheshold)) + "dB",
-                            Toast.LENGTH_LONG);
+                            Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.TOP, 0, 1000);
                     toast.show();
 

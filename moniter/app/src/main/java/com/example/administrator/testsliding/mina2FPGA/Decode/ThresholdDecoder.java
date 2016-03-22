@@ -18,7 +18,7 @@ public class ThresholdDecoder implements MessageDecoder {
             return MessageDecoderResult.NEED_DATA;
         }else{
             byte frameHead=in.get();
-            if(frameHead==(byte)0x55){
+            if((frameHead==(byte)0x55)||(frameHead==(byte)0x66)){
                 byte functionCode=in.get();
                 if (functionCode==0x26){
                     return MessageDecoderResult.OK;
@@ -45,12 +45,12 @@ public class ThresholdDecoder implements MessageDecoder {
                 buffer.flip();
                 byte[] accept=new byte[17];
                 buffer.get(accept);
+                threshold.setPacketHead(accept[0]);
                 threshold.setThresholdModel(accept[4]);
                 threshold.setAutoThreshold(accept[5]);
                 threshold.setFixThreshold(getFixTheshold(accept));
-
+                threshold.setContent(accept);
                 out.write(threshold);
-
                 return  MessageDecoderResult.OK;
             }
         }

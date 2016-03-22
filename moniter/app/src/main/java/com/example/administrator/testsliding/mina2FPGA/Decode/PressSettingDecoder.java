@@ -18,7 +18,7 @@ public class PressSettingDecoder implements MessageDecoder {
             return MessageDecoderResult.NEED_DATA;
         }else{
             byte frameHead=in.get();
-            if(frameHead==0x55){
+            if((frameHead==(byte)0x55)||(frameHead==(byte)0x66)){
                 byte functionCode=in.get();
                 if(functionCode==0x28){
                     return MessageDecoderResult.OK;
@@ -44,6 +44,7 @@ public class PressSettingDecoder implements MessageDecoder {
                 buffer.flip();
                 byte[] accept=new byte[17];
                 buffer.get(accept);
+                pressSetting.setPacketHead(accept[0]);
                 pressSetting.setPressMode(accept[4]);
                 pressSetting.setStyle(accept[5] >> 4);
                 pressSetting.setBand(accept[5] & 0x0f);
@@ -51,6 +52,7 @@ public class PressSettingDecoder implements MessageDecoder {
                 pressSetting.setT2((accept[8] << 8) + accept[9]);
                 pressSetting.setT3((accept[10] << 8) + accept[11]);
                 pressSetting.setT4((accept[12] << 8) + accept[13]);
+                pressSetting.setContent(accept);
 
                 out.write(pressSetting);
 //                Constants.FPGAsession.write()

@@ -7,6 +7,8 @@ import android.os.Parcelable;
  * Created by jinaghao on 15/11/25.
  */
 public class PressSetting implements Parcelable {
+    private byte packetHead;
+    private byte[] content;
     private int pressMode;
     private int style;
     private int band;
@@ -16,8 +18,9 @@ public class PressSetting implements Parcelable {
     private int t4;
     public PressSetting(){}
 
-
     protected PressSetting(Parcel in) {
+        packetHead = in.readByte();
+        content = in.createByteArray();
         pressMode = in.readInt();
         style = in.readInt();
         band = in.readInt();
@@ -38,6 +41,22 @@ public class PressSetting implements Parcelable {
             return new PressSetting[size];
         }
     };
+
+    public byte getPacketHead() {
+        return packetHead;
+    }
+
+    public void setPacketHead(byte packetHead) {
+        this.packetHead = packetHead;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 
     public void setPressMode(int pressMode) {
         this.pressMode = pressMode;
@@ -104,6 +123,8 @@ public class PressSetting implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(packetHead);
+        dest.writeByteArray(content);
         dest.writeInt(pressMode);
         dest.writeInt(style);
         dest.writeInt(band);

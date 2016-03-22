@@ -4,6 +4,18 @@
         "source": "E:\\Android project\\project_over\\testSliding_0130_combined V1.0\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
     },
     {
+        "merged": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\ic_launcher.png",
+        "source": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\image_holder.xml",
+        "source": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
+    },
+    {
+        "merged": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\dot_light.png",
+        "source": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\src\\main\\res\\drawable-hdpi\\dot_light.png"
+    },
+    {
         "merged": "E:\\Android project\\project_over\\testSliding_0130_combined V1.0\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\ic_launcher.png",
         "source": "E:\\Android project\\project_over\\testSliding_0130_combined V1.0\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
     },
@@ -16,7 +28,15 @@
         "source": "E:\\Android project\\project_over\\testSliding_0130_combined V1.0\\flashview\\src\\main\\res\\drawable-hdpi\\dot_light.png"
     },
     {
+        "merged": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\dot_white.png",
+        "source": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\src\\main\\res\\drawable-hdpi\\dot_white.png"
+    },
+    {
         "merged": "E:\\Android project\\project_over\\testSliding_0130_combined V1.0\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\dot_white.png",
         "source": "E:\\Android project\\project_over\\testSliding_0130_combined V1.0\\flashview\\src\\main\\res\\drawable-hdpi\\dot_white.png"
+    },
+    {
+        "merged": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\defaultflashview.png",
+        "source": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
     }
 ]

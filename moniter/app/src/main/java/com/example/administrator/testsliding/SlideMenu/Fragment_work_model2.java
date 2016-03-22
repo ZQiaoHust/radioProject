@@ -34,9 +34,6 @@ import java.util.List;
  */
 public class Fragment_work_model2 extends Fragment {
 
-    private CheckBox cb_frequency01;
-    private CheckBox cb_frequency02;
-    private CheckBox cb_frequency03;
 
     private EditText et_frequency01;
     private EditText et_frequency02;
@@ -74,7 +71,6 @@ public class Fragment_work_model2 extends Fragment {
                 if (data==null){
                     return;
                 }
-
                 int number=data.getNumber();
                 double fix1=data.getFix1();
                 double fix2=data.getFix2();
@@ -103,7 +99,6 @@ public class Fragment_work_model2 extends Fragment {
                 int second=data.getSecond();
 
 
-
                 Toast toast=Toast.makeText(getActivity(), "IQ复信号带宽为"+String.valueOf(IQwidth)
                         +"数据率"+String.valueOf(IQwidth)+"起始时间是"+String.valueOf(year)+"."
                         +String.valueOf(month)+"."+String.valueOf(day)+"   "+String.valueOf(hour)+
@@ -119,14 +114,12 @@ public class Fragment_work_model2 extends Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         InitSetting();
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConstantValues.FixSettingQuery);
         filter.addAction(ConstantValues.FixCentralFreqQuery);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(fixFreqReceiver, filter);
-
         initspinnerSetting();
         InitEvent();
 
@@ -140,34 +133,20 @@ public class Fragment_work_model2 extends Fragment {
     }
 
     private void InitSetting(){
-
-
         et_frequency01=(EditText)getActivity().findViewById(R.id.et_frequency01);
         et_frequency02=(EditText)getActivity().findViewById(R.id.et_frequency02);
         et_frequency03=(EditText)getActivity().findViewById(R.id.et_frequency03);
-
         spinner_IQ=(Spinner)getActivity().findViewById(R.id.spinner_IQ);
         inputDate= (EditText) getActivity().findViewById(R.id.inputDate);
-
         et_IQblock=(EditText)getActivity().findViewById(R.id.et_IQblock);
-
         mSetCentralFreq= (Button) getActivity().findViewById(R.id.bt_setCentralFreq);
         mGetCentralFreq= (Button) getActivity().findViewById(R.id.bt_getCentralFreq);
         mSetIQ= (Button) getActivity().findViewById(R.id.bt_setIQ);
         mGetIQ= (Button) getActivity().findViewById(R.id.bt_getIQ);
-
-
-
         editList=new ArrayList<>();
-
         editList.add(et_frequency01);
         editList.add(et_frequency02);
         editList.add(et_frequency03);
-
-
-
-
-
 
     }
     /**
@@ -285,14 +264,9 @@ public class Fragment_work_model2 extends Fragment {
                     FixSetting fixSetting=new FixSetting();
                     fixSetting.setIQwidth(IQwidth);
                     fixSetting.setBlockNum(blockNum);
-                    List<Integer> digitList ;
-                    digitList=computePara.Time2Int(inputDate.getText().toString());
-                    fixSetting.setYear(digitList.get(0));
-                    fixSetting.setMonth(digitList.get(1));
-                    fixSetting.setDay(digitList.get(2));
-                    fixSetting.setHour(digitList.get(3));
-                    fixSetting.setMinute(digitList.get(4));
-                    fixSetting.setSecond(digitList.get(5));
+                    if(!inputDate.getText().toString().equals("")){
+                        fixSetting.setTimeString(inputDate.getText().toString());
+                    }
 
                     if(fixSetting!=null){
                         Broadcast.sendBroadCast(getActivity(),ConstantValues.FixSettingSet,

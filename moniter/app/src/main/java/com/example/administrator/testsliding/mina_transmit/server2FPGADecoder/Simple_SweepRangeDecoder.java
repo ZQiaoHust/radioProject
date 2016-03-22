@@ -2,6 +2,8 @@ package com.example.administrator.testsliding.mina_transmit.server2FPGADecoder;
 
 import android.util.Log;
 
+import com.example.administrator.testsliding.GlobalConstants.Constants;
+import com.example.administrator.testsliding.GlobalConstants.SweepRangeInfo;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_SweepRange;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -43,6 +45,7 @@ public class Simple_SweepRangeDecoder implements MessageDecoder {
                in.get(bytes);
                Simple_SweepRange sweep=new Simple_SweepRange();
                sweep.setContent(bytes);
+               HandleSweepInfo(bytes);
                out.write(sweep);
                Log.d("xyz", Arrays.toString(bytes));
                return MessageDecoderResult.OK;
@@ -54,6 +57,40 @@ public class Simple_SweepRangeDecoder implements MessageDecoder {
 
     @Override
     public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput) throws Exception {
+
+    }
+    private void HandleSweepInfo(byte[] bytes){
+        SweepRangeInfo sweepRangeInfo=new SweepRangeInfo();
+        int sendMode=bytes[4]&0x03;//文件上传模式
+        int total=bytes[5]&0xff;
+        int select=bytes[13]&0x3f;
+        double freq1=((bytes[7]&0xff)-1)*25+(((bytes[8]&0x03)<<8)+(bytes[9]&0xff))*25/1024.0;
+        double freq2=((bytes[10]&0xff)-1)*25+(((bytes[11]&0x03)<<8)+(bytes[12]&0xff))*25/1024.0;
+
+        sweepRangeInfo.setSegStart(freq1);
+        sweepRangeInfo.setSegEnd(freq2);
+        sweepRangeInfo.setStartNum((bytes[7]&0xff));
+        sweepRangeInfo.setEndNum((bytes[10]&0xff));
+        if(total==1){
+            //不是多频段扫描
+            Constants.SweepParaList.clear();
+            Constants.SweepParaList.add(sweepRangeInfo);
+        }else {
+            //多频段扫描
+            if(Constants.serverSweepCount==0){
+                //第一次
+                Constants.SweepParaList.clear();
+                Constants.serverSweepCount++;
+            }else {
+                if(Constants.serverSweepCount==total){
+                    //最后一次
+                    Constants.serverSweepCount=0;
+                }else {
+                    Constants.serverSweepCount++;
+                }
+            }
+            Constants.SweepParaList.add(sweepRangeInfo);
+        }
 
     }
 }

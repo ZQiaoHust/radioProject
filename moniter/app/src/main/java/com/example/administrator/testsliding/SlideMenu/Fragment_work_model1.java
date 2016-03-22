@@ -53,8 +53,7 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
     private Button mSetButton;
     private Button mGetButton;
     private Button mFailed;
-    private byte[] ReceivedWrong=new byte[17];
-    private ReceiveWrong mReceiveWrong=new ReceiveWrong();
+
 
 
 
@@ -91,31 +90,25 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                 }else{
                     s2="自动传输 判断门限是10dB";
                 }
-
             }else if(b==3){
-                s2="抽取传输 抽取倍率是"+String.valueOf(h);
+                s2="抽取传输 抽取倍率是:"+String.valueOf(h);
             }
-
-
-
-
             if(a==1){
-                Toast toast=Toast.makeText(getActivity(), "全频段扫描"+s2,
-                        Toast.LENGTH_SHORT);
+                Toast toast=Toast.makeText(getActivity(), "文件上传模式："+s2+"\n"
+                        +"扫频模式： 全频段扫描", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.TOP , 0, 800);
                 toast.show();
             }else if(a==2){
-                Toast toast=Toast.makeText(getActivity(), "指定频段扫描 扫描范围是"
-                                +String.valueOf(e)+"到"+String.valueOf(f)+s2,
+                Toast toast=Toast.makeText(getActivity(), "文件上传模式："+s2+"\n"+
+                        "扫频模式： 指定频段扫描 范围 " +String.valueOf(e)+"到"+String.valueOf(f),
                         Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.TOP , 0, 800);
                 toast.show();
 
             }else if(a==3){
-
-
-                Toast toast=Toast.makeText(getActivity(), "多频段扫描"+"总扫描段数"+c +"当前是第"+d+"段"+ "起始频率"+String.valueOf(e)+"终止频率"
-                                +String.valueOf(f)+s2,
+                Toast toast=Toast.makeText(getActivity(), "文件上传模式："+s2+"\n"+
+                        "多频段扫描"+"总扫描段数"+c +"当前是第"+d+"段"+ "起始频率"+String.valueOf(e)+"终止频率"
+                                +String.valueOf(f),
                         Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.TOP , 0, 400);
                 toast.show();
@@ -144,18 +137,13 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
      */
 
 
-    private int SweepMode;//扫频模式
-    private int uploadMode;//功率谱上传模式
+    private int uploadMode=0;//功率谱上传模式
     private int TotalOfBands;//多频段扫频模式的频段总数
-    private int BandNumber;//多频段扫频模式的频段序号
-    private int startFrequence;//起止频率
-    private int endFrequence;//终止频率
     private byte gate;//功率谱数据变化的判定门限
     private int Select ;//文件上传的抽取倍率
     private Boolean IsDUOSetting0K=false;
     private Boolean IsZHISetting0K=false;
     private Boolean IsQUANSetting0K=false;
-    private Boolean isUPSettingOK=false;
 
     private final static String TAG="socket";
 
@@ -188,33 +176,14 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
      * 初始化参数
      */
     private void InitSetting() {
-
         gate=3;
         rg_sendMode = (RadioGroup) getActivity().findViewById(R.id.rg_sendMode);
         rg_sweep = (RadioGroup) getActivity().findViewById(R.id.rg_sweep);
         sp_autoSend = (Spinner) getActivity().findViewById(R.id.spinner_autoSend);
-
         seekBar_select = (SeekBar) getActivity().findViewById(R.id.seekBar_selectSend);
         tv_select = (TextView) getActivity().findViewById(R.id.tv_selectSend);
-
         mSetButton = (Button) getActivity().findViewById(R.id.bt_setoutgain);
         mGetButton = (Button) getActivity().findViewById(R.id.bt_getoutgain);
-       // mFailed = (Button) getActivity().findViewById(R.id.bt_failed);
-        ReceivedWrong[0]= (byte) 0x55;
-        ReceivedWrong[1]= (byte) 0xf0;
-        ReceivedWrong[2]= (byte) 0x0f;
-        ReceivedWrong[4]= (byte) 0x0b;
-        ReceivedWrong[5]= (byte) 0x01;
-        ReceivedWrong[6]= (byte) 0x01;
-        ReceivedWrong[7]= (byte) 0x09;
-        ReceivedWrong[9]= (byte) 0x28;
-        ReceivedWrong[10]= (byte) 0x0c;
-        ReceivedWrong[11]= (byte) 0x03;
-        ReceivedWrong[12]= (byte) 0xd7;
-
-        ReceivedWrong[16]= (byte) 0xaa;
-
-
     }
 
     /**
@@ -246,13 +215,6 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
 //        sp_autoSend.setOnItemSelectedListener(this);//spinner监听在fragment中失效
         seekBar_select.setOnSeekBarChangeListener(this);
 
-//        mFailed.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Constants.FPGAsession.write(mReceiveWrong);//下发重传帧
-//            }
-//        });
-
         sp_autoSend.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -280,30 +242,15 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
          * 生成数据帧
          *
          */
-
-
-//        for(int i=0;i<5;i++)
-//        {
-//         if((v1[i])!=0)
-//         {
-//             TotalOfBands++;
-//         }
-//        }
-
-
         final SweepRange sweepRange =new SweepRange();
         mSetButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
-
-
-                SweepRangeInfo sweepRangeInfo=new SweepRangeInfo();
+                final SweepRangeInfo sweepRangeInfo=new SweepRangeInfo();
                 TotalOfBands = 0;
                 if(IsQUANSetting0K){
                     IsQUANSetting0K=false;
-                    sweepRange.setEquipmentId(0);
+                    sweepRange.setEquipmentId(Constants.ID);
                     sweepRange.setaSweepMode(1);
                     sweepRange.setaSendMode(uploadMode);
                     sweepRange.setaTotalOfBands(1);
@@ -312,12 +259,12 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                     sweepRange.setEndFrequence(6000);
                     sweepRange.setGate(gate);
                     sweepRange.setaSelect(Select);
-//                    sweepRangeInfo.setSegStart(70);
-//                    sweepRangeInfo.setSegEnd(6000);
-//                    sweepRangeInfo.setStartNum( 1);
-//                    sweepRangeInfo.setEndNum((int) ((6000-70)/25+1));
-//                    Constants.SweepParaList.clear();
-//                    Constants.SweepParaList.add(sweepRangeInfo);
+                    sweepRangeInfo.setSegStart(70);
+                    sweepRangeInfo.setSegEnd(6000);
+                    sweepRangeInfo.setStartNum( 1);
+                    sweepRangeInfo.setEndNum((int) ((6000-70)/25+1));
+                    Constants.SweepParaList.clear();
+                    Constants.SweepParaList.add(sweepRangeInfo);
 
                     if(sweepRange !=null)
                     {
@@ -325,11 +272,10 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                                 ConstantValues.SweepRangeSet, "SweepRangeSet", sweepRange);
                     }
 
-
                 }else if(IsZHISetting0K){
 
                     IsZHISetting0K=false;
-                    sweepRange.setEquipmentId(0);
+                    sweepRange.setEquipmentId(Constants.ID);
                     sweepRange.setaSweepMode(2);
                     sweepRange.setaSendMode(uploadMode);
                     sweepRange.setaTotalOfBands(1);
@@ -352,8 +298,6 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                         Broadcast.sendBroadCast(getActivity(),
                                 ConstantValues.SweepRangeSet, "SweepRangeSet", sweepRange);
                     }
-
-
                 }else if(IsDUOSetting0K){
                         IsDUOSetting0K = false;
                         for (int i = 0; i < 5; i++) {
@@ -365,10 +309,9 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                             @Override
                             public void run() {
                                 try {
-
                                     for (int i = 0; i < TotalOfBands; i++) {
-                                        sweepRange.setEquipmentId(0);
-                                        sweepRange.setaSweepMode(SweepMode);
+                                        sweepRange.setEquipmentId(Constants.ID);
+                                        sweepRange.setaSweepMode(3);
                                         sweepRange.setaSendMode(uploadMode);
                                         sweepRange.setaTotalOfBands(TotalOfBands);
                                         sweepRange.setaBandNumber(i + 1);
@@ -377,14 +320,19 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                                         sweepRange.setGate(gate);
                                         sweepRange.setaSelect(Select);
 
+                                        sweepRangeInfo.setSegStart(v1[i]);
+                                        sweepRangeInfo.setSegEnd(v2[i]);
+                                        sweepRangeInfo.setStartNum((int) ((v1[i]-70)/25+1));
+                                        sweepRangeInfo.setEndNum((int) ((v2[i]-70)/25+1));
+                                        Constants.SweepParaList.clear();
+                                        Constants.SweepParaList.add(sweepRangeInfo);
+
                                         if(sweepRange !=null)
                                         {
                                             Broadcast.sendBroadCast(getActivity(),
                                                     ConstantValues.SweepRangeSet, "SweepRangeSet", sweepRange);
                                         }
-
                                     }
-
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     Log.i(TAG, "run: 发送异常");
@@ -402,25 +350,15 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
             @Override
             public void onClick(View v) {
                 Query query=new Query();
-                query.setequipmentID(0);
+                query.setequipmentID(Constants.ID);
                 query.setFuncID((byte) 0x11);
-                int a=Constants.Queue_RealtimeSpectrum.size();
-                int b=Constants.Queue_IQwave.size();
-                for(int i=0;i<a;i++){
-                   List list= Constants.Queue_RealtimeSpectrum.poll();
-                }
-
-
                 if(query!=null){
                     Broadcast.sendBroadCast(getActivity(),
                             ConstantValues.SweepRangeQuery,"SweepRangeQuery",query);
                 }
             }
         });
-
-
     }
-
 
     /**
      * 查询扫频模式弹出框
@@ -433,13 +371,10 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
         builder.setTitle("扫频工作模式：");
         AlertDialog dialog = builder.create();
         dialog.show();
-
-
     }
 
 
     private void showDialog_Save1() {
-
         AlertDialog.Builder bulider = new AlertDialog.Builder(getActivity());
         bulider.setTitle("您是否确认保存以下参数：");
         bulider.setIcon(R.drawable.wo2);
@@ -463,8 +398,6 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
     }
 
     private void showDialog_Save2() {
-
-
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         View view = inflater.inflate(R.layout.mydialogzhidingpinduan, null);
         final EditText StartEditText = (EditText) view.findViewById(R.id.edit1);
@@ -496,16 +429,10 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
             }
         });
         bulider.setView(view);
-
-
         AlertDialog dialog = bulider.create();
         dialog.show();
     }
-
-
     private void showDialog_Save3() {
-
-
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         View view = inflater.inflate(R.layout.mydialogduopinduan, null);
 
@@ -551,15 +478,11 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                 v1 = new double[5];
                 v2 = new double[5];
                 //mVector=new Vector();
-
-
                 for (int i = 0; i < StartEditTextArrayList.size(); i++) {
                     if (!StartEditTextArrayList.get(i).getText().toString().equals("")) {
                         double mm = Double.
                                 parseDouble(StartEditTextArrayList.get(i).getText().toString());
                         v1[i] = mm;
-
-
                     }
                 }
                 for (int i = 0; i < EndEditTextArrayList.size(); i++) {
@@ -567,8 +490,6 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                         double cc = Double.
                                 parseDouble(EndEditTextArrayList.get(i).getText().toString());
                         v2[i] = cc;
-
-
                     }
                 }
 
@@ -592,7 +513,6 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId) {
             case R.id.rbtn_sendHand:
-                isUPSettingOK=true;
                 sp_autoSend.setEnabled(false);
                 seekBar_select.setEnabled(false);
                 uploadMode = 1;
@@ -601,14 +521,12 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
 
                 break;
             case R.id.rbtn_sendAuto:
-                isUPSettingOK=true;
                 sp_autoSend.setEnabled(true);
                 seekBar_select.setEnabled(false);
                 uploadMode = 2;
                 Select = 0;
                 break;
             case R.id.rbtn_sendSelect:
-                isUPSettingOK=true;
                 sp_autoSend.setEnabled(false);
                 seekBar_select.setEnabled(true);
                 uploadMode = 3;
@@ -616,17 +534,12 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                 break;
             case R.id.rbtn_whole:
                 showDialog_Save1();
-                SweepMode = 1;
                 break;
             case R.id.rbtn_specify:
                 showDialog_Save2();
-                SweepMode = 2;
                 break;
             case R.id.rbtn_many:
                 showDialog_Save3();
-
-
-                SweepMode = 3;
                 break;
             default:
                 break;

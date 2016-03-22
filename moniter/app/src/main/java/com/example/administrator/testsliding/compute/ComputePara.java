@@ -234,16 +234,7 @@ public class ComputePara {
 
         return freq;
     }
-    //归属单位查询表
-    public String QueryOrganiaer(byte b){
-        String str=null;
 
-        if(str==null){
-            str="unknown";
-        }
-        return str;
-
-    }
     //调制方式查询表
     public String QueryModem(byte b){
         String str=null;
@@ -337,18 +328,18 @@ public class ComputePara {
 //                    ((bytes[3*i+1] >> 1) & 0x01) * 0.25 + (bytes[3*i+1] & 0x01) * 0.125);
             int f1=(((bytes[3*i]>>4)&0x0f)<<8)+(bytes[3*i+1] & 0xff);
             if (((bytes[3*i]>>7)&0x01) == 0) {
-                pow[2*i] = f1/16;
+                pow[2*i] = f1/8;
             } else {
-                pow[2*i] = (float) ((f1-Math.pow(2,12))/16.0);
+                pow[2*i] = (float) ((f1-Math.pow(2,12))/8.0);
             }
 
 //            float f2 = (float) ((((bytes[3*i] << 6) + (bytes[2+3*i] >> 3)) & 0xff) + ((bytes[2+3*i] >> 2) & 0x01) * 0.5 +
 //                    ((bytes[2+3*i] >> 1) & 0x01) * 0.25 + (bytes[2+3*i] & 0x01) * 0.125);
             int f2=((bytes[3*i]&0x0f)<<8)+(bytes[3*i+2] & 0xff);
             if (((bytes[3*i] >> 3) & 0x01) == 0) {
-                pow[1+2*i] = f2/16;
+                pow[1+2*i] = f2/8;
             } else {
-                pow[1+2*i] =(float) ((f2-Math.pow(2,12))/16.0);
+                pow[1+2*i] =(float) ((f2-Math.pow(2,12))/8.0);
             }
         }
         return  pow;

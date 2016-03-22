@@ -6,7 +6,29 @@ import android.os.Parcelable;
 /**
  * Created by jinaghao on 15/11/23.
  */
-public class OutGain implements Parcelable{
+public class OutGain implements Parcelable {
+    private byte packetHead;
+    private byte[] content;
+
+    protected OutGain(Parcel in) {
+        packetHead = in.readByte();
+        content = in.createByteArray();
+        equipmentID = in.readInt();
+        OutGain = in.readInt();
+    }
+
+    public static final Creator<OutGain> CREATOR = new Creator<OutGain>() {
+        @Override
+        public OutGain createFromParcel(Parcel in) {
+            return new OutGain(in);
+        }
+
+        @Override
+        public OutGain[] newArray(int size) {
+            return new OutGain[size];
+        }
+    };
+
     public void setEquipmentID(int equipmentID) {
         this.equipmentID = equipmentID;
     }
@@ -30,22 +52,21 @@ public class OutGain implements Parcelable{
 
     public OutGain(){}
 
-    protected OutGain(Parcel in) {
-        equipmentID = in.readInt();
-        OutGain = in.readInt();
+    public byte getPacketHead() {
+        return packetHead;
     }
 
-    public static final Creator<com.example.administrator.testsliding.Bean.OutGain> CREATOR = new Creator<com.example.administrator.testsliding.Bean.OutGain>() {
-        @Override
-        public com.example.administrator.testsliding.Bean.OutGain createFromParcel(Parcel in) {
-            return new OutGain(in);
-        }
+    public void setPacketHead(byte packetHead) {
+        this.packetHead = packetHead;
+    }
 
-        @Override
-        public com.example.administrator.testsliding.Bean.OutGain[] newArray(int size) {
-            return new OutGain[size];
-        }
-    };
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 
     @Override
     public int describeContents() {
@@ -54,6 +75,8 @@ public class OutGain implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(packetHead);
+        dest.writeByteArray(content);
         dest.writeInt(equipmentID);
         dest.writeInt(OutGain);
     }

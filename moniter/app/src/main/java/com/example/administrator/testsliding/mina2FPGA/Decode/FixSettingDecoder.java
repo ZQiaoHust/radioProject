@@ -18,7 +18,7 @@ public class FixSettingDecoder implements MessageDecoder {
             return MessageDecoderResult.NEED_DATA;
         } else {
             byte frameHead = in.get();
-            if (frameHead == (byte) 0x55) {
+            if ((frameHead==(byte)0x55)||(frameHead==(byte)0x66)) {
                 byte functionCode = in.get();
                 if (functionCode == 0x27) {
                     return MessageDecoderResult.OK;
@@ -45,7 +45,8 @@ public class FixSettingDecoder implements MessageDecoder {
                 buffer.flip();
                 byte[] accept = new byte[17];
                 buffer.get(accept);
-                fixSetting.setIQwidth(getIQwidth(accept));
+                fixSetting.setPacketHead(accept[0]);
+                fixSetting.setIQwidth(getIQwidth(accept));//带宽和数据率
                 fixSetting.setBlockNum(accept[5]);
                 fixSetting.setYear(getYear(accept));
                 fixSetting.setDay(getDay(accept));
@@ -53,6 +54,7 @@ public class FixSettingDecoder implements MessageDecoder {
                 fixSetting.setHour(getHour(accept));
                 fixSetting.setMinute(getMin(accept));
                 fixSetting.setSecond(getSecond(accept));
+                fixSetting.setContent(accept);
 
                 out.write(fixSetting);
                 return MessageDecoderResult.OK;

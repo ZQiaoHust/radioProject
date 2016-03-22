@@ -3,15 +3,16 @@ package com.example.administrator.testsliding.GlobalConstants;
 import org.apache.mina.core.buffer.IoBuffer;
 
 /**
- * 实时频谱数据解码器  用来封转当前解码器中的一些公共数据，主要是用于大数据解析
+ * 背景频谱数据解码器  用来封转当前解码器中的一些公共数据，主要是用于大数据解析
  * Created by jinaghao on 16/1/9.
  */
-public class Context {
+public class ContextBackground {
     public IoBuffer buffer;
-    public long length = 1613 ;
+    public long length = 1560 ;
     public long matchLength = 0;
 
-    public Context() {
+
+    public ContextBackground() {
         buffer = IoBuffer.allocate(1024).setAutoExpand(true);
     }
 
@@ -31,7 +32,6 @@ public class Context {
 
         return buffer;
     }
-
     public long getLength() {
         return length;
     }
@@ -40,10 +40,9 @@ public class Context {
         return matchLength;
     }
 
-
     public void reset() {
         this.buffer.clear();
-        this.length = 1613;
+        this.length = 1560;
         this.matchLength = 0;
 
     }

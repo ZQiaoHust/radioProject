@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.example.administrator.testsliding.Bean.ToServerIQwaveFile;
 import com.example.administrator.testsliding.Bean.ToServerPowerSpectrumAndAbnormalPoint;
 import com.example.administrator.testsliding.Database.DatabaseHelper;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
@@ -54,7 +55,8 @@ public class Share_fragment extends Fragment {
 
     FileInputStream fis;
     DataInputStream dis;
-
+    private Timer timer = new Timer();
+    private TimerTask task;
 
     public static final String PSFILE_PATH = Environment.getExternalStorageDirectory().
             getAbsolutePath() + "/PowerSpectrumFile/";
@@ -69,6 +71,16 @@ public class Share_fragment extends Fragment {
                 int a = (int) msg.obj;
                 mSeekbar.setProgress(a);
 
+        }
+    };
+    private Handler handlerIQ = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1) {
+                //定时上传IQ文件，每5秒扫描一次
+                uploadIQFile();
+            }
         }
     };
 
@@ -334,58 +346,15 @@ public class Share_fragment extends Fragment {
         mCreateIQ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                task = new TimerTask() {
                     @Override
                     public void run() {
-
-                        //创建IQ波形文件路径
-                        File PSdir = new File(IQFILE_PATH);
-                        if (!PSdir.exists()) {
-                            PSdir.mkdir();
-                        }
-
-                        if (!Constants.Queue_IQwave.isEmpty()) {
-
-                            for (int i = 0; i < Constants.Queue_IQwave.size(); i++) {
-                                mIQ = Constants.Queue_IQwave.poll();
-
-                                //取出时间
-                                byte[] byte1 = (byte[]) mIQ.get(0);
-                                int year = getYear(byte1);
-                                int month = getMonth(byte1);
-                                int day = getDay(byte1);
-                                int hour = getHour(byte1);
-                                int min = getMin(byte1);
-                                int sec = getSecond(byte1);
-                                //创建IQ文件
-                                String IQname = String.format("%d_%d_%d_%d_%d_%d_%d.%s", year, month, day, hour, min, sec,
-                                        Constants.ID, "iq");
-                                File file = new File(IQFILE_PATH, IQname);
-                                //向文件写入数据
-                                try {
-                                    //获取文件写入流
-                                    fos = new FileOutputStream(file);
-                                    fos.write((byte) 0x00);
-                                    for (int j = 0; j < mIQ.size(); j++) {
-//                                        fos.write((byte[]) mPowerSpectrum.get(j));
-                                    }
-                                    fos.write(0x00);
-                                    fos.close();
-                                } catch (IOException e) {
-                                    try {
-                                        fos.close();
-                                    } catch (IOException e1) {
-                                        e1.printStackTrace();
-                                    }
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            Toast.makeText(getContext(), "IQ文件写入完毕", Toast.LENGTH_SHORT).show();
-                        }
-
+                        Message message = new Message();
+                        message.what = 1;
+                        handler.sendMessage(message);
                     }
-                }).start();
+                };
+                timer.schedule(task, 1000, 5000);
             }
         });
 
@@ -452,7 +421,46 @@ public class Share_fragment extends Fragment {
         }
         return Filename;
     }
-
+    private void uploadIQFile() {
+        File file = new File(IQFILE_PATH);
+        if (!file.exists()) {
+            return;
+        }
+        String[] tempList = file.list();
+        for (int i = 0; i < tempList.length; i++) {
+            String name=tempList[i];
+            File f = new File(IQFILE_PATH, name);
+        /* 取得扩展名 */
+            String end = name
+                    .substring(name.lastIndexOf(".") + 1, name.length())
+                    .toLowerCase();
+            //String befoe=name.substring(0,name.lastIndexOf(".") );
+            if(end.equals("iq")){
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(f);
+                    byte[] content = new byte[fis.available()];
+                    byte[] buffer = new byte[content.length];
+                    while ((fis.read(buffer)) != -1) {
+                        content = buffer;
+                    }
+                    //将文件里的内容转化为对象
+                    ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
+                    ToWave.setContent(content);
+                    ToWave.setContentLength(content.length);
+                    // String upname= befoe  + String.format("iq");
+                    ToWave.setFileName(name);
+                    ToWave.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
+                    Constants.FILEsession.write(ToWave);
+                    f.delete();//上传后删除
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
 
 

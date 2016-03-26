@@ -17,6 +17,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.bigkoo.pickerview.TimePickerView;
 import com.example.administrator.testsliding.Bean.FixCentralFreq;
 import com.example.administrator.testsliding.Bean.FixSetting;
 import com.example.administrator.testsliding.Bean.Query;
@@ -26,14 +28,15 @@ import com.example.administrator.testsliding.R;
 import com.example.administrator.testsliding.compute.ComputePara;
 import com.example.administrator.testsliding.view.DateTimePickDialogUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by H on 2015/9/10.
  */
 public class Fragment_work_model2 extends Fragment {
-
 
     private EditText et_frequency01;
     private EditText et_frequency02;
@@ -50,12 +53,13 @@ public class Fragment_work_model2 extends Fragment {
     private Button mGetCentralFreq;
     private Button mSetIQ;
     private Button mGetIQ;
+    TimePickerView pvTime;
 
     ArrayList<EditText> editList;
     private double[] v1=null;
     private int FreqNumber;
     //全局变量
-    private double IQwidth;
+    private double IQwidth=5;//与界面默认值一致
     private int blockNum;
 
     private ComputePara computePara=new ComputePara();
@@ -77,8 +81,9 @@ public class Fragment_work_model2 extends Fragment {
                 double fix3=data.getFix3();
 
 
-                Toast toast=Toast.makeText(getActivity(), "定频接受中心频率："+number+"段"+String.valueOf(fix1)+"  "
-                                +String.valueOf(fix2)+"  "+String.valueOf(fix3), Toast.LENGTH_SHORT);
+                Toast toast=Toast.makeText(getActivity(), "定频接受中心频率："+number+"个"+"\n"+
+                                 String.valueOf(fix1)+" MHz, "
+                                +String.valueOf(fix2)+" MHz, "+String.valueOf(fix3)+"MHz", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.TOP , 0, 600);
                 toast.show();
             }
@@ -99,9 +104,11 @@ public class Fragment_work_model2 extends Fragment {
                 int second=data.getSecond();
 
 
-                Toast toast=Toast.makeText(getActivity(), "IQ复信号带宽为"+String.valueOf(IQwidth)
-                        +"数据率"+String.valueOf(IQwidth)+"起始时间是"+String.valueOf(year)+"."
-                        +String.valueOf(month)+"."+String.valueOf(day)+"   "+String.valueOf(hour)+
+                Toast toast=Toast.makeText(getActivity(), "IQ复信号带宽为:"+String.valueOf(IQwidth)
+                       +"MHz"+"\n" +
+                        "数据率:"+String.valueOf(IQwidth)+"Msps"+"\n"+
+                        "起始时间是:"+String.valueOf(year)+"年"
+                        +String.valueOf(month)+"月"+String.valueOf(day)+" 日 "+String.valueOf(hour)+
                         ":"+String.valueOf(min)+ ":"+String.valueOf(second), Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.TOP , 0, 800);
                 toast.show();
@@ -148,6 +155,21 @@ public class Fragment_work_model2 extends Fragment {
         editList.add(et_frequency02);
         editList.add(et_frequency03);
 
+        pvTime = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
+        //控制时间范围
+//        Calendar calendar = Calendar.getInstance();
+//        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
+        pvTime.setTime(new Date());
+        pvTime.setCyclic(false);
+        pvTime.setCancelable(true);
+        //时间选择后回调
+        pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                inputDate.setText(getTime(date));
+            }
+        });
     }
     /**
      * spinner初始化
@@ -292,19 +314,14 @@ public class Fragment_work_model2 extends Fragment {
                 }
             }
         });
-
-
-
-
-
         inputDate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
             public void onClick(View v) {
-
-                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(getActivity());
-                dateTimePicKDialog.dateTimePicKDialog(inputDate);
-
+                pvTime.show();
             }
         });
+
     }
 
 
@@ -315,6 +332,9 @@ public class Fragment_work_model2 extends Fragment {
         super.onDestroy();
     }
 
-
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        return format.format(date);
+    }
 
 }

@@ -235,13 +235,11 @@ public class Fragment_work_model3  extends Fragment implements
         //单双信号 和 手动自动压制全局变量初始化
         isSingle=true;
         isAuto=true;
-
         pressMode=0x01;
         t1=0;
         t2=0;
         t3=0;
         t4=0;
-
         //绑定groupRadio
         rg_choose= (RadioGroup)getActivity().findViewById(R.id.radioGroup_choose);
         rg_press= (RadioGroup)getActivity().findViewById(R.id.radioGroup_press);

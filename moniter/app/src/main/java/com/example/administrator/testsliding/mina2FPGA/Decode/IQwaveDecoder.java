@@ -4,8 +4,11 @@ import android.util.Log;
 
 import com.example.administrator.testsliding.Bean.IQwave;
 import com.example.administrator.testsliding.Bean.PowerSpectrumAndAbnormalPonit;
+import com.example.administrator.testsliding.Bean.ReceiveRight;
+import com.example.administrator.testsliding.Bean.ReceiveWrong;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.GlobalConstants.Context;
+import com.example.administrator.testsliding.GlobalConstants.IQContext;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.AttributeKey;
@@ -24,6 +27,9 @@ import java.util.TimerTask;
 public class IQwaveDecoder implements MessageDecoder {
     private final AttributeKey CONTEXT = new AttributeKey(getClass(),
             "context");
+    private ReceiveRight mReceiveRight = new ReceiveRight();
+    private ReceiveWrong mReceiveWrong = new ReceiveWrong();
+    private  int k;
 
     @Override
     public MessageDecoderResult decodable(IoSession ioSession, IoBuffer in) {
@@ -45,14 +51,14 @@ public class IQwaveDecoder implements MessageDecoder {
     @Override
     public MessageDecoderResult decode(IoSession session, IoBuffer in,
                                        ProtocolDecoderOutput out) throws Exception {
-        Context ctx = getContext(session);//获取session  的context
-        long matchCount = ctx.getMatchLength();//目前已获取的数据
-        long length = ctx.getLength();//数据总长度
-        IoBuffer buffer = ctx.getBuffer();//数据存入buffer
+        Constants.ctxIQ  = getContext(session);//获取session  的context
+        long matchCount = Constants.ctxIQ.getMatchLength();//目前已获取的数据
+        long length =  Constants.ctxIQ.getLength();//数据总长度
+        IoBuffer buffer =  Constants.ctxIQ.getBuffer();//数据存入buffer
 
         matchCount += in.remaining();
-        Log.d("abcd", "共收到字节：" + String.valueOf(matchCount));
-        ctx.setMatchLength(matchCount);
+        Log.d("IQ", "共收到字节：" + String.valueOf(matchCount));
+        Constants.ctxIQ.setMatchLength(matchCount);
 
         if (in.hasRemaining()) {// 如果in中还有数据
             if (matchCount < length) {
@@ -68,41 +74,37 @@ public class IQwaveDecoder implements MessageDecoder {
                 buffer.get(b);
 
                 if (b[1] == (byte) 0x54 && b[6026] == (byte) 0xaa) {
-                    long a = System.currentTimeMillis();
-//                    IQwave iQwave = byte2Object(b);
-//                    Log.d("psap", Arrays.toString(PSAP.getPSpower()));
-//
-//                    if (PSAP != null) {
-//                        TimerTask task = new TimerTask() {
-//                            public void run() {
-//                                //实现自己的延时执行任务
-//                                Constants.FPGAsession.write(mReceiveRight);
-//                            }
-//                        };
-//                        Timer timer = new Timer();
-//                        timer.schedule(task, 200);
-//
-//                        out.write(PSAP);
-//                        Log.d("psap", Arrays.toString(b));
-//                        Log.d("psap", "当前帧总共段数：" + PSAP.getTotalBand());
-//                        Log.d("psap", "当前帧所在序号：" + PSAP.getNumN());
-//                        Constants.NotFill = false;//收成功，NotFill表示没满的变量
-//                        k++;
-//                        Log.d("abcd", "成功次数：" + String.valueOf(k));
-//                        System.out.println("fine功率谱和异常频点解码完成.......");
-//                    }
-//                } else {
-//                    Constants.FPGAsession.write(mReceiveWrong);
-//                }
-                    Constants.ctx.reset();
+                    IQwave iQwave = byte2Object(b);
+                    if (iQwave != null) {
+                        TimerTask task = new TimerTask() {
+                            public void run() {
+                                //实现自己的延时执行任务
+                                Constants.FPGAsession.write(mReceiveRight);
+                            }
+                        };
+                        Timer timer = new Timer();
+                        timer.schedule(task, 200);
+
+                        out.write(iQwave);
+                        Log.d("IQ", "当前帧总共段数：" + iQwave.getTotalBands());
+                        Log.d("IQ", "当前帧所在序号：" + iQwave.getNowNum());
+                        Constants.NotFill = false;//收成功，NotFill表示没满的变量
+                        k++;
+                        Log.d("IQ", "成功次数：" + String.valueOf(k));
+                        System.out.println("IQ波解码完成.......");
+                    }
+                } else {
+                    Constants.FPGAsession.write(mReceiveWrong);
+                    Constants.failCount++;
+                }
+                    Constants.ctxIQ.reset();
                     return MessageDecoderResult.OK;
                 } else {
-                    Constants.ctx.setBuffer(buffer);
+                    Constants.ctxIQ.setBuffer(buffer);
                     Constants.NotFill = true;
                     return MessageDecoderResult.NEED_DATA;
                 }
             }
-        }
             return MessageDecoderResult.NEED_DATA;
 
     }
@@ -114,66 +116,37 @@ public class IQwaveDecoder implements MessageDecoder {
 
 
     //获取session的context
-    public Context getContext(IoSession session) {
-        Context ctx = (Context) session.getAttribute(CONTEXT);
+    public IQContext getContext(IoSession session) {
+        IQContext ctx = (IQContext) session.getAttribute(CONTEXT);
         if (ctx == null) {
-            ctx = new Context();
+            ctx = new IQContext();
             session.setAttribute(CONTEXT, ctx);
         }
         return ctx;
     }
 
-    /**
-     * 定义一个内部类，用来封转当前解码器中的一些公共数据，主要是用于大数据解析
-     //     */
-    private class Context {
-        public IoBuffer buffer;
-        public long length = 6027 ;
-        public long matchLength = 0;
-        public long startTime=0;
-
-        public Context() {
-            buffer = IoBuffer.allocate(1024).setAutoExpand(true);
-        }
-
-        public void setBuffer(IoBuffer buffer) {
-            this.buffer = buffer;
-        }
-
-        public void setLength(long length) {
-            this.length = length;
-        }
-
-        public void setMatchLength(long matchLength) {
-            this.matchLength = matchLength;
-        }
-
-        public IoBuffer getBuffer() {
-
-            return buffer;
-        }
-
-        public long getLength() {
-            return length;
-        }
-
-        public long getMatchLength() {
-            return matchLength;
-        }
-        public long getStartTime() {
-            return startTime;
-        }
-
-        public void setStartTime(long startTime) {
-
-            this.startTime = startTime;
-        }
-
-        public void reset() {
-            this.buffer.clear();
-            this.length = 1613;
-            this.matchLength = 0;
-            this.startTime=0;
-        }
+    private IQwave byte2Object(byte[] b){
+        IQwave wave=new IQwave();
+        //地理位置
+        byte[] data1=new byte[9];
+        System.arraycopy(b,4,data1,0,9);
+        wave.setLocation(data1);
+        //时间
+        byte[] data2=new byte[5];
+        System.arraycopy(b,13,data2,0,5);
+        wave.setTime(data2);
+        //IQ参数
+        byte[] data3=new byte[5];
+        System.arraycopy(b,18,data3,0,5);
+        wave.setIQpara(data3);
+        //数据块总个数
+        wave.setTotalBands(b[22]&0xff);
+        //数据块序号
+        wave.setNowNum(b[23]&0xff);
+        //数据块信息，包括序号
+        byte[] data4=new byte[6001];
+        System.arraycopy(b,23,data4,0,6001);
+        wave.setIQwave(data4);
+        return wave;
     }
 }

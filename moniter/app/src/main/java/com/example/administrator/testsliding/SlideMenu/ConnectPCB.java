@@ -58,12 +58,12 @@ public class ConnectPCB extends Activity {
 //        return connectIpList;
 //    }
 
-    private String getConnectIp() throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader("/proc/net/arp"));
-        String line;
-        line = br.readLine();
-        return line;
-    }
+//    private String getConnectIp() throws Exception {
+//        BufferedReader br = new BufferedReader(new FileReader("/proc/net/arp"));
+//        String line;
+//        line = br.readLine();
+//        return line;
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +112,8 @@ public class ConnectPCB extends Activity {
                     Broadcast.sendBroadCast(ConnectPCB.this,ConstantValues.ConnectPCB,"connectPCB",connect);
                     if(connectStyle==1) {
                         //获取连接到手机热点的硬件ip
-                        PCBIP = getConnectIp();
-                        Constants.PCBIP = PCBIP;
+//                        PCBIP = getConnectIp();
+//                        Constants.PCBIP = PCBIP;
                         //启动后台service
                         Intent startServiceIntent = new Intent(ConnectPCB.this, MinaClientService.class);
                         startService(startServiceIntent);

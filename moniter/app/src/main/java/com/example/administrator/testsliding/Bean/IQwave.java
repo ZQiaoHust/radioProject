@@ -9,8 +9,8 @@ public class IQwave  {
     private byte[] time;//时间p
     private int totalBands;//iq上传总段数
     private int nowNum;//序号
-    private byte[] IQpara;//IQ的参数
-    private byte[] IQwave;//IQ路2000个点
+    private byte[] IQpara;//IQ的参数和数据块总个数
+    private byte[] IQwave;//IQ路2000个点和数据块序号
 
 
     public IQwave(){}

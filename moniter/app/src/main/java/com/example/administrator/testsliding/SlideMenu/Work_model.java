@@ -166,7 +166,7 @@ public class Work_model extends FragmentActivity implements View.OnClickListener
     protected void onRestart() {
         // TODO Auto-generated method stub
         super.onRestart();
-        viewPager_work_model.setCurrentItem(0);
+        //viewPager_work_model.setCurrentItem(0);
     }
 //设置点击的页面显示
     @Override

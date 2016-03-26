@@ -30,9 +30,6 @@ import java.util.Queue;
  */
 public class Constants {
 	public static  int ID=1111;
-	public static String PCBIP=null;
-	public static int PORTValue ;
-	public static String IPValue ;
 
 	public static IoSession FPGAsession=null;
 	public static IoSession SERVERsession=null;
@@ -65,6 +62,7 @@ public class Constants {
 	public static Context ctx;//频谱数据
 	public static ContextBackground ctxBack;//背景频谱数据
 	public  static  int  sevCount;
+	public static IQContext ctxIQ;//IQ波
 
 
 	public  static  int  judgePower;//功率谱变化判断门限

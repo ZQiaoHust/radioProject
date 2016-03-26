@@ -35,7 +35,7 @@ public class FixSettingEncoder implements MessageEncoder<FixSetting> {
         data[4]=IQtoCode((int) (fixsetting.getIQwidth()*10));//带宽和数据率
         data[5]= (byte) fixsetting.getBlockNum();//数据块
         byte[] data1=computePara.Time2Bytes(fixsetting.getTimeString());//时间
-        System.arraycopy(data1, 0, data, 6, 13);
+        System.arraycopy(data1, 0, data, 6, 5);
         data[16]= (byte) 0xAA;
         return data;
 

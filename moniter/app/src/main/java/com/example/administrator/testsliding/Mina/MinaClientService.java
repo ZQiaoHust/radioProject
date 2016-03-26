@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,6 +31,8 @@ import com.example.administrator.testsliding.Bean.ReceiveWrong;
 import com.example.administrator.testsliding.Bean.StationState;
 import com.example.administrator.testsliding.Bean.SweepRange;
 import com.example.administrator.testsliding.Bean.Threshold;
+import com.example.administrator.testsliding.Bean.ToServerIQwaveFile;
+import com.example.administrator.testsliding.Bean.ToServerPowerSpectrumAndAbnormalPoint;
 import com.example.administrator.testsliding.Bean.UploadData;
 import com.example.administrator.testsliding.Database.DatabaseHelper;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
@@ -47,10 +51,14 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,7 +85,7 @@ public class MinaClientService extends Service {
     List<float[]> temp_drawWaterfall;
     List<float[]> temp_drawBackSpectrum;
 
-    List<byte[]> temp_IQwave = new ArrayList<>();
+    List<byte[]> temp_IQwave;
     int SweepParaList_length;
 
     private int total;
@@ -85,15 +93,29 @@ public class MinaClientService extends Service {
     private int h;
     private int y;
     private int z;
-    private int fileIsChanged=0;
+    private int fileIsChanged = 0;
+    private Timer timer = new Timer();
+    private TimerTask task;
 
 
     public static final String PSFILE_PATH = Environment.getExternalStorageDirectory().
             getAbsolutePath() + "/PowerSpectrumFile/";
-
+    public static final String IQFILE_PATH = Environment.getExternalStorageDirectory().
+            getAbsolutePath() + "/IQwaveFile/";
 
     private FileOutputStream fos;
     private DataOutputStream dos;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1) {
+                //定时上传IQ文件，每5秒扫描一次
+                uploadIQFile();
+            }
+        }
+    };
+
 
     private BroadcastReceiver ActivityReceiver = new BroadcastReceiver() {
         @Override
@@ -541,18 +563,17 @@ public class MinaClientService extends Service {
 
                     connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 1);
                     // connector.getSessionConfig().setReadBufferSize(1024);
-//
-//                    /**
-//                     * 我的电脑的IP
-//                     */
-//                    ConnectFuture future=connector.connect
-//                            (new InetSocketAddress("115.156.209.124",8080));
 
+
+                    ArrayList ipList = getConnectIp();
+                    String FpgaIP = (String) ipList.get(1);
+                    ConnectFuture future = connector.connect
+                            (new InetSocketAddress(FpgaIP, 8899));
                     /**
                      * Fpga的IP
                      */
-                    ConnectFuture future = connector.connect
-                            (new InetSocketAddress("192.168.43.35", 8899));
+//                    ConnectFuture future = connector.connect
+//                            (new InetSocketAddress("192.168.43.35", 8899));
 
                     /**
                      * Fpga的IP
@@ -612,11 +633,11 @@ public class MinaClientService extends Service {
                         public void run() {
 
                             total = PSAP.getTotalBand();
-                            num=PSAP.getNumN();
+                            num = PSAP.getNumN();
                             /**
                              * 扫频范围只跨越一个25MHz
                              */
-                            if (total==1) {
+                            if (total == 1) {
                                 temp_powerSpectrum = new ArrayList<>();
                                 temp_abnormalPoint = new ArrayList<>();
                                 temp_drawSpectrum = new ArrayList<float[]>();
@@ -652,7 +673,7 @@ public class MinaClientService extends Service {
                                 /**
                                  * 扫频跨越多个25MHz
                                  */
-                                if ( num==1) {
+                                if (num == 1) {
                                     //判断起始段
                                     temp_powerSpectrum = new ArrayList<>();
                                     temp_abnormalPoint = new ArrayList<>();
@@ -683,7 +704,7 @@ public class MinaClientService extends Service {
                                     Constants.spectrumCount++;
                                 } else {
 
-                                    if (num== (Constants.spectrumCount+1)) {
+                                    if (num == (Constants.spectrumCount + 1)) {
                                         //===========从第二段开始===============
                                         if (PSAP.getIsChange() == 0x0f) {
                                             fileIsChanged = 1;
@@ -724,9 +745,9 @@ public class MinaClientService extends Service {
                                     }
                                 }
 
-                                if ((num==total)&&(Constants.spectrumCount ==total)) {
+                                if ((num == total) && (Constants.spectrumCount == total)) {
                                     //结束
-                                    if((temp_powerSpectrum.size()==total)&&(temp_abnormalPoint.size()==total)) {
+                                    if ((temp_powerSpectrum.size() == total) && (temp_abnormalPoint.size() == total)) {
                                         writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
                                         Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
                                         Constants.Queue_DrawRealtimewaterfall.offer(temp_drawWaterfall);
@@ -737,7 +758,7 @@ public class MinaClientService extends Service {
                             }
                             //=============================异常频点=================================================
                             ////////////////存入显示列表
-                            if(PSAP.getAPnum()>0&&PSAP.getAPnum()<=10) {
+                            if (PSAP.getAPnum() > 0 && PSAP.getAPnum() <= 10) {
                                 int length = PSAP.getAPnum() * 3;
                                 if (length != 0) {
                                     byte[] abnormalList = new byte[length + 1];
@@ -761,7 +782,7 @@ public class MinaClientService extends Service {
             if (message instanceof BackgroundPowerSpectrum) {
                 BackgroundPowerSpectrum back = (BackgroundPowerSpectrum) message;
 
-                if (back.getTotalBand()==1) {
+                if (back.getTotalBand() == 1) {
                     temp_drawBackSpectrum = new ArrayList<>();
                     float[] pow = new float[1026];
                     pow[0] = back.getTotalBand();//总段数
@@ -770,8 +791,9 @@ public class MinaClientService extends Service {
                     System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
                     temp_drawBackSpectrum.add(pow);
                     Constants.Queue_BackgroundSpectrum.offer(temp_drawBackSpectrum);
-                }else {
-                    if(back.getNumN()==1){
+                } else {
+                    if (back.getNumN() == 1) {
+                        temp_drawBackSpectrum = new ArrayList<>();
                         float[] pow = new float[1026];
                         pow[0] = back.getTotalBand();//总段数
                         pow[1] = back.getPSbandNum();//输入段序号
@@ -779,8 +801,8 @@ public class MinaClientService extends Service {
                         System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
                         temp_drawBackSpectrum.add(pow);
                         Constants.BackgroundCount++;
-                    }else {
-                        if(back.getNumN()==(Constants.BackgroundCount+1)){
+                    } else {
+                        if (back.getNumN() == (Constants.BackgroundCount + 1)) {
                             float[] pow = new float[1026];
                             pow[0] = back.getTotalBand();//总段数
                             pow[1] = back.getPSbandNum();//输入段序号
@@ -788,13 +810,13 @@ public class MinaClientService extends Service {
                             System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
                             temp_drawBackSpectrum.add(pow);
                             Constants.BackgroundCount++;
-                        }else {
-                            if(temp_drawBackSpectrum!=null){
+                        } else {
+                            if (temp_drawBackSpectrum != null) {
                                 temp_drawBackSpectrum.clear();
                             }
                         }
                     }
-                    if((back.getNumN()==back.getTotalBand())&&(Constants.spectrumCount ==total)) {
+                    if ((back.getNumN() == back.getTotalBand()) && (Constants.spectrumCount == total)) {
                         //结束
                         Constants.Queue_BackgroundSpectrum.offer(temp_drawBackSpectrum);
 
@@ -807,9 +829,9 @@ public class MinaClientService extends Service {
 
             if (message instanceof InGain) {
                 InGain data = (InGain) message;
-                if(data.getPacketHead()==0x66){
-                   Constants.SERVERsession.write(data);
-                }else {
+                if (data.getPacketHead() == 0x66) {
+                    Constants.SERVERsession.write(data);
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(),
                             ConstantValues.InGainQuery, "data", data);
                 }
@@ -817,88 +839,88 @@ public class MinaClientService extends Service {
 
             if (message instanceof SweepRange) {
                 SweepRange data = (SweepRange) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.SweepRangeQuery, "data", data);
                 }
             }
 
             if (message instanceof OutGain) {
                 OutGain data = (OutGain) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.OutGainQuery, "data", data);
                 }
             }
 
             if (message instanceof Threshold) {
                 Threshold data = (Threshold) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.ThresholdQuery, "data", data);
                 }
             }
 
             if (message instanceof FixCentralFreq) {
                 FixCentralFreq data = (FixCentralFreq) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.FixCentralFreqQuery, "data", data);
                 }
             }
 
             if (message instanceof FixSetting) {
                 FixSetting data = (FixSetting) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.FixSettingQuery, "data", data);
                 }
             }
             if (message instanceof Press) {
                 Press data = (Press) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.PressQuery, "data", data);
                 }
             }
             if (message instanceof PressSetting) {
                 PressSetting data = (PressSetting) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.PressSettingQuery, "data", data);
                 }
             }
             if (message instanceof StationState) {
                 StationState data = (StationState) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.StationStateQuery, "data", data);
                 }
             }
 
             if (message instanceof UploadData) {
                 UploadData data = (UploadData) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.uploadQuery, "data", data);
                 }
             }
 
             if (message instanceof Connect) {
                 Connect data = (Connect) message;
-                if(data.getPacketHead()==0x66){
+                if (data.getPacketHead() == 0x66) {
                     //zhuanfa
                     Constants.SERVERsession.write(data);
-                }else {
+                } else {
                     Broadcast.sendBroadCast(getBaseContext(), ConstantValues.ConnectPCBQuery, "data", data);
                 }
             }
@@ -907,39 +929,73 @@ public class MinaClientService extends Service {
 //============================IQ波形文件生成==================================================
 
             if (message instanceof IQwave) {
-                IQwave iQwave = new IQwave();
-                iQwave = (IQwave) message;
+                IQwave iQwave = (IQwave) message;
                 if (iQwave != null) {
-                    if (iQwave.getNowNum() == 1) {
-                        Constants.IQCount++;
-                        byte[] byte1 = new byte[6020];
-                        System.arraycopy(iQwave.getLocation(), 0, byte1, 0, 10);
-                        System.arraycopy(iQwave.getIQpara(), 0, byte1, 11, 5);
-                        System.arraycopy(iQwave.getIQwave(), 0, byte1, 16, 6001);
+                    if (iQwave.getTotalBands() == 1) {
+                        //只有一个数据块
+                        temp_IQwave = new ArrayList<>();
+                        byte[] byte1 = new byte[6015];
+                        System.arraycopy(iQwave.getLocation(), 0, byte1, 0, 9);
+                        System.arraycopy(iQwave.getIQpara(), 0, byte1, 9, 5);
+                        System.arraycopy(iQwave.getIQwave(), 0, byte1, 14, 6001);
                         temp_IQwave.add(byte1);
+                        writeIQFlie(iQwave, temp_IQwave);
+                        task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                Message message = new Message();
+                                message.what = 1;
+                                handler.sendMessage(message);
+                            }
+                        };
+                        timer.schedule(task, 1000, 5000);
 
-                    } else if (Constants.IQCount == iQwave.getNowNum()) {
-                        Constants.IQCount++;
-                        byte[] byte1 = new byte[6001];
-                        System.arraycopy(iQwave.getIQwave(), 0, byte1, 0, 6001);
-                        temp_IQwave.add(byte1);
-
-                    } else if (Constants.IQCount != iQwave.getNowNum()) {
-                        int need = iQwave.getTotalBands() - Constants.IQCount;
-                        for (int i = 0; i < need; i++) {
+                    } else {
+                        if (iQwave.getNowNum() == 1) {
+                            temp_IQwave = new ArrayList<>();
+                            Constants.IQCount=0;
                             Constants.IQCount++;
-                            byte[] byte1 = new byte[6001];
-                            System.arraycopy(iQwave.getIQwave(), 0, byte1, 0, 6001);
+                            byte[] byte1 = new byte[6015];
+                            System.arraycopy(iQwave.getLocation(), 0, byte1, 0, 9);
+                            System.arraycopy(iQwave.getIQpara(), 0, byte1, 9, 5);
+                            System.arraycopy(iQwave.getIQwave(), 0, byte1, 14, 6001);
                             temp_IQwave.add(byte1);
+                        } else {
+
+                            if (iQwave.getNowNum() == (Constants.IQCount + 1)) {
+                                //从第二块开始
+                                Constants.IQCount++;
+                                byte[] byte1 = new byte[6001];
+                                System.arraycopy(iQwave.getIQwave(), 0, byte1, 0, 6001);
+                                temp_IQwave.add(byte1);
+
+                            } else {
+                                if (temp_IQwave != null) {
+                                    temp_IQwave.clear();
+                                }
+                                Constants.IQCount = 0;
+                            }
+
                         }
-                    } else if (iQwave.getNowNum() == Constants.IQCount && iQwave.getNowNum() == iQwave.getTotalBands()) {
-                        byte[] byte1 = new byte[6001];
-                        System.arraycopy(iQwave.getIQwave(), 0, byte1, 0, 6001);
-                        temp_IQwave.add(byte1);
-                        Constants.Queue_IQwave.offer(temp_IQwave);
-                        temp_IQwave.clear();
-                        Constants.IQCount = 0;
+                        if ((iQwave.getNowNum() == iQwave.getTotalBands()) && (Constants.IQCount == iQwave.getTotalBands())) {
+                            //结束
+                            if (temp_IQwave.size() == iQwave.getTotalBands()) {
+                                writeIQFlie(iQwave, temp_IQwave);
+                                task = new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        Message message = new Message();
+                                        message.what = 1;
+                                        handler.sendMessage(message);
+                                    }
+                                };
+                                timer.schedule(task, 1000, 5000);
+                            }
+                            Constants.IQCount = 0;
+                        }
+
                     }
+
                 }
             }
             //==========================数据转发=======================
@@ -964,41 +1020,26 @@ public class MinaClientService extends Service {
         @Override
         public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
             super.sessionIdle(session, status);
-             final ReceiveWrong mReceiveWrong = new ReceiveWrong();
-             final ReceiveRight mReceiveRight = new ReceiveRight();
+            final ReceiveWrong mReceiveWrong = new ReceiveWrong();
+            final ReceiveRight mReceiveRight = new ReceiveRight();
             //频谱数据超时重传
             if (Constants.NotFill) {
                 Constants.FPGAsession.write(mReceiveWrong);
                 Constants.NotFill = false;
                 Constants.ctx.reset();
                 Constants.failCount++;
-                Log.d("fail", "重传次数：" +  Constants.failCount);
+                Log.d("fail", "重传次数：" + Constants.failCount);
             }
             if (Constants.Backfail) {
-//                TimerTask task = new TimerTask() {
-//                    public void run() {
-                        //实现自己的延时执行任务
-                        Constants.FPGAsession.write(mReceiveWrong);
-//                    }
-//                };
-//                Timer timer = new Timer();
-//                timer.schedule(task, 500);
+                Constants.FPGAsession.write(mReceiveWrong);
                 Constants.Backfail = false;
-                Constants.IsJump=true;
+                Constants.IsJump = true;
                 Constants.ctxBack.reset();
             }
-           if (Constants.Isstop) {
-               //没找到解码器，数据传输截止
-//               TimerTask task = new TimerTask() {
-//                   public void run() {
-                       //实现自己的延时执行任务
-                       Constants.FPGAsession.write(mReceiveWrong);
-//                   }
-//               };
-//               Timer timer = new Timer();
-//               timer.schedule(task, 500);
-               Constants.Isstop = false;
-           }
+            if (Constants.Isstop) {
+                Constants.FPGAsession.write(mReceiveWrong);
+                Constants.Isstop = false;
+            }
         }
 
         @Override
@@ -1223,6 +1264,95 @@ public class MinaClientService extends Service {
         }
         return connectIpList;
     }
+
+    /**
+     * IQ博存文件
+     * @param iQwave
+     * @param mlist
+     */
+    private void writeIQFlie(IQwave iQwave, List<byte[]> mlist) {
+        ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
+        File PSdir = new File(IQFILE_PATH);
+        if (!PSdir.exists()) {
+            PSdir.mkdir();
+        }
+        //取出时间
+//        byte[] byte6 = iQwave.getTime();
+//        int year = getYear(byte6);
+//        int month = getMonth(byte6);
+//        int day = getDay(byte6);
+//        int hour = getHour(byte6);
+//        int min = getMin(byte6);
+//        int sec = getSecond(byte6);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        String time = sdf.format(new Date());
+        String fname = null;
+//        String name = null;
+        int count = 0;
+        //创建文件
+//        name = String.format("%d-%d-%d-%d-%d-%d-%d.%s", year, month, day, hour, min, sec,
+//                 Constants.ID, "Niq");
+        fname = time + "-" + String.format("%d.%s", Constants.ID, "iq");
+
+        if (fname != null) {
+            File file = new File(PSdir, fname);
+            //获取文件写入流
+            try {
+                dos = new DataOutputStream(new FileOutputStream(file));
+                dos.write((byte) 0x00);
+                for (int j = 0; j < mlist.size(); j++) {
+                    dos.write(mlist.get(j));
+                }
+                dos.write(0x00);
+                dos.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private void uploadIQFile() {
+        File file = new File(IQFILE_PATH);
+        if (!file.exists()) {
+            return;
+        }
+        String[] tempList = file.list();
+        for (int i = 0; i < tempList.length; i++) {
+            String name=tempList[i];
+            File f = new File(IQFILE_PATH, name);
+        /* 取得扩展名 */
+        String end = name
+                .substring(name.lastIndexOf(".") + 1, name.length())
+                .toLowerCase();
+            //String befoe=name.substring(0,name.lastIndexOf(".") );
+            if(end.equals("iq")){
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(f);
+                    byte[] content = new byte[fis.available()];
+                    byte[] buffer = new byte[content.length];
+                    while ((fis.read(buffer)) != -1) {
+                        content = buffer;
+                    }
+                    //将文件里的内容转化为对象
+                    ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
+                    ToWave.setContent(content);
+                    ToWave.setContentLength(content.length);
+                   // String upname= befoe  + String.format("iq");
+                    ToWave.setFileName(name);
+                    ToWave.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
+                    Constants.FILEsession.write(ToWave);
+                    f.delete();//上传后删除
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+    }
+    }
+
 }
 
 

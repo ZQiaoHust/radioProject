@@ -4,96 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#a3cf62"
-        android:text="压制的频点："
-        android:textColor="#000000"
-        android:textSize="20sp" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup_choose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <!--<RadioButton-->
-            <!--android:id="@+id/rbtn_default"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="40dp"-->
-            <!--android:text="默认频点"-->
-            <!--android:textSize="18sp" />-->
-
-        <!--<RadioButton-->
-            <!--android:id="@+id/rbtn_defined"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="40dp"-->
-            <!--android:checked="true"-->
-            <!--android:text="自定义"-->
-            <!--android:textSize="18sp"-->
-
-            <!--/>-->
-
-
-    </RadioGroup>
-
-
-    <LinearLayout
-        android:id="@+id/liLay_defined"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-
-        <EditText
-            android:id="@+id/et_firstPressPoint"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:maxLines="1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MHz" />
-
-
-        <EditText
-            android:id="@+id/et_secondPressPoint"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:maxLines="1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MHz" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/bt_setPressFreq"
-            android:layout_width="150dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            android:text="设置" />
-
-        <Button
-            android:id="@+id/bt_getPressFreq"
-            android:layout_width="150dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:text="查询" />
-    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -386,30 +296,126 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="horizontal">
-
         <Button
             android:id="@+id/bt_startPress"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:text="设置" />
+        <!--<Button-->
+            <!--android:id="@+id/bt_startPress"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="开始压制" />-->
+
+
+
+        <Button
+            android:id="@+id/bt_getPressSetting"
+            android:text="查询"
+            android:layout_width="150dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#a3cf62"
+        android:text="压制的频点："
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup_choose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <!--<RadioButton-->
+        <!--android:id="@+id/rbtn_default"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginLeft="40dp"-->
+        <!--android:text="默认频点"-->
+        <!--android:textSize="18sp" />-->
+
+        <!--<RadioButton-->
+        <!--android:id="@+id/rbtn_defined"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginLeft="40dp"-->
+        <!--android:checked="true"-->
+        <!--android:text="自定义"-->
+        <!--android:textSize="18sp"-->
+
+        <!--/>-->
+
+
+    </RadioGroup>
+
+
+    <LinearLayout
+        android:id="@+id/liLay_defined"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <EditText
+            android:id="@+id/et_firstPressPoint"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MHz" />
+
+
+        <EditText
+            android:id="@+id/et_secondPressPoint"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MHz" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/bt_setPressFreq"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:text="开始压制" />
-
         <Button
             android:id="@+id/bt_stopPress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="停止压制" />
-
         <Button
-            android:id="@+id/bt_getPressSetting"
-            android:text="查询"
+            android:id="@+id/bt_getPressFreq"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:text="查询" />
     </LinearLayout>
-
 
 </LinearLayout>
 

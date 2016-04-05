@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.example.administrator.testsliding.view.MyTopBar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -132,24 +134,17 @@ public class Chart_Abnormal extends Activity {
     }
 
     private void updateChart(){
-        if(!Constants.Queue_AbnormalFreq_List.isEmpty()){
-            byte[] data= Constants.Queue_AbnormalFreq_List.poll();
-            int start=(data[0]-1)*25+70;
-            int legth=data.length;
-            float power=0;
-            for(int i=0;i<(legth-1)/3;i++){
+        if(!Constants.Queue_Abnormal.isEmpty()){
+            Map<Float,Float> mapList= Constants.Queue_Abnormal.poll();
+            Iterator<Float> iter = mapList.keySet().iterator();
+            while (iter.hasNext()) {
                 seqNum++;
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("seq_num", seqNum);
-                float freq= (float) (((((data[i*3+1]>>4)&0x0f)<<8)+data[i*3+2]&0xff)*15/1024.0+start);
-                map.put("freq", freq);
-                float f1= (((data[i*3+1]&0x0f)<<8)+(data[i*3+3]&0xff));
-                if(((data[i*3+1]>>3)&0x01)==0) {
-                     power = (float) (f1 / 16.0);
-                }else {
-                    power= (float) ((f1-Math.pow(2,12))/16.0);
-                }
-                map.put("PowerSpectrum", power);
+                float key = iter.next();
+                map.put("freq", key);
+                float value = mapList.get(key);
+                map.put("PowerSpectrum", value);
                 listItems.add(map);
             }
             simpleAdapter.notifyDataSetChanged();

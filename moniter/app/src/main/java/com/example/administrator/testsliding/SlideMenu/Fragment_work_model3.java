@@ -26,6 +26,7 @@ import com.example.administrator.testsliding.Bean.Press;
 import com.example.administrator.testsliding.Bean.PressSetting;
 import com.example.administrator.testsliding.Bean.Query;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
+import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.Mina.Broadcast;
 import com.example.administrator.testsliding.R;
 
@@ -83,8 +84,8 @@ public class Fragment_work_model3  extends Fragment implements
 
     //全局变量
     private int pressMode;
-    private int style;
-    private int band;
+    private int style=1;//与界面一致
+    private int band=1;
     private int t1;
     private int t2;
     private int t3;
@@ -105,14 +106,14 @@ public class Fragment_work_model3  extends Fragment implements
                 double freq1=data.getFix1();
                 double freq2=data.getFix2();
                 if(pressNum==1){
-                    Toast toast=Toast.makeText(getActivity(), "压制发射频率："+String.valueOf(freq1)
+                    Toast toast=Toast.makeText(getActivity(), "压制发射频率："+String.valueOf(freq1)+"MHz"
                             , Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.TOP , 0, 400);
                     toast.show();
                 }
                 if(pressNum==2){
                     Toast toast=Toast.makeText(getActivity(), "压制发射频率："+String.valueOf(freq1)
-                            +" "+String.valueOf(freq2), Toast.LENGTH_SHORT);
+                            +"MHz 和 "+String.valueOf(freq2)+"MHz", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.TOP , 0, 400);
                     toast.show();
 
@@ -385,6 +386,7 @@ public class Fragment_work_model3  extends Fragment implements
                     press.setNumber(FreqNumber);
                     press.setFix1(v1[0]);
                     press.setFix2(v1[1]);
+                    Constants.press=press;
                     Broadcast.sendBroadCast(getActivity(),
                             ConstantValues.PressSet, "PressSet", press);
                 }else {
@@ -424,8 +426,9 @@ public class Fragment_work_model3  extends Fragment implements
                 try{
                     PressSetting pressSetting=new PressSetting();
                     if(isAuto&&isSingle){
+                        //自动单频点
+                        Constants.pressModel=1;
                         pressMode=0x01;
-
                         pressSetting.setPressMode(pressMode);
                         t1=Integer.parseInt(et_T1.getText().toString());
                         t2=Integer.parseInt(et_T2.getText().toString());
@@ -435,12 +438,11 @@ public class Fragment_work_model3  extends Fragment implements
                         pressSetting.setT2(t2);
                         pressSetting.setT3(t3);
                         pressSetting.setT4(t4);
-
                         Broadcast.sendBroadCast(getActivity(),
                                 ConstantValues.PressSettingSet,"PressSettingSet",pressSetting);
                     }else if(isSingle&&!isAuto){
                         pressMode=0x02;
-
+                        Constants.pressModel=0;
                         pressSetting.setPressMode(pressMode);
                         t1=Integer.parseInt(et_T1.getText().toString());
                         t2=Integer.parseInt(et_T2.getText().toString());
@@ -450,13 +452,12 @@ public class Fragment_work_model3  extends Fragment implements
                         pressSetting.setT2(t2);
                         pressSetting.setT3(t3);
                         pressSetting.setT4(t4);
-
                         Broadcast.sendBroadCast(getActivity(),
                                 ConstantValues.PressSettingSet,"PressSettingSet",pressSetting);
-
                     }else if(!isSingle&&isAuto){
+                        //双频点自动压制
+                        Constants.pressModel=3;
                         pressMode=0x03;
-
                         pressSetting.setPressMode(pressMode);
                         t1=Integer.parseInt(et_doubleT1.getText().toString());
                         t2=Integer.parseInt(et_doubleT2.getText().toString());
@@ -468,12 +469,11 @@ public class Fragment_work_model3  extends Fragment implements
                         pressSetting.setT2(t2);
                         pressSetting.setT3(t3);
                         pressSetting.setT4(t4);
-
                         Broadcast.sendBroadCast(getActivity(),
                                 ConstantValues.PressSettingSet, "PressSettingSet", pressSetting);
                     }else if(!isSingle&&!isAuto){
                         pressMode=0x04;
-
+                        Constants.pressModel=0;
                         pressSetting.setPressMode(pressMode);
                         t1=Integer.parseInt(et_doubleT1.getText().toString());
                         t2=Integer.parseInt(et_doubleT2.getText().toString());
@@ -485,7 +485,6 @@ public class Fragment_work_model3  extends Fragment implements
                         pressSetting.setT2(t2);
                         pressSetting.setT3(t3);
                         pressSetting.setT4(t4);
-
                         Broadcast.sendBroadCast(getActivity(),
                                 ConstantValues.PressSettingSet, "PressSettingSet", pressSetting);
                     }

@@ -29,7 +29,7 @@ public class SweepRangeEncoder implements MessageEncoder<SweepRange> {
         buffer.put(bytes);
         buffer.flip();
         out.write(buffer);
-        Log.d("trans","自己;"+ Arrays.toString(bytes));
+        Log.d("Encode","扫频："+ Arrays.toString(bytes));
 
     }
     private byte[] GetBytes(SweepRange sweep){

@@ -2,6 +2,7 @@ package com.example.administrator.testsliding.mina_transmit.server2FPGADecoder;
 
 import android.util.Log;
 
+import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_FixSetting;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -43,6 +44,7 @@ public class Simple_FixSettingDecoder implements MessageDecoder {
                in.get(bytes);
                Simple_FixSetting fixSetting=new Simple_FixSetting();
                fixSetting.setContent(bytes);
+               Constants.sequenceID=0;
                out.write(fixSetting);
                Log.d("xyz", Arrays.toString(bytes));
                return MessageDecoderResult.OK;

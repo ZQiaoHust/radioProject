@@ -378,7 +378,7 @@ public class ToServerMinaService extends Service {
                     connector.setHandler(dataHandler);
                     // 这里是异步操作 连接后立即返回
 			ConnectFuture future = connector.connect(new InetSocketAddress(
-						"27.17.8.142",9123));
+						"27.17.8.142",9000));
 // ConnectFuture future = connector.connect(new InetSocketAddress(
 //                            "115.156.208.51",9123));
 //                    ConnectFuture future = connector.connect(new InetSocketAddress(

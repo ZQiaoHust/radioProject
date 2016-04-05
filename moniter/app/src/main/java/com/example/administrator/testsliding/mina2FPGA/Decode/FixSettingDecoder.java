@@ -48,12 +48,12 @@ public class FixSettingDecoder implements MessageDecoder {
                 fixSetting.setPacketHead(accept[0]);
                 fixSetting.setIQwidth(getIQwidth(accept));//带宽和数据率
                 fixSetting.setBlockNum(accept[5]);
-                fixSetting.setYear(getYear(accept));
-                fixSetting.setDay(getDay(accept));
-                fixSetting.setMonth(getMonth(accept));
-                fixSetting.setHour(getHour(accept));
-                fixSetting.setMinute(getMin(accept));
-                fixSetting.setSecond(getSecond(accept));
+                fixSetting.setYear(((accept[6]&0xff) << 4) + ((accept[7] >> 4)&0x0f));
+                fixSetting.setMonth(accept[7]&0x0f);
+                fixSetting.setDay((accept[8]>>3)&0x1f);
+                fixSetting.setHour(((accept[8] &0x07)<<2) + (accept[9]&0x03));
+                fixSetting.setMinute((accept[9]>>2)&0x3f);
+                fixSetting.setSecond(accept[10]&0xff);
                 fixSetting.setContent(accept);
 
                 out.write(fixSetting);
@@ -99,39 +99,4 @@ public class FixSettingDecoder implements MessageDecoder {
 
     }
 
-    private int getYear(byte[] bytes) {
-        int year;
-        year = (bytes[6] << 4) + (bytes[7] >> 4);
-        return year;
-    }
-
-    private int getMonth(byte[] bytes) {
-        int month ;
-        month = (bytes[7]&0x0f);
-        return month;
-    }
-
-    private int getDay(byte[] bytes) {
-        int day ;
-        day = (bytes[8]&0xf8);
-        return day;
-    }
-
-    private int getHour(byte[] bytes) {
-        int hour ;
-        hour = ((bytes[8] &0x07)<<3) + (bytes[9] &0x03);
-        return hour;
-    }
-
-    private int getMin(byte[] bytes) {
-        int min ;
-        min = (bytes[9] & 0xfc);
-        return min;
-    }
-
-    private int getSecond(byte[] bytes) {
-        int second ;
-        second = (bytes[10])&0xff;
-        return second;
-    }
 }

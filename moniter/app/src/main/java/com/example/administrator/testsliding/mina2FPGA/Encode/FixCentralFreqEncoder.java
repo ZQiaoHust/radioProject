@@ -24,6 +24,7 @@ public class FixCentralFreqEncoder implements MessageEncoder<FixCentralFreq> {
             buffer.put(bytes);
             buffer.flip();
             out.write(buffer);
+            Constants.sequenceID=0;
         }
 
     }

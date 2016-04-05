@@ -1,5 +1,7 @@
 package com.example.administrator.testsliding.mina2FPGA.Encode;
 
+import android.util.Log;
+
 import com.example.administrator.testsliding.Bean.FixCentralFreq;
 import com.example.administrator.testsliding.Bean.Press;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
@@ -10,6 +12,8 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.apache.mina.filter.codec.demux.MessageEncoder;
+
+import java.util.Arrays;
 
 /**
  * Created by jinaghao on 15/11/25.
@@ -24,6 +28,7 @@ public class PressEncoder implements MessageEncoder<Press> {
         buffer.put(bytes);
         buffer.flip();
         out.write(buffer);
+        Log.d("Encode", "压制频点"+Arrays.toString(bytes));
     }
 
     private byte[] GetBytes(Press press){

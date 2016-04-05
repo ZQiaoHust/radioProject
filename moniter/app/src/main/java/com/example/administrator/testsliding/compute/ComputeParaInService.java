@@ -13,6 +13,8 @@ import com.example.administrator.testsliding.bean2server.List_TerminalOnline;
 import com.example.administrator.testsliding.bean2server.ModifyIngainView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**在service中运用到的解码成列表方式
  * Created by Administrator on 2015/11/25.
@@ -419,4 +421,6 @@ public class ComputeParaInService {
         return str;
 
     }
+
+
 }

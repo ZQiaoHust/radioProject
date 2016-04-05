@@ -351,7 +351,7 @@ public class Share_fragment extends Fragment {
                     public void run() {
                         Message message = new Message();
                         message.what = 1;
-                        handler.sendMessage(message);
+                        handlerIQ.sendMessage(message);
                     }
                 };
                 timer.schedule(task, 1000, 5000);
@@ -434,8 +434,8 @@ public class Share_fragment extends Fragment {
             String end = name
                     .substring(name.lastIndexOf(".") + 1, name.length())
                     .toLowerCase();
-            //String befoe=name.substring(0,name.lastIndexOf(".") );
-            if(end.equals("iq")){
+            String befoe=name.substring(0,name.lastIndexOf(".") );
+            if(end.equals("uniq")){
                 FileInputStream fis = null;
                 try {
                     fis = new FileInputStream(f);
@@ -448,11 +448,20 @@ public class Share_fragment extends Fragment {
                     ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
                     ToWave.setContent(content);
                     ToWave.setContentLength(content.length);
-                    // String upname= befoe  + String.format("iq");
-                    ToWave.setFileName(name);
-                    ToWave.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
-                    Constants.FILEsession.write(ToWave);
-                    f.delete();//上传后删除
+                     String upname= befoe  + ".iq";
+                    ToWave.setFileName(upname);
+                    ToWave.setFileNameLength((short) upname.getBytes(Charset.forName("UTF-8")).length);
+                    try {
+                        Constants.FILEsession.write(ToWave);
+                        if(tempList.length>10) {
+                            f.delete();//上传后删除
+                        }else{
+                            File f2=new File(IQFILE_PATH, upname);
+                            f.renameTo(f2);
+                        }
+                    }catch(Exception e){
+
+                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {

@@ -13,6 +13,9 @@ package com.example.administrator.testsliding.GlobalConstants;
 
 
 
+import com.example.administrator.testsliding.Bean.Press;
+import com.example.administrator.testsliding.Bean.PressSetting;
+
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
@@ -41,6 +44,8 @@ public class Constants {
 	public static Queue<List<float[]>> Queue_BackgroundSpectrum=new LinkedList<>();//背景功率谱
 	public static Queue<byte[]> Queue_AbnormalFreq_List=new LinkedList<>();//异常频点数据供列表显示
 	public static Queue<List<byte[]>> Queue_IQwave=new LinkedList<>();//IQ波形文件
+
+	public static Queue<Map<Float,Float>> Queue_Abnormal=new LinkedList<>();//IQ波形文件
 
 
 
@@ -72,5 +77,8 @@ public class Constants {
 	public  static  int serverSweepCount=0;//中心站设置扫频范围，多频段段数
 
 	public static int  failCount;//实时频谱重传次数
+	public static int  pressModel;//自动压制模式下的压制方式
+	public static Press press;//自动压制模式模式保存
 
+	public static int sequenceID;//文件服务器发过来的任务序列号
 }

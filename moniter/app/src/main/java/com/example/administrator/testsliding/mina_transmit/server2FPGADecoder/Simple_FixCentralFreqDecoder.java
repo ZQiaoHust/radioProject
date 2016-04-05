@@ -2,6 +2,7 @@ package com.example.administrator.testsliding.mina_transmit.server2FPGADecoder;
 
 import android.util.Log;
 
+import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_FixCentralFreq;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -43,6 +44,7 @@ public class Simple_FixCentralFreqDecoder implements MessageDecoder {
                in.get(bytes);
                Simple_FixCentralFreq fixCentral=new Simple_FixCentralFreq();
                fixCentral.setContent(bytes);
+               Constants.sequenceID=0;
                out.write(fixCentral);
                Log.d("xyz", Arrays.toString(bytes));
                return MessageDecoderResult.OK;

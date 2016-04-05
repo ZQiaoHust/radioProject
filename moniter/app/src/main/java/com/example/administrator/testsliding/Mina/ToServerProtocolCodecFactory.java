@@ -82,6 +82,8 @@ import com.example.administrator.testsliding.mina_transmit.FPGA2serverEncoder.Re
 import com.example.administrator.testsliding.mina_transmit.FPGA2serverEncoder.Reply_ThresholdEncoder;
 import com.example.administrator.testsliding.mina_transmit.FPGA2serverEncoder.Reply_UploadDataEndEncoder;
 import com.example.administrator.testsliding.mina_transmit.FPGA2serverEncoder.Reply_UploadDataStartEncoder;
+import com.example.administrator.testsliding.mina_transmit.server2FPGADecoder.FileSettingFixCentralDecoder;
+import com.example.administrator.testsliding.mina_transmit.server2FPGADecoder.FileSettingFixDecoder;
 import com.example.administrator.testsliding.mina_transmit.server2FPGADecoder.Query_ConnectDecoder;
 import com.example.administrator.testsliding.mina_transmit.server2FPGADecoder.Query_FixCentralFreqDecoder;
 import com.example.administrator.testsliding.mina_transmit.server2FPGADecoder.Query_FixSettingDecoder;
@@ -114,6 +116,47 @@ import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 public class ToServerProtocolCodecFactory extends DemuxingProtocolCodecFactory {
 
     public ToServerProtocolCodecFactory(){
+        //==============================数据转发========================================
+        //设置
+        super.addMessageDecoder(Simple_ConnectDecoder.class);
+        super.addMessageDecoder(Simple_FixCentralFreqDecoder.class);
+        super.addMessageDecoder(Simple_FixSettingDecoder.class);
+        super.addMessageDecoder(Simple_InGainDecoder.class);
+        super.addMessageDecoder(Simple_OutGainDecoder.class);
+        super.addMessageDecoder(Simple_PressDecoder.class);
+        super.addMessageDecoder(Simple_PressSettingDecoder.class);
+        super.addMessageDecoder(Simple_SweepRangeDecoder.class);
+        super.addMessageDecoder(Simple_ThresholdDecoder.class);
+        super.addMessageDecoder(Simple_UploadDataEndDecoder.class);
+        super.addMessageDecoder(Simple_UploadDataStartDecoder.class);
+        super.addMessageDecoder(FileSettingFixCentralDecoder.class);
+        super.addMessageDecoder(FileSettingFixDecoder.class);
+        //查询
+        super.addMessageDecoder(Query_ConnectDecoder.class);
+        super.addMessageDecoder(Query_FixCentralFreqDecoder.class);
+        super.addMessageDecoder(Query_FixSettingDecoder.class);
+        super.addMessageDecoder(Query_InGainDecoder.class);
+        super.addMessageDecoder(Query_OutGainDecoder.class);
+        super.addMessageDecoder(Query_IsTerminalOnlineDecoder.class);
+        super.addMessageDecoder(Query_PressDecoder.class);
+        super.addMessageDecoder(Query_PressSettingDecoder.class);
+        super.addMessageDecoder(Query_SweepRangeDecoder.class);
+        super.addMessageDecoder(Query_ThresholdDecoder.class);
+        super.addMessageDecoder(Query_UploadDataStartDecoder.class);
+        super.addMessageDecoder(Query_UploadDataEndDecoder.class);
+        //响应
+        super.addMessageEncoder(Connect.class, Reply_ConnectEncoder.class);
+        super.addMessageEncoder(FixCentralFreq.class, Reply_FixCentralFreqEncoder.class);
+        super.addMessageEncoder(FixSetting.class, Reply_FixSettingEncoder.class);
+        super.addMessageEncoder(InGain.class, Reply_InGainEncoder.class);
+        super.addMessageEncoder(StationState.class, Reply_IsTerminalOnlineEncoder.class);
+        super.addMessageEncoder(OutGain.class, Reply_OutGainEncoder.class);
+        super.addMessageEncoder(Press.class, Reply_PressEncoder.class);
+        super.addMessageEncoder(PressSetting.class, Reply_PressSettingEncoder.class);
+        super.addMessageEncoder(SweepRange.class, Reply_SweepRangeEncoder.class);
+        super.addMessageEncoder(Threshold.class, Reply_ThresholdEncoder.class);
+        super.addMessageEncoder(UploadData.class, Reply_UploadDataStartEncoder.class);
+//        super.addMessageEncoder(UploadDataEnd.class, Reply_UploadDataEndEncoder.class);
         //入网申请
         super.addMessageEncoder(RequstNetwork.class,RequstNetworkEncoder.class);
         super.addMessageDecoder(RequstNetworkDecoder.class);
@@ -154,46 +197,6 @@ public class ToServerProtocolCodecFactory extends DemuxingProtocolCodecFactory {
         super.addMessageDecoder(ModifyInGainDecoder.class);
         super.addMessageEncoder(ModifyAntenna.class, ModifyAntennaEncoder.class);
         super.addMessageDecoder(ModifyAntennaDecoder.class);
-
-        //==============================数据转发========================================
-        //设置
-        super.addMessageDecoder(Simple_ConnectDecoder.class);
-        super.addMessageDecoder(Simple_FixCentralFreqDecoder.class);
-        super.addMessageDecoder(Simple_FixSettingDecoder.class);
-        super.addMessageDecoder(Simple_InGainDecoder.class);
-        super.addMessageDecoder(Simple_OutGainDecoder.class);
-        super.addMessageDecoder(Simple_PressDecoder.class);
-        super.addMessageDecoder(Simple_PressSettingDecoder.class);
-        super.addMessageDecoder(Simple_SweepRangeDecoder.class);
-        super.addMessageDecoder(Simple_ThresholdDecoder.class);
-        super.addMessageDecoder(Simple_UploadDataEndDecoder.class);
-        super.addMessageDecoder(Simple_UploadDataStartDecoder.class);
-        //查询
-        super.addMessageDecoder(Query_ConnectDecoder.class);
-        super.addMessageDecoder(Query_FixCentralFreqDecoder.class);
-        super.addMessageDecoder(Query_FixSettingDecoder.class);
-        super.addMessageDecoder(Query_InGainDecoder.class);
-        super.addMessageDecoder(Query_OutGainDecoder.class);
-        super.addMessageDecoder(Query_IsTerminalOnlineDecoder.class);
-        super.addMessageDecoder(Query_PressDecoder.class);
-        super.addMessageDecoder(Query_PressSettingDecoder.class);
-        super.addMessageDecoder(Query_SweepRangeDecoder.class);
-        super.addMessageDecoder(Query_ThresholdDecoder.class);
-        super.addMessageDecoder(Query_UploadDataStartDecoder.class);
-        super.addMessageDecoder(Query_UploadDataEndDecoder.class);
-        //响应
-        super.addMessageEncoder(Connect.class, Reply_ConnectEncoder.class);
-        super.addMessageEncoder(FixCentralFreq.class, Reply_FixCentralFreqEncoder.class);
-        super.addMessageEncoder(FixSetting.class, Reply_FixSettingEncoder.class);
-        super.addMessageEncoder(InGain.class, Reply_InGainEncoder.class);
-        super.addMessageEncoder(StationState.class, Reply_IsTerminalOnlineEncoder.class);
-        super.addMessageEncoder(OutGain.class, Reply_OutGainEncoder.class);
-        super.addMessageEncoder(Press.class, Reply_PressEncoder.class);
-        super.addMessageEncoder(PressSetting.class, Reply_PressSettingEncoder.class);
-        super.addMessageEncoder(SweepRange.class, Reply_SweepRangeEncoder.class);
-        super.addMessageEncoder(Threshold.class, Reply_ThresholdEncoder.class);
-        super.addMessageEncoder(UploadData.class, Reply_UploadDataStartEncoder.class);
-//        super.addMessageEncoder(UploadDataEnd.class, Reply_UploadDataEndEncoder.class);
 
 
         //文件上传

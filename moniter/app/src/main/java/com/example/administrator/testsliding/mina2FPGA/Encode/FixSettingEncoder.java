@@ -24,6 +24,7 @@ public class FixSettingEncoder implements MessageEncoder<FixSetting> {
             buffer.put(bytes);
             buffer.flip();
             out.write(buffer);
+            Constants.sequenceID=0;
         }
     }
     private  byte[] GetBytes(FixSetting fixsetting){

@@ -173,7 +173,6 @@ public class Share_fragment extends Fragment {
                                         } finally {
                                             try {
                                                 if (fis != null) {
-
                                                     fis.close();
                                                 }
                                             } catch (IOException e) {

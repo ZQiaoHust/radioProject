@@ -31,7 +31,6 @@ public class ReceiveWrongEncoder implements MessageEncoder<ReceiveWrong> {
             buffer.put(bytes);
             buffer.flip();
             out.write(buffer);
-            Log.d("abcd", "发送重传数据帧: "+ Arrays.toString(bytes));
         }
 
     }

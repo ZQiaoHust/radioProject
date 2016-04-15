@@ -9,19 +9,16 @@ import android.os.Parcelable;
 public class RequstNetwork implements Parcelable{
     private  int equipmentID;
     private  int FPGAID;//硬件型号
-    private byte style;
-    private byte[] longtitude;
-    private byte[] latitude;
-    private byte[] height;
+    private byte[] styleAndLocation;//终端类型和位置信息
+
 
     public RequstNetwork(){}
+
+
     protected RequstNetwork(Parcel in) {
         equipmentID = in.readInt();
         FPGAID = in.readInt();
-        style = in.readByte();
-        longtitude = in.createByteArray();
-        latitude = in.createByteArray();
-        height = in.createByteArray();
+        styleAndLocation = in.createByteArray();
     }
 
     public static final Creator<RequstNetwork> CREATOR = new Creator<RequstNetwork>() {
@@ -36,27 +33,6 @@ public class RequstNetwork implements Parcelable{
         }
     };
 
-    public void setStyle(byte style) {
-        this.style = style;
-    }
-
-    public void setLongtitude(byte[] longtitude) {
-        this.longtitude = longtitude;
-    }
-
-    public void setLatitude(byte[] latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setHeight(byte[] height) {
-        this.height = height;
-    }
-
-    public byte[] getLatitude() {
-
-        return latitude;
-    }
-
     public void setFPGAID(int FPGAID) {
         this.FPGAID = FPGAID;
     }
@@ -65,25 +41,20 @@ public class RequstNetwork implements Parcelable{
         return FPGAID;
     }
 
-    public byte[] getLongtitude() {
-        return longtitude;
-    }
-
-    public byte getStyle() {
-        return style;
-    }
-
-    public byte[] getHeight() {
-        return height;
-    }
-
-
     public void setEquipmentID(int equipmentID) {
         this.equipmentID = equipmentID;
     }
 
     public int getEquipmentID() {
         return equipmentID;
+    }
+
+    public byte[] getStyleAndLocation() {
+        return styleAndLocation;
+    }
+
+    public void setStyleAndLocation(byte[] styleAndLocation) {
+        this.styleAndLocation = styleAndLocation;
     }
 
     @Override
@@ -95,9 +66,6 @@ public class RequstNetwork implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(equipmentID);
         dest.writeInt(FPGAID);
-        dest.writeByte(style);
-        dest.writeByteArray(longtitude);
-        dest.writeByteArray(latitude);
-        dest.writeByteArray(height);
+        dest.writeByteArray(styleAndLocation);
     }
 }

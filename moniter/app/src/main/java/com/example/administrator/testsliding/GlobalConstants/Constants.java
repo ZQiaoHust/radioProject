@@ -32,8 +32,7 @@ import java.util.Queue;
  * 
  */
 public class Constants {
-	public static  int ID=1111;
-
+	public static  int ID=12;
 	public static IoSession FPGAsession=null;
 	public static IoSession SERVERsession=null;
 	public static IoSession FILEsession=null;
@@ -81,4 +80,6 @@ public class Constants {
 	public static Press press;//自动压制模式模式保存
 
 	public static int sequenceID;//文件服务器发过来的任务序列号
+
+	public static byte[] requestNetcontent;//申请入网
 }

@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.testsliding.Bean.Query;
 import com.example.administrator.testsliding.Bean.StationState;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
@@ -38,6 +39,7 @@ public class FinalStationState extends Activity {
     private LinearLayout mLinearLayout;
 
     private QueryFPGANetwork fpgaInfo=null;
+    private  StationState data=null;
 
     private Spinner spinner;
     private List<String> list;
@@ -49,15 +51,14 @@ public class FinalStationState extends Activity {
             String action = intent.getAction();
             if (action.equals(ConstantValues.StationStateQuery)) {
 
-                StationState data = intent.getParcelableExtra("data");
+                data = intent.getParcelableExtra("data");
                 if (data == null) {
                     return;
                 }
-
                 String s1net;
-
                 String s2model=null;
-                Constants.ID=data.getEquipmentID();//将ID号存下
+              //  Constants.ID=data.getEquipmentID();//将ID号存下
+                int id=data.getEquipmentID();
                 int onNet=data.getOnNet();
                 int model=data.getModel();
                 int eastORwest=data.getEastORwest();
@@ -87,13 +88,32 @@ public class FinalStationState extends Activity {
                         s2model="普通查询终端";
                         break;
                 }
-
-                Toast toast=Toast.makeText(FinalStationState.this, "该终端是："
-                        +s1net+"的"+s2model, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.TOP , 0, 400);
-                toast.show();
-
-
+                tv_ID.setText("设备ID号："+ id);
+                tv_style.setText("终端类型："+s2model);
+                String s1=null;
+                if(eastORwest==0){
+                    s1="东经"+longtitude+"度";
+                }else{
+                    s1="西经"+longtitude+"度";
+                }
+                String s2=null;
+                if(northORsouth==0){
+                    s2="北纬"+latitude+"度";
+                }else{
+                    s2="南纬"+latitude+"度";
+                }
+                String s3=null;
+                if(isAboveHrizon==0){
+                    s3="海拔"+atitude+"米";
+                }else{
+                    s3="海拔"+"-"+atitude+"米";
+                }
+                tv_location.setText("位置： "+s1+",  "+s2+",  "+s3);
+                mLinearLayout.setVisibility(View.VISIBLE);
+//                Toast toast=Toast.makeText(FinalStationState.this, "该终端是："
+//                        +s1net+"的"+s2model, Toast.LENGTH_SHORT);
+//                toast.setGravity(Gravity.TOP , 0, 400);
+//                toast.show();
             }
             else  if(action.equals(ConstantValues.RREQUSTNETWORK)){
                 RequstNetworkReply reply=intent.getParcelableExtra("requstNet");
@@ -132,7 +152,6 @@ public class FinalStationState extends Activity {
         spinner= (Spinner) findViewById(R.id.spinner_FPGA);
     }
     private  void initspinnerSetting(){
-
         //1,设置数据源
         list = new ArrayList<String>();
         list.add("");
@@ -141,7 +160,6 @@ public class FinalStationState extends Activity {
 
         //2.新建数组适配器
         adapter=new ArrayAdapter<String>(FinalStationState.this,android.R.layout.simple_spinner_item,list);
-
         //adapter设置一个下拉列表样式
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //spin加载适配器
@@ -169,8 +187,12 @@ public class FinalStationState extends Activity {
         btn_getpcb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLinearLayout.setVisibility(View.VISIBLE);
-                fpgaInfo=new QueryFPGANetwork();
+                Query query=new Query();
+                query.setFuncID((byte)0x1C);//0x1C
+                Broadcast.sendBroadCast(FinalStationState.this,
+                        ConstantValues.IsOnlieQuery, "IsOnlieQuery", query);
+
+               // fpgaInfo=new QueryFPGANetwork();
 
             }
         });
@@ -179,30 +201,31 @@ public class FinalStationState extends Activity {
             @Override
             public void onClick(View v) {
                 RequstNetwork net=new RequstNetwork();
-                if(fpgaInfo!=null){
-//                    net.setEquipmentID(fpgaInfo.getEquipmentID());
-//                    net.setStyle(fpgaInfo.getStyle());
-//                    net.setLongtitude(fpgaInfo.getLongtitude());
-//                    net.setLatitude(fpgaInfo.getLatitude());
-//                    net.setHeight(fpgaInfo.getHeight());
+                if(data!=null){
+                   // net.setEquipmentID(data.getEquipmentID());
+                    byte[] b=data.getContent();
+                    //终端类型和ID号
+                    byte[] b1=new byte[10];
+                    System.arraycopy(b,5,b1,0,10);
+                    net.setStyleAndLocation(b1);
                     net.setEquipmentID(Constants.ID);
-                    net.setStyle((byte) 1);
-//经度
-                    byte[] bytes=new byte[4];
-                    bytes[0]=0;
-                    bytes[1]=114&0xff;
-                    bytes[2]=108;
-                    bytes[3]= (byte) (174&0xff);
-                   net.setLongtitude(bytes);
-				   //纬度
-                    byte[] bytes1=new byte[3];
-					bytes1[0]=30;
-                    bytes1[1]= (byte) (132&0xff);
-                    bytes1[2]=95; 
-                    net.setLatitude(bytes1);					
-                    
-                    byte[] bytes2=new byte[2];
-                    net.setHeight(bytes2);
+//                   net.setStyle((byte) 1);
+////经度
+//                    byte[] bytes=new byte[4];
+//                    bytes[0]=0;
+//                    bytes[1]=114&0xff;
+//                    bytes[2]=108;
+//                    bytes[3]= (byte) (174&0xff);
+//                   net.setLongtitude(bytes);
+//				   //纬度
+//                    byte[] bytes1=new byte[3];
+//					bytes1[0]=30;
+//                    bytes1[1]= (byte) (132&0xff);
+//                    bytes1[2]=95;
+//                    net.setLatitude(bytes1);
+//
+//                    byte[] bytes2=new byte[2];
+//                    net.setHeight(bytes2);
                     Broadcast.sendBroadCast(FinalStationState.this,
                             ConstantValues.REQUSTNETWORK, "network", net);
                     //启动与中心站连接的service

@@ -119,7 +119,7 @@ public class Map_RouteMap extends Activity {
                         Log.e("pocess", "size " + String.valueOf(mapRoutePointInfoList.size()));
                         handler.sendMessage(message);//发送消息
                         Log.e("pocess", "now is here 12");
-                        Thread.sleep(2000);//线程暂停3秒，单位毫秒
+                        Thread.sleep(100);//线程暂停3秒，单位毫秒
 
                     }
 
@@ -151,8 +151,7 @@ public class Map_RouteMap extends Activity {
             first_latLng = new LatLng(infos.get(i - 1).getLatitude(), infos.get(i - 1).getLongitude());
             end_latlng = new LatLng(infos.get(i).getLatitude(), infos.get(i).getLongitude());
 
-            MarkerOptions ooA = new MarkerOptions().position(end_latlng).icon(stationMarker);
-            mMarkerA = (Marker) (mRoute_BaiduMap.addOverlay(ooA));
+
 
 
             points.add(first_latLng);

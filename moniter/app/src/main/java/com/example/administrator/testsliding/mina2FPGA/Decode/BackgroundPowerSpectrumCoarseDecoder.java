@@ -33,7 +33,6 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
 
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
-        Log.d("abcd", "尝试背景功率谱解码器");
 
         if(Constants.flag ){
             Constants.buffer.flip();
@@ -66,7 +65,6 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
 //                    }
 //                }
                 byte functionCode = in.get();
-                Log.d(TAG, "functionCode: "+functionCode);
                 if (functionCode == 0x57) {
                     Constants.Isstop=false;
                     return MessageDecoderResult.OK;

@@ -99,7 +99,7 @@ public class Fragment_work_model2 extends Fragment {
                 int year=data.getYear();
                 int month=data.getMonth();
                 int day=data.getDay();
-                int hour=data.getHour();
+                int hour=data.getHour();//UTC时间转北京时间
                 int min=data.getMinute();
                 int second=data.getSecond();
 
@@ -182,9 +182,9 @@ public class Fragment_work_model2 extends Fragment {
         list = new ArrayList<String>();
         list.add("5/5");
         list.add("2.5/2.5");
-        list.add("1/1");
-        list.add("0.5/0.5");
-        list.add("0.1/0.1");
+        list.add("1.25/1.25");
+        list.add("0.625/0.625");
+        list.add("0.125/0.125");
 
         //2.新建数组适配器
         adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item,list);

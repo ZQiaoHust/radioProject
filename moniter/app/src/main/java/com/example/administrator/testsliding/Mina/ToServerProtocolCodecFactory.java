@@ -8,11 +8,15 @@ import com.example.administrator.testsliding.Bean.InGain;
 import com.example.administrator.testsliding.Bean.OutGain;
 import com.example.administrator.testsliding.Bean.Press;
 import com.example.administrator.testsliding.Bean.PressSetting;
+import com.example.administrator.testsliding.Bean.RequestNetworkAgain;
 import com.example.administrator.testsliding.Bean.StationState;
 import com.example.administrator.testsliding.Bean.SweepRange;
 import com.example.administrator.testsliding.Bean.Threshold;
 import com.example.administrator.testsliding.Bean.ToServerPowerSpectrumAndAbnormalPoint;
 import com.example.administrator.testsliding.Bean.UploadData;
+import com.example.administrator.testsliding.HeartBeat.HEARTBEATREQUEST;
+import com.example.administrator.testsliding.HeartBeat.RequestEncoder;
+import com.example.administrator.testsliding.HeartBeat.ResponseDecoder;
 import com.example.administrator.testsliding.bean2Transmit.FPGA2server.Reply_Connect;
 import com.example.administrator.testsliding.bean2Transmit.FPGA2server.Reply_FixCentralFreq;
 import com.example.administrator.testsliding.bean2Transmit.FPGA2server.Reply_FixSetting;
@@ -58,6 +62,7 @@ import com.example.administrator.testsliding.mina2server.ModifyInGainDecoder;
 import com.example.administrator.testsliding.mina2server.ModifyInGainEncoder;
 import com.example.administrator.testsliding.mina2server.RequestWirlessPlanDecode;
 import com.example.administrator.testsliding.mina2server.RequestWirlessPlanEncode;
+import com.example.administrator.testsliding.mina2server.RequstNetworkAgainEncoder;
 import com.example.administrator.testsliding.mina2server.RequstNetworkDecoder;
 import com.example.administrator.testsliding.mina2server.RequstNetworkEncoder;
 import com.example.administrator.testsliding.mina2server.StationAllAttributesDecoder;
@@ -201,5 +206,9 @@ public class ToServerProtocolCodecFactory extends DemuxingProtocolCodecFactory {
 
         //文件上传
         //super.addMessageEncoder(ToServerPowerSpectrumAndAbnormalPoint.class, ToServerPowerSpectrumAndAbnormalPointEncoder.class);
+       //心跳
+        super.addMessageEncoder(HEARTBEATREQUEST.class, RequestEncoder.class);
+        super.addMessageDecoder(ResponseDecoder.class);
+        super.addMessageEncoder(RequestNetworkAgain.class, RequstNetworkAgainEncoder.class);
     }
 }

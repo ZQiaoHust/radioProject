@@ -128,11 +128,9 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
                         Timer timer = new Timer();
                         timer.schedule(task, 200);
                         out.write(PSAP);
-                        Log.d("psap", Arrays.toString(b));
                         Constants.NotFill = false;//收成功，NotFill表示没满的变量
                         k++;
-                        Log.d("abcd", "成功次数：" + String.valueOf(k));
-                        System.out.println("功率谱和异常频点解码完成.......");
+                        Log.d("sucess", "成功次数：" + String.valueOf(k));
                     }
 
                 } else {

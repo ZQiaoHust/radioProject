@@ -33,8 +33,7 @@ public class ReceiveRightEncoder implements MessageEncoder<ReceiveRight> {
             buffer.put(bytes);
             buffer.flip();
             out.write(buffer);
-            Log.d("abcd", "回复成功数据时间: "+ String.valueOf(System.currentTimeMillis()));
-            Log.d("abcd", "回复成功数据帧: "+ Arrays.toString(bytes));
+
         }
 
     }

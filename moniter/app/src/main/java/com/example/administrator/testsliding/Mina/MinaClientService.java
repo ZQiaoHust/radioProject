@@ -38,6 +38,8 @@ import com.example.administrator.testsliding.Database.DatabaseHelper;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.GlobalConstants.MyApplication;
+import com.example.administrator.testsliding.HeartBeat.HEARTBEATREQUEST;
+import com.example.administrator.testsliding.HeartBeat.HEARTBEATRESPONSE;
 import com.example.administrator.testsliding.compute.ComputePara;
 
 import org.apache.mina.core.future.ConnectFuture;
@@ -61,6 +63,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -83,13 +86,13 @@ public class MinaClientService extends Service {
     ComputePara computePara = new ComputePara();
     private Boolean Ispsfull = false;//queshao
 
-    private float firstMax=0,secMax=0;//需要压制的频点
+    private float firstMax = 0, secMax = 0;//需要压制的频点
     List<byte[]> temp_powerSpectrum;
     List<byte[]> temp_abnormalPoint;
     List<float[]> temp_drawSpectrum;
     List<float[]> temp_drawWaterfall;
     List<float[]> temp_drawBackSpectrum;
-    Map<Float,Float> map_abnormal;
+    Map<Float, Float> map_abnormal;
 
 
     List<byte[]> temp_IQwave;
@@ -506,6 +509,22 @@ public class MinaClientService extends Service {
                 }
                 return;
             }
+            if (action.equals(ConstantValues.IsOnlieQuery)) {
+                Query data = intent.getParcelableExtra("IsOnlieQuery");
+                /**
+                 * 在这里把activity的消息转发给服务器
+                 */
+                if (data == null) {
+                    return;
+                }
+                try {
+                    session.write(data);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
         }
     };
 
@@ -549,6 +568,7 @@ public class MinaClientService extends Service {
         filter.addAction(ConstantValues.uploadQuery);
         filter.addAction(ConstantValues.ConnectPCB);
         filter.addAction(ConstantValues.ConnectPCBQuery);
+        filter.addAction(ConstantValues.IsOnlieQuery);
 
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(ActivityReceiver, filter);
@@ -572,15 +592,25 @@ public class MinaClientService extends Service {
                     // connector.getSessionConfig().setReadBufferSize(1024);
 
 
-                    ArrayList<String> ipList = getConnectIp();
-                    String FpgaIP = (String) ipList.get(1);
-                    ConnectFuture future = connector.connect
-                            (new InetSocketAddress(FpgaIP, 8899));
+//                    ArrayList<String> ipList = getConnectIp();
+//                    String FpgaIP = (String) ipList.get(1);
+//                    ConnectFuture future = connector.connect
+//                            (new InetSocketAddress(FpgaIP, 8899));
                     /**
                      * Fpga的IP
                      */
+                    //HUAWEIAP5  ID=5
 //                    ConnectFuture future = connector.connect
-//                            (new InetSocketAddress("192.168.43.35", 8899));
+//                            (new InetSocketAddress("192.168.43.135", 8899));
+//                    //HUAWEIAP2  ID=12
+                    ConnectFuture future = connector.connect
+                            (new InetSocketAddress("192.168.43.99", 8899));
+                    //HUAWEIAP3,ID为13
+//                    ConnectFuture future = connector.connect
+//                            (new InetSocketAddress("192.168.43.73", 8899));
+                    //HUAWEIAP4,ID为14
+//                    ConnectFuture future = connector.connect
+//                            (new InetSocketAddress("192.168.43.228", 8899));
 
                     /**
                      * Fpga的IP
@@ -589,13 +619,9 @@ public class MinaClientService extends Service {
 //                        (new InetSocketAddress(Constants.PCBIP,8080));
 
                     future.awaitUninterruptibly();// 等待连接创建完成
-
                     session = future.getSession();
-
                     Constants.FPGAsession = session;
-
                     session.getCloseFuture().awaitUninterruptibly();//等待连接断开
-
                     connector.dispose();
 
 
@@ -649,7 +675,7 @@ public class MinaClientService extends Service {
                                 temp_abnormalPoint = new ArrayList<>();
                                 temp_drawSpectrum = new ArrayList<float[]>();
                                 temp_drawWaterfall = new ArrayList<float[]>();
-                                map_abnormal=new HashMap<Float, Float>();
+                                map_abnormal = new HashMap<Float, Float>();
                                 //判断是否为有变化的文件
                                 if (PSAP.getIsChange() == 0x0f) {
                                     fileIsChanged = 1;
@@ -674,22 +700,22 @@ public class MinaClientService extends Service {
                                 temp_drawWaterfall.add(water);
                                 //异常频点
                                 ////////////////存入显示列表
-                                Map<Float,Float> map= abnormalToList(PSAP,firstMax,secMax);
+                                Map<Float, Float> map = abnormalToList(PSAP, firstMax, secMax);
                                 map_abnormal.putAll(map);
                                 Constants.Queue_Abnormal.offer(map_abnormal);
                                 //下发自动压制帧
-                                if(Constants.pressModel==1){
+                                if (Constants.pressModel == 1) {
                                     //单频点
-                                      if(Constants.press!=null&&firstMax!=0){
-                                          Constants.press.setFix1(firstMax);
-                                          Constants.press.setFix2(0);
-                                          Constants.press.setNumber(1);
-                                          Constants.FPGAsession.write(Constants.press);
-                                      }
+                                    if (Constants.press != null && firstMax != 0) {
+                                        Constants.press.setFix1(firstMax);
+                                        Constants.press.setFix2(0);
+                                        Constants.press.setNumber(1);
+                                        Constants.FPGAsession.write(Constants.press);
+                                    }
                                 }
-                                if(Constants.pressModel==3){
+                                if (Constants.pressModel == 3) {
                                     //双频点
-                                    if(Constants.press!=null&&firstMax!=0&&secMax!=0){
+                                    if (Constants.press != null && firstMax != 0 && secMax != 0) {
                                         Constants.press.setFix1(firstMax);
                                         Constants.press.setFix2(secMax);
                                         Constants.press.setNumber(2);
@@ -711,7 +737,7 @@ public class MinaClientService extends Service {
                                     temp_abnormalPoint = new ArrayList<>();
                                     temp_drawSpectrum = new ArrayList<float[]>();
                                     temp_drawWaterfall = new ArrayList<float[]>();
-                                    map_abnormal=new HashMap<Float, Float>();
+                                    map_abnormal = new HashMap<Float, Float>();
                                     if (PSAP.getIsChange() == 0x0f) {
                                         fileIsChanged = 1;
                                     }
@@ -737,7 +763,7 @@ public class MinaClientService extends Service {
                                     Constants.spectrumCount++;
                                     //异常频点
                                     ////////////////存入显示列表
-                                    Map<Float,Float> map= abnormalToList(PSAP,firstMax,secMax);
+                                    Map<Float, Float> map = abnormalToList(PSAP, firstMax, secMax);
                                     map_abnormal.putAll(map);
                                 } else {
                                     if (num == (Constants.spectrumCount + 1)) {
@@ -753,7 +779,7 @@ public class MinaClientService extends Service {
                                         temp_abnormalPoint.add(byteAb1);
                                         //异常频点
                                         ////////////////存入显示列表
-                                        Map<Float,Float> map= abnormalToList(PSAP,firstMax,secMax);
+                                        Map<Float, Float> map = abnormalToList(PSAP, firstMax, secMax);
                                         map_abnormal.putAll(map);
 
                                         //存入画频谱图图
@@ -792,18 +818,18 @@ public class MinaClientService extends Service {
                                     }
                                     Constants.Queue_Abnormal.offer(map_abnormal);
                                     //下发自动压制帧
-                                    if(Constants.pressModel==1){
+                                    if (Constants.pressModel == 1) {
                                         //单频点
-                                        if(Constants.press!=null&&firstMax!=0){
+                                        if (Constants.press != null && firstMax != 0) {
                                             Constants.press.setFix1(firstMax);
                                             Constants.press.setFix2(0);
                                             Constants.press.setNumber(1);
                                             Constants.FPGAsession.write(Constants.press);
                                         }
                                     }
-                                    if(Constants.pressModel==3){
+                                    if (Constants.pressModel == 3) {
                                         //双频点
-                                        if(Constants.press!=null&&firstMax!=0&&secMax!=0){
+                                        if (Constants.press != null && firstMax != 0 && secMax != 0) {
                                             Constants.press.setFix1(firstMax);
                                             Constants.press.setFix2(secMax);
                                             Constants.press.setNumber(2);
@@ -819,7 +845,6 @@ public class MinaClientService extends Service {
 
                         }
                     }).start();
-                    Log.d("abcd", "写文件结束时间：" + String.valueOf(System.currentTimeMillis()));
                 }
             }
             /**
@@ -981,6 +1006,7 @@ public class MinaClientService extends Service {
                         temp_IQwave = new ArrayList<>();
                         byte[] byte1 = new byte[6015];
                         System.arraycopy(iQwave.getLocation(), 0, byte1, 0, 9);
+                        Log.d("IQLocation", "IQ数据帧Location：" + Arrays.toString(iQwave.getLocation()));
                         System.arraycopy(iQwave.getIQpara(), 0, byte1, 9, 5);
                         System.arraycopy(iQwave.getIQwave(), 0, byte1, 14, 6001);
                         temp_IQwave.add(byte1);
@@ -998,10 +1024,11 @@ public class MinaClientService extends Service {
                     } else {
                         if (iQwave.getNowNum() == 1) {
                             temp_IQwave = new ArrayList<>();
-                            Constants.IQCount=0;
+                            Constants.IQCount = 0;
                             Constants.IQCount++;
                             byte[] byte1 = new byte[6015];
                             System.arraycopy(iQwave.getLocation(), 0, byte1, 0, 9);
+                            Log.d("IQLocation", "IQ数据帧Location：" + Arrays.toString(iQwave.getLocation()));
                             System.arraycopy(iQwave.getIQpara(), 0, byte1, 9, 5);
                             System.arraycopy(iQwave.getIQwave(), 0, byte1, 14, 6001);
                             temp_IQwave.add(byte1);
@@ -1013,6 +1040,7 @@ public class MinaClientService extends Service {
                                 byte[] byte1 = new byte[6001];
                                 System.arraycopy(iQwave.getIQwave(), 0, byte1, 0, 6001);
                                 temp_IQwave.add(byte1);
+                                Log.d("IQLocation", "IQ数据帧Location：" + Arrays.toString(iQwave.getLocation()));
 
                             } else {
                                 if (temp_IQwave != null) {
@@ -1160,7 +1188,7 @@ public class MinaClientService extends Service {
         int year = getYear(byte6);
         int month = getMonth(byte6);
         int day = getDay(byte6);
-        int hour = getHour(byte6);
+        int hour = getHour(byte6) + 8;
         int min = getMin(byte6);
         int sec = getSecond(byte6);
 
@@ -1312,6 +1340,7 @@ public class MinaClientService extends Service {
 
     /**
      * IQ博存文件
+     *
      * @param iQwave
      * @param mlist
      */
@@ -1326,7 +1355,7 @@ public class MinaClientService extends Service {
 //        int year = getYear(byte6);
 //        int month = getMonth(byte6);
 //        int day = getDay(byte6);
-//        int hour = getHour(byte6);
+//        int hour = getHour(byte6)+8;//UTC转北京时间
 //        int min = getMin(byte6);
 //        int sec = getSecond(byte6);
 
@@ -1357,6 +1386,7 @@ public class MinaClientService extends Service {
             }
         }
     }
+
     private void uploadIQFile() {
         File file = new File(IQFILE_PATH);
         if (!file.exists()) {
@@ -1364,14 +1394,14 @@ public class MinaClientService extends Service {
         }
         String[] tempList = file.list();
         for (int i = 0; i < tempList.length; i++) {
-            String name=tempList[i];
+            String name = tempList[i];
             File f = new File(IQFILE_PATH, name);
         /* 取得扩展名 */
-        String end = name
-                .substring(name.lastIndexOf(".") + 1, name.length())
-                .toLowerCase();
-            String befoe=name.substring(0,name.lastIndexOf(".") );
-            if(end.equals("uniq")){
+            String end = name
+                    .substring(name.lastIndexOf(".") + 1, name.length())
+                    .toLowerCase();
+            String befoe = name.substring(0, name.lastIndexOf("."));
+            if (end.equals("uniq")) {
                 FileInputStream fis = null;
                 try {
                     fis = new FileInputStream(f);
@@ -1384,19 +1414,21 @@ public class MinaClientService extends Service {
                     ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
                     ToWave.setContent(content);
                     ToWave.setContentLength(content.length);
-                   String upname= befoe+".iq";
+                    String upname = befoe + ".iq";
                     ToWave.setFileName(upname);
                     ToWave.setFileNameLength((short) upname.getBytes(Charset.forName("UTF-8")).length);
                     try {
                         Constants.FILEsession.write(ToWave);
-                        if(file.list().length>10) {
-                            //保留最新10个文件
-                            f.delete();//上传后删除
-                        }else{
-                            File f2=new File(IQFILE_PATH,upname);
-                            f.renameTo(f2);
-                        }
-                    }catch(Exception e){
+//                        if (file.list().length > 100) {
+//                            //保留最新10个文件
+//                            String temp = tempList[1];
+//                            File ff = new File(IQFILE_PATH, temp);
+//                            ff.delete();//上传后删除
+//                        }
+                        File f2 = new File(IQFILE_PATH, upname);
+                        f.renameTo(f2);
+
+                    } catch (Exception e) {
 
                     }
                 } catch (FileNotFoundException e) {
@@ -1405,27 +1437,27 @@ public class MinaClientService extends Service {
                     e.printStackTrace();
                 }
             }
-    }
+        }
     }
 
-    private Map<Float,Float> abnormalToList(PowerSpectrumAndAbnormalPonit PSAP,float fisMax,float secMax ){
+    private Map<Float, Float> abnormalToList(PowerSpectrumAndAbnormalPonit PSAP, float fisMax, float secMax) {
         Map<Float, Float> map = new HashMap<>();
-        List<Float> mlist=new ArrayList<>();
+        List<Float> mlist = new ArrayList<>();
         if (PSAP.getAPnum() > 0 && PSAP.getAPnum() <= 10) {
-            int start=( PSAP.getAPbandNum()-1)*25+70;
+            int start = (PSAP.getAPbandNum() - 1) * 25 + 70;
             int length = PSAP.getAPnum() * 3;
             if (length != 0) {
                 byte[] data = new byte[length];
                 byte[] allPow = PSAP.getAPpower();
                 System.arraycopy(allPow, 0, data, 0, length);
-                float power=0;
-                for(int i=0;i<(length)/3;i++){
-                    float freq= (float) (((((data[i*3]>>4)&0x0f)<<8)+data[i*3+1]&0xff)*15/1024.0+start);
-                    float f1= (((data[i*3]&0x0f)<<8)+(data[i*3+2]&0xff));
-                    if(((data[i*3]>>3)&0x01)==0) {
+                float power = 0;
+                for (int i = 0; i < (length) / 3; i++) {
+                    float freq = (float) (((((data[i * 3] >> 4) & 0x0f) << 8) + data[i * 3 + 1] & 0xff) * 15 / 1024.0 + start);
+                    float f1 = (((data[i * 3] & 0x0f) << 8) + (data[i * 3 + 2] & 0xff));
+                    if (((data[i * 3] >> 3) & 0x01) == 0) {
                         power = (float) (f1 / 8.0);
-                    }else {
-                        power= (float) ((f1-Math.pow(2,12))/8.0);
+                    } else {
+                        power = (float) ((f1 - Math.pow(2, 12)) / 8.0);
                     }
                     map.put(freq, power);
                     mlist.add(power);
@@ -1433,20 +1465,20 @@ public class MinaClientService extends Service {
             }
             //找出压制点
             Collections.sort(mlist);
-            int size=mlist.size();
-            if(size>=1){
-               float f1=mlist.get(size-1);
-                if(f1>fisMax) {
+            int size = mlist.size();
+            if (size >= 1) {
+                float f1 = mlist.get(size - 1);
+                if (f1 > fisMax) {
                     fisMax = f1;
                 }
             }
-            if(size>=2){
-                float f1=mlist.get(size-1);
-                float f2=mlist.get(size-2);
-                if(f1>fisMax) {
+            if (size >= 2) {
+                float f1 = mlist.get(size - 1);
+                float f2 = mlist.get(size - 2);
+                if (f1 > fisMax) {
                     fisMax = f1;
                 }
-                if(f2>secMax) {
+                if (f2 > secMax) {
                     secMax = f2;
                 }
             }

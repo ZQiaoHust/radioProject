@@ -45,6 +45,43 @@ public class ComputePara {
 
         return  bytes;
     }
+    /**
+     * 将文本框的String转换为时间字节，用在定频模式下的参数，北京时间转UTC
+     * @param str
+     * @return
+     */
+    public byte[] Time2BytesUTC(String str){
+        byte[] bytes=new byte[5];
+        //从字符串中取出时间，分别是年，月，日，时，分,miao
+        String regex="\\d*";
+        List<Integer> digitList =new ArrayList<>();
+        Pattern p=Pattern.compile(regex);
+
+        Matcher m=p.matcher(str);
+        while (m.find()){
+            if(!"".equals(m.group())){
+                digitList.add(Integer.valueOf(m.group()));
+            }
+        }
+        if(digitList.size()==5){
+            //只有到分
+            bytes[0]= (byte) ((digitList.get(0)>>4)&0xff);//年高八位
+            bytes[1]= (byte) (((digitList.get(0)&0x0f)<<4)+(digitList.get(1)&0x0f));//年+月
+            int  hour=digitList.get(3)-8;
+            bytes[2]= (byte) (((digitList.get(2)&0x1f)<<3)+((hour)&0x1f)>>2);//日+时高三位
+            bytes[3]= (byte) (((digitList.get(4)&0x3f)<<2)+(hour&0x03));//分+时低二位
+        }
+        else if(digitList.size()==6){
+            bytes[0]= (byte) ((digitList.get(0)>>4)&0xff);//年高八位
+            bytes[1]= (byte) (((digitList.get(0)&0x0f)<<4)+(digitList.get(1)&0x0f));//年+月
+            int  hour=digitList.get(3)-8;
+            bytes[2]= (byte) (((digitList.get(2)&0x1f)<<3)+((hour&0x1f)>>2));//日+时高三位
+            bytes[3]= (byte) (((digitList.get(4)&0x3f)<<2)+(hour&0x03));//分+时低二位
+            bytes[4]= (byte) (digitList.get(5)&0xff);
+        }
+
+        return  bytes;
+    }
     public List<Integer> Time2Int(String str) {
         int[] result = new int[8];
         //从字符串中取出时间，分别是年，月，日，时，分,miao

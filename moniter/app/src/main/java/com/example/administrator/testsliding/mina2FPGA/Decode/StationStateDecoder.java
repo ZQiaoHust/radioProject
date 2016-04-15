@@ -1,6 +1,9 @@
 package com.example.administrator.testsliding.mina2FPGA.Decode;
 
+import android.util.Log;
+
 import com.example.administrator.testsliding.Bean.StationState;
+import com.example.administrator.testsliding.compute.ComputePara;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
@@ -8,10 +11,13 @@ import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.demux.MessageDecoder;
 import org.apache.mina.filter.codec.demux.MessageDecoderResult;
 
+import java.util.Arrays;
+
 /**
  * Created by jinaghao on 15/11/25.
  */
 public class StationStateDecoder implements MessageDecoder {
+    private ComputePara computePara=new ComputePara();
     @Override
     public MessageDecoderResult decodable(IoSession ioSession, IoBuffer in) {
         if (in.remaining() < 2) {
@@ -49,14 +55,20 @@ public class StationStateDecoder implements MessageDecoder {
                 stationState.setOnNet(accept[4]);
                 stationState.setModel(accept[5]);
                 stationState.setEastORwest(accept[6]);
-                stationState.setLongtitude(accept[7] + accept[8] / 256 + accept[9] / 65536);
+                float longtitude= (float) ((accept[7] &0xff)+((accept[8]>>>2)&0xff)/60.0+
+                                        (((accept[2]&0x03)<<8)+(accept[9]&0xff))/60000.0);
+                        //computePara.BitDecimal2float(accept[8] ,accept[9] );
+                stationState.setLongtitude(longtitude);
                 stationState.setNorthORsouth(accept[10] >> 7);
-                stationState.setLatitude((accept[10] & 0xef) + accept[11] / 256 + accept[12] / 65536);
+                float latitude= (float) ((accept[10]&0x7f)+((accept[11]>>>2)&0xff)/60.0+
+                                        (((accept[11]&0x03)<<8)+(accept[12]&0xff))/60000.0);
+                        //computePara.BitDecimal2float( accept[11],accept[12]);
+                stationState.setLatitude(latitude);
                 stationState.setIsAboveHrizon(accept[13] >> 7);
-                stationState.setAtitude(((accept[13] & 0xef) << 8) + accept[14]);
+                stationState.setAtitude(((accept[13] & 0x7f) << 8) + accept[14]);
                 stationState.setContent(accept);
                 out.write(stationState);
-
+                Log.d("query","终端是否在网应答"+ Arrays.toString(accept));
                 return MessageDecoderResult.OK;
             }
         }

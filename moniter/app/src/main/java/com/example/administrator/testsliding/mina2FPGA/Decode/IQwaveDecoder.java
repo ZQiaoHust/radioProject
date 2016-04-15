@@ -84,7 +84,6 @@ public class IQwaveDecoder implements MessageDecoder {
                         };
                         Timer timer = new Timer();
                         timer.schedule(task, 200);
-
                         out.write(iQwave);
                         Log.d("IQ", "当前帧总共段数：" + iQwave.getTotalBands());
                         Log.d("IQ", "当前帧所在序号：" + iQwave.getNowNum());

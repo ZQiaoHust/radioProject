@@ -48,7 +48,14 @@ public class FileSettingFixDecoder implements MessageDecoder {
                 byte[] data=new byte[17];
                 data[0]=bytes[0];
                 data[1]=0x07;
-                System.arraycopy(bytes,2,data,2,12);
+                System.arraycopy(bytes,2,data,2,6);
+                //北京时间转UTC时间
+                int hour=((bytes[8]&0x07)<<2)+(bytes[9]&0x03)-8;
+                byte b1= (byte) ((bytes[8]&0xf8)+((hour>>2)&0x07));
+                data[8]=b1;
+                byte b2= (byte) ((bytes[9]&0xfc)+(hour&0x03));
+                data[9]=b2;
+                System.arraycopy(bytes,10,data,10,4);
                 data[14]=bytes[16];
                 data[15]=bytes[17];
                 data[16]=bytes[18];

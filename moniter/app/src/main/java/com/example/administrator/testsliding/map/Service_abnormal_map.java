@@ -133,7 +133,6 @@ public class Service_abnormal_map extends Activity  {
         mAbnormal_BaiduMap.setMapStatus(u1);
         MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
         mAbnormal_BaiduMap.setMapStatus(msu);
-        Log.e("abnormal", "enter this");
         Power_cnt = Math.floor(AbnormalReply.getEqualPower());
         //Power_1st = Power_cnt-20;
         //Power_sed = Power_cnt - 40;
@@ -141,6 +140,8 @@ public class Service_abnormal_map extends Activity  {
 
         Log.e("abnormal","Power is "+String.valueOf(Math.floor(AbnormalReply.getEqualPower())));
 
+        if(Power_cnt == 0)
+            return;
         BitmapDescriptor AbnormalMarker = BitmapDescriptorFactory
                 .fromResource(R.drawable.marker1);
         MarkerOptions oo1 = new MarkerOptions().position(new LatLng(AbnormalReply.getLatitude(),AbnormalReply.getLongitude())).icon(AbnormalMarker)

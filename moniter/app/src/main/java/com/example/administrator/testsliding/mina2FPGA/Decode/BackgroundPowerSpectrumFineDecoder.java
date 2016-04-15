@@ -35,7 +35,6 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
 
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
-        Log.d("abcd", "尝试背景功率谱解码器");
 
         if(Constants.flag ){
             Constants.buffer.limit(Constants.positionValue);
@@ -50,7 +49,7 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
 //                }
 //            }
             byte functionCode = Constants.buffer.get();
-            Log.d("abcd", "Constants.buffer背景功率谱解码器functionCode"+functionCode);
+          //  Log.d("abcd", "Constants.buffer背景功率谱解码器functionCode"+functionCode);
             if (functionCode == 0x52) {
                 Constants.Isstop=false;
                 return MessageDecoderResult.OK;
@@ -63,7 +62,7 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
                 return MessageDecoderResult.NEED_DATA;
             } else {
                 byte head = in.get();
-                Log.d("abcd", "背景功率谱解码器找帧头" + head);
+               // Log.d("abcd", "背景功率谱解码器找帧头" + head);
 //                while (head != (byte) 0x55) {
 //                    i++;
 //                    head = in.get();
@@ -73,7 +72,7 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
 //                    }
 //                }
                 byte functionCode = in.get();
-                Log.d("abcd", "背景功率谱解码器functionCode" + functionCode);
+               // Log.d("abcd", "背景功率谱解码器functionCode" + functionCode);
 
                 if (functionCode == 0x52) {
                     Constants.Isstop=false;

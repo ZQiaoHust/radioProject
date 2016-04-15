@@ -51,7 +51,7 @@ public class FixSettingDecoder implements MessageDecoder {
                 fixSetting.setYear(((accept[6]&0xff) << 4) + ((accept[7] >> 4)&0x0f));
                 fixSetting.setMonth(accept[7]&0x0f);
                 fixSetting.setDay((accept[8]>>3)&0x1f);
-                fixSetting.setHour(((accept[8] &0x07)<<2) + (accept[9]&0x03));
+                fixSetting.setHour(((accept[8] &0x07)<<2) + (accept[9]&0x03)+8);//UTC转北京时间
                 fixSetting.setMinute((accept[9]>>2)&0x3f);
                 fixSetting.setSecond(accept[10]&0xff);
                 fixSetting.setContent(accept);

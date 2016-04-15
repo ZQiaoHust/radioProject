@@ -33,9 +33,9 @@ public class FixSettingEncoder implements MessageEncoder<FixSetting> {
         data[1]=0x07;
         data[2]= (byte) (Constants.ID&0xff);//设备ID号
         data[3]= (byte) ((Constants.ID>>8)&0xff);
-        data[4]=IQtoCode((int) (fixsetting.getIQwidth()*10));//带宽和数据率
+        data[4]=IQtoCode((int) (fixsetting.getIQwidth()*1000));//带宽和数据率
         data[5]= (byte) fixsetting.getBlockNum();//数据块
-        byte[] data1=computePara.Time2Bytes(fixsetting.getTimeString());//时间
+        byte[] data1=computePara.Time2BytesUTC(fixsetting.getTimeString());//时间
         System.arraycopy(data1, 0, data, 6, 5);
         data[16]= (byte) 0xAA;
         return data;
@@ -44,19 +44,19 @@ public class FixSettingEncoder implements MessageEncoder<FixSetting> {
     private byte IQtoCode(int index){
         byte code=0;
         switch(index){
-            case 50:
+            case 5000:
                 code=0x11;
                 break;
-            case 25:
+            case 2500:
                 code=0x22;
                 break;
-            case 10:
+            case 1250:
                 code=0x33;
                 break;
-            case 5:
+            case 625:
                 code=0x44;
                 break;
-            case 1:
+            case 125:
                 code=0x55;
                 break;
             default:

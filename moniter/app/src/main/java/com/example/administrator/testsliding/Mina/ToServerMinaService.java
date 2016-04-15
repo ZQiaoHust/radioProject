@@ -20,8 +20,11 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.administrator.testsliding.Bean.RequestNetworkAgain;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
+import com.example.administrator.testsliding.HeartBeat.HEARTBEATREQUEST;
+import com.example.administrator.testsliding.HeartBeat.HEARTBEATRESPONSE;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGAQuery.Query_Connect;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGAQuery.Query_FixCentralFreq;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGAQuery.Query_FixSetting;
@@ -89,11 +92,15 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.keepalive.KeepAliveFilter;
+import org.apache.mina.filter.keepalive.KeepAliveMessageFactory;
+import org.apache.mina.filter.keepalive.KeepAliveRequestTimeoutHandler;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 
 /**
@@ -101,233 +108,243 @@ import java.util.Arrays;
  * @Description: TODO
  */
 public class ToServerMinaService extends Service {
-
+    /**
+     * 30秒后超时
+     */
+    private static final int IDELTIMEOUT = 30;
+    /**
+     * 15秒发送一次心跳包
+     */
+    private static final int HEARTBEATRATE = 15;
+    private static HEARTBEATREQUEST heartbeatrequest = null;
+    private static HEARTBEATRESPONSE heartbeatresponse = null;
+    private static int i=0;
     private String IP = "27.17.8.142";
     private int PORT = 9988;
     private DataHandler dataHandler;
-    private IoSession session;
+    private static IoSession session=null;
     private String TAG = "ToServerMinaService";
-    private ComputeParaInService compute=new ComputeParaInService();
-    private ComputePara computePara=new ComputePara();
-
+    private ComputeParaInService compute = new ComputeParaInService();
+    private ComputePara computePara = new ComputePara();
+    private static NioSocketConnector connector = new NioSocketConnector();
 
     private BroadcastReceiver sendMessage = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                Log.d("map","ACTION"+action);
+            String action = intent.getAction();
+            Log.d("map", "ACTION" + action);
 
-                switch(action){
-                    case ConstantValues.REQUSTNETWORK:
-                        RequstNetwork net = intent.getParcelableExtra("network");
-                        if(net==null){
-                            return;
-                        }
-                        try {
-                            session.write(net);
-                            Constants.FILEsession.write(net);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.MAPRADIO:
-                        MapRadio radio=intent.getParcelableExtra("map_radio");
-                        if(radio==null){
-                            return;
-                        }
-                        try {
-                            session.write(radio);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.MAPROUTE:
-                        MapRoute route=intent.getParcelableExtra("map_route");
-                        if(route==null){
-                            return;
-                        }
-                        try {
-                            session.write(route);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.ABNORMAL_LOCATION:
-                        LocationAbnormalRequest locate = intent.getParcelableExtra("abnormal_location");
-                        if(locate==null){
-                            return;
-                        }
-                        try {
-                            session.write(locate);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
+            switch (action) {
+                case ConstantValues.REQUSTNETWORK:
+                    RequstNetwork net = intent.getParcelableExtra("network");
+                    if (net == null) {
+                        return;
+                    }
+                    try {
+                        session.write(net);
+                        Constants.FILEsession.write(net);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.MAPRADIO:
+                    MapRadio radio = intent.getParcelableExtra("map_radio");
+                    if (radio == null) {
+                        return;
+                    }
+                    try {
+                        session.write(radio);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.MAPROUTE:
+                    MapRoute route = intent.getParcelableExtra("map_route");
+                    if (route == null) {
+                        return;
+                    }
+                    try {
+                        session.write(route);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.ABNORMAL_LOCATION:
+                    LocationAbnormalRequest locate = intent.getParcelableExtra("abnormal_location");
+                    if (locate == null) {
+                        return;
+                    }
+                    try {
+                        session.write(locate);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
 
-                        break;
-                    case ConstantValues.STATION_REGISTER:
-                        Station_RegisterRequst reg = intent.getParcelableExtra("station_register");
-                        if(reg==null){
-                            return;
-                        }
-                        try {
-                            session.write(reg);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.STATION_CURRENT:
-                        Station_CurrentRequst cur = intent.getParcelableExtra("station_current");
-                        if(cur==null){
-                            return;
-                        }
-                        try {
-                            session.write(cur);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
+                    break;
+                case ConstantValues.STATION_REGISTER:
+                    Station_RegisterRequst reg = intent.getParcelableExtra("station_register");
+                    if (reg == null) {
+                        return;
+                    }
+                    try {
+                        session.write(reg);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.STATION_CURRENT:
+                    Station_CurrentRequst cur = intent.getParcelableExtra("station_current");
+                    if (cur == null) {
+                        return;
+                    }
+                    try {
+                        session.write(cur);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
 
-                    case ConstantValues.WIRLESSPLAN:
-                        Send_ServiceRadio data = intent.getParcelableExtra("wirlessplan");
-                        if(data==null){
-                            return;
-                        }
-                        try {
-                            session.write(data);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.TERMINAL_ALL:
-                        TerminalAttributes_All ter = intent.getParcelableExtra("station_all");
-                        if(ter==null){
-                            return;
-                        }
-                        try {
-                            session.write(ter);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.TERMINAL_ONLINE:
-                       Terminal_Online online = intent.getParcelableExtra("terminal_online");
-                        if(online==null){
-                            return;
-                        }
-                        try {
-                            session.write(online);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.TERMINAL_REGISTER:
-                        Terminal_Register register = intent.getParcelableExtra("terminal_register");
-                        if(register==null){
-                            return;
-                        }
-                        try {
-                            session.write(register);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.SERVICE_SPECTRUM:
-                        HistorySpectrumRequest spec = intent.getParcelableExtra("service_spectrum");
-                        if(spec==null){
-                            return;
-                        }
-                        try {
-                            session.write(spec);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.SERVICE_IQ:
-                        HistoryIQRequest IQ = intent.getParcelableExtra("service_IQ");
-                        if(IQ==null){
-                            return;
-                        }
-                        try {
-                            session.write(IQ);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.INTERACTION_WORKMODEL01:
-                        InteractionSweepModeRequest sweep = intent.getParcelableExtra("interaction_workmodel01");
-                        if(sweep==null){
-                            return;
-                        }
-                        try {
-                            session.write(sweep);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.INTERACTION_WORKMODEL02:
-                        InteractionFixmodeRequest fix = intent.getParcelableExtra("interaction_workmodel02");
-                        if(fix==null){
-                            return;
-                        }
-                        try {
-                            session.write(fix);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.INTERACTION_WORKMODEL03:
-                        InteractionPressmodeRequest press = intent.getParcelableExtra("interaction_workmodel03");
-                        if(press==null){
-                            return;
-                        }
-                        try {
-                            session.write(press);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.MODIFYINGAIN:
-                        ModifyInGain modify = intent.getParcelableExtra("modifyIngain");
-                        if(modify==null){
-                            return;
-                        }
-                        try {
-                            session.write(modify);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case ConstantValues.MODIFYANTENNA:
-                        ModifyAntenna antenna = intent.getParcelableExtra("modifyAntenna");
-                        if(antenna==null){
-                            return;
-                        }
-                        try {
-                            session.write(antenna);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
+                case ConstantValues.WIRLESSPLAN:
+                    Send_ServiceRadio data = intent.getParcelableExtra("wirlessplan");
+                    if (data == null) {
+                        return;
+                    }
+                    try {
+                        session.write(data);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.TERMINAL_ALL:
+                    TerminalAttributes_All ter = intent.getParcelableExtra("station_all");
+                    if (ter == null) {
+                        return;
+                    }
+                    try {
+                        session.write(ter);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.TERMINAL_ONLINE:
+                    Terminal_Online online = intent.getParcelableExtra("terminal_online");
+                    if (online == null) {
+                        return;
+                    }
+                    try {
+                        session.write(online);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.TERMINAL_REGISTER:
+                    Terminal_Register register = intent.getParcelableExtra("terminal_register");
+                    if (register == null) {
+                        return;
+                    }
+                    try {
+                        session.write(register);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.SERVICE_SPECTRUM:
+                    HistorySpectrumRequest spec = intent.getParcelableExtra("service_spectrum");
+                    if (spec == null) {
+                        return;
+                    }
+                    try {
+                        session.write(spec);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.SERVICE_IQ:
+                    HistoryIQRequest IQ = intent.getParcelableExtra("service_IQ");
+                    if (IQ == null) {
+                        return;
+                    }
+                    try {
+                        session.write(IQ);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.INTERACTION_WORKMODEL01:
+                    InteractionSweepModeRequest sweep = intent.getParcelableExtra("interaction_workmodel01");
+                    if (sweep == null) {
+                        return;
+                    }
+                    try {
+                        session.write(sweep);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.INTERACTION_WORKMODEL02:
+                    InteractionFixmodeRequest fix = intent.getParcelableExtra("interaction_workmodel02");
+                    if (fix == null) {
+                        return;
+                    }
+                    try {
+                        session.write(fix);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.INTERACTION_WORKMODEL03:
+                    InteractionPressmodeRequest press = intent.getParcelableExtra("interaction_workmodel03");
+                    if (press == null) {
+                        return;
+                    }
+                    try {
+                        session.write(press);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.MODIFYINGAIN:
+                    ModifyInGain modify = intent.getParcelableExtra("modifyIngain");
+                    if (modify == null) {
+                        return;
+                    }
+                    try {
+                        session.write(modify);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.MODIFYANTENNA:
+                    ModifyAntenna antenna = intent.getParcelableExtra("modifyAntenna");
+                    if (antenna == null) {
+                        return;
+                    }
+                    try {
+                        session.write(antenna);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
 
-                }
+            }
 
         }
     };
@@ -339,6 +356,13 @@ public class ToServerMinaService extends Service {
 
     @Override
     public void onCreate() {
+        heartbeatrequest = new HEARTBEATREQUEST();
+        heartbeatresponse = new HEARTBEATRESPONSE();
+        byte[] request = {(byte) 0x55, (byte) 0x66};
+        byte[] response = {(byte) 0x77, (byte) 0x88};
+        heartbeatrequest.setContent(request);
+        heartbeatresponse.setContent(response);
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConstantValues.REQUSTNETWORK);
         filter.addAction(ConstantValues.MAPRADIO);
@@ -366,33 +390,10 @@ public class ToServerMinaService extends Service {
 
             @Override
             public void run() {
-                try {
-                    IoConnector connector = new NioSocketConnector();
-                    connector.getFilterChain().addLast(
-                            "codec",
-                            new ProtocolCodecFilter(new ToServerProtocolCodecFactory()));
+                serviceConnect(dataHandler);
 
-                    connector.getSessionConfig().setReadBufferSize(1024);
-//
-
-                    connector.setHandler(dataHandler);
-                    // 这里是异步操作 连接后立即返回
-			ConnectFuture future = connector.connect(new InetSocketAddress(
-						"27.17.8.142",9000));
-// ConnectFuture future = connector.connect(new InetSocketAddress(
-//                            "115.156.208.51",9123));
-//                    ConnectFuture future = connector.connect(new InetSocketAddress(
-//                            Constants.IPValue, Constants.PORTValue));
-                    future.awaitUninterruptibly();// 等待连接创建完成
-
-                    session = future.getSession();
-                    Constants.SERVERsession=session;
-                    session.getCloseFuture().awaitUninterruptibly();// 等待连接断开
-                    connector.dispose();
-                } catch (Exception e) {
-
-                }
             }
+
         }).start();
 
         super.onCreate();
@@ -418,6 +419,28 @@ public class ToServerMinaService extends Service {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
+            Log.d("session","连接断开");
+            i=0;
+            while(true) {
+                try {
+                    Thread.sleep(3000);
+                    // 这里是异步操作 连接后立即返回
+                    ConnectFuture future = connector.connect(new InetSocketAddress(
+                            "27.17.8.142", 9000));
+                    future.awaitUninterruptibly();// 等待连接创建完成
+                    session = future.getSession();
+                    if(session.isConnected()) {
+                        Constants.SERVERsession = session;
+                        break;
+                    }
+                } catch (Exception e) {
+                }
+            }
+            if(Constants.requestNetcontent!=null) {
+                RequestNetworkAgain request = new RequestNetworkAgain();
+                request.setContent(Constants.requestNetcontent);
+                Constants.SERVERsession.write(request);
+            }
         }
 
         @Override
@@ -434,25 +457,25 @@ public class ToServerMinaService extends Service {
         @Override
         public void messageReceived(IoSession session, Object message)
                 throws Exception {
-            if(message instanceof RequstNetworkReply){
-                RequstNetworkReply networkReply= (RequstNetworkReply) message;
+            if (message instanceof RequstNetworkReply) {
+                RequstNetworkReply networkReply = (RequstNetworkReply) message;
                 Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
-                        ConstantValues.RREQUSTNETWORK,"requstNet",networkReply);
+                        ConstantValues.RREQUSTNETWORK, "requstNet", networkReply);
             }
             //处理从服务端接收到的消息
-            if(message instanceof MapRadioResult){
-                MapRadioResult map= (MapRadioResult) message;
+            if (message instanceof MapRadioResult) {
+                MapRadioResult map = (MapRadioResult) message;
                 Thread.sleep(1500);
                 Broadcast.sendBroadCast(getBaseContext(),
-                        ConstantValues.RMAPRADIO,"map_radio",map);
+                        ConstantValues.RMAPRADIO, "map_radio", map);
                 Log.d("MAP", "收到态势");
             }
-            if(message instanceof MapRouteResult){
-                MapRouteResult map= (MapRouteResult) message;
+            if (message instanceof MapRouteResult) {
+                MapRouteResult map = (MapRouteResult) message;
                 Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
-                        ConstantValues.RMAPROUTE,"map_route",map);
+                        ConstantValues.RMAPROUTE, "map_route", map);
                 Log.d("MAP", "收到路径");
             }
             if (message instanceof File_ServiceRadio) {
@@ -474,15 +497,14 @@ public class ToServerMinaService extends Service {
                 list_stationAlls.clear();
                 list_stationAlls = compute.StationALL2ListItem(all);
                 Thread.sleep(1000);
-                if(list_stationAlls !=null){
-                Broadcast.sendBroadCastTerminalAllList(getBaseContext(),
-                        ConstantValues.RTERMINAL_ALL, "station_allresult", list_stationAlls);
-                    Log.d("MAP","收到所有终端属性");
-                }else {
-                    Log.d("MAP","收到所有终端属性但为空");
+                if (list_stationAlls != null) {
+                    Broadcast.sendBroadCastTerminalAllList(getBaseContext(),
+                            ConstantValues.RTERMINAL_ALL, "station_allresult", list_stationAlls);
+                    Log.d("MAP", "收到所有终端属性");
+                } else {
+                    Log.d("MAP", "收到所有终端属性但为空");
                 }
             }
-
 
 
             if (message instanceof File_TerminalOnline) {
@@ -492,12 +514,12 @@ public class ToServerMinaService extends Service {
                 list_terminalOnlines.clear();
                 list_terminalOnlines = compute.TerminalOnline2ListItem(online);
                 Thread.sleep(1000);
-                if(list_terminalOnlines!=null){
-                Broadcast.sendBroadCastTerminalOnlineList(getBaseContext(),
-                        ConstantValues.RTERMINAL_ONLINE, "terminal_onlineresult", list_terminalOnlines);
-                    Log.d("MAP","收到在网终端属性");
-                }else {
-                    Log.d("MAP","收到在网终端属性但为空");
+                if (list_terminalOnlines != null) {
+                    Broadcast.sendBroadCastTerminalOnlineList(getBaseContext(),
+                            ConstantValues.RTERMINAL_ONLINE, "terminal_onlineresult", list_terminalOnlines);
+                    Log.d("MAP", "收到在网终端属性");
+                } else {
+                    Log.d("MAP", "收到在网终端属性但为空");
                 }
             }
 
@@ -510,12 +532,12 @@ public class ToServerMinaService extends Service {
                 list_terminalRegister.clear();
                 list_terminalRegister = compute.TerminalRegister2ListItem(register);
                 Thread.sleep(1000);
-                if(list_terminalRegister!=null) {
+                if (list_terminalRegister != null) {
                     Broadcast.sendBroadCastTerminalOnlineList(getBaseContext(),
                             ConstantValues.RTERMINAL_REGISTER, "terminal_registerresult", list_terminalRegister);
-                    Log.d("MAP","收到终端登记属性");
-                }else {
-                    Log.d("MAP","收到终端登记属性但为空");
+                    Log.d("MAP", "收到终端登记属性");
+                } else {
+                    Log.d("MAP", "收到终端登记属性但为空");
                 }
 
             }
@@ -529,12 +551,12 @@ public class ToServerMinaService extends Service {
                 list_StayionRegister.clear();
                 list_StayionRegister = compute.TerminalALL2ListItem(register1);
                 Thread.sleep(1000);
-                if(list_StayionRegister!=null){
-                Broadcast.sendBroadCastTerminalAllList(getBaseContext(),
-                        ConstantValues.RSTATION_REGISTER, "station_register", list_StayionRegister);
-                Log.d("MAP","收到台站登记属性");
-                }else {
-                    Log.d("MAP","收到台站登记属性但为空");
+                if (list_StayionRegister != null) {
+                    Broadcast.sendBroadCastTerminalAllList(getBaseContext(),
+                            ConstantValues.RSTATION_REGISTER, "station_register", list_StayionRegister);
+                    Log.d("MAP", "收到台站登记属性");
+                } else {
+                    Log.d("MAP", "收到台站登记属性但为空");
                 }
 
             }
@@ -542,12 +564,12 @@ public class ToServerMinaService extends Service {
             //=======================================================================
 
             if (message instanceof StationCurrentReply) {
-                 StationCurrentReply reply = new StationCurrentReply();
+                StationCurrentReply reply = new StationCurrentReply();
                 reply = (StationCurrentReply) message;
                 Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RSTATION_CURRENT, "station_current", reply);
-                Log.d("MAP","收到台站当前属性");
+                Log.d("MAP", "收到台站当前属性");
             }
 
             //=======================================================================
@@ -561,9 +583,9 @@ public class ToServerMinaService extends Service {
             //========================增益表==============================
             if (message instanceof File_ModifyIngain) {
                 File_ModifyIngain modify = (File_ModifyIngain) message;
-                byte[] bytes=modify.getFileContent();
-                if(bytes[0]==0x55){
-                    ModifyIngainView view=compute.File2InGain(modify);
+                byte[] bytes = modify.getFileContent();
+                if (bytes[0] == 0x55) {
+                    ModifyIngainView view = compute.File2InGain(modify);
                     Broadcast.sendBroadCast(getBaseContext(),
                             ConstantValues.RMODIFYINGAIN, "modifyIngian", view);
                 }
@@ -571,10 +593,10 @@ public class ToServerMinaService extends Service {
             }
             if (message instanceof File_ModifyAntenna) {
                 File_ModifyAntenna modify = (File_ModifyAntenna) message;
-                byte[] bytes=modify.getFileContent();
-                if(bytes[0]==0x55){
+                byte[] bytes = modify.getFileContent();
+                if (bytes[0] == 0x55) {
                     //表相同
-                    ModifyIngainView view=compute.File2Antenna(modify);
+                    ModifyIngainView view = compute.File2Antenna(modify);
                     Broadcast.sendBroadCast(getBaseContext(),
                             ConstantValues.RMODIFYANTENNA, "modifyAntenna", view);
                 }
@@ -587,7 +609,7 @@ public class ToServerMinaService extends Service {
                 Simple_Connect connect = new Simple_Connect();
                 connect = (Simple_Connect) message;
                 Constants.FPGAsession.write(connect);
-                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(connect.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(connect.getContent()));
             }
 
             //================================================
@@ -596,14 +618,14 @@ public class ToServerMinaService extends Service {
                 Simple_FixCentralFreq fixCentral = new Simple_FixCentralFreq();
                 fixCentral = (Simple_FixCentralFreq) message;
                 Constants.FPGAsession.write(fixCentral);
-                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(fixCentral.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(fixCentral.getContent()));
             }
             /////////////////////////////////
             if (message instanceof Simple_FixSetting) {
                 Simple_FixSetting fixSetting = new Simple_FixSetting();
                 fixSetting = (Simple_FixSetting) message;
                 Constants.FPGAsession.write(fixSetting);
-                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(fixSetting.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(fixSetting.getContent()));
             }
 
             ///////////////////////////////////////////////////
@@ -612,29 +634,29 @@ public class ToServerMinaService extends Service {
                 Simple_InGain inGain = new Simple_InGain();
                 inGain = (Simple_InGain) message;
                 Constants.FPGAsession.write(inGain);
-                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(inGain.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(inGain.getContent()));
             }
             /////////////////////////////////////////////////////
             if (message instanceof Simple_OutGain) {
                 Simple_OutGain outGain = new Simple_OutGain();
                 outGain = (Simple_OutGain) message;
                 Constants.FPGAsession.write(outGain);
-                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(outGain.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(outGain.getContent()));
             }
             //////////////////////////////////////
             if (message instanceof Simple_Press) {
                 Simple_Press press = new Simple_Press();
                 press = (Simple_Press) message;
-               Constants.FPGAsession.write(press);
-                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(press.getContent()));
+                Constants.FPGAsession.write(press);
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(press.getContent()));
             }
             ///////////////////////////////////////////
 
             if (message instanceof Simple_PressSetting) {
                 Simple_PressSetting pressSetting = new Simple_PressSetting();
                 pressSetting = (Simple_PressSetting) message;
-               Constants.FPGAsession.write(pressSetting);
-                Log.d("trans","SeverSession 转发设置"+ Arrays.toString(pressSetting.getContent()));
+                Constants.FPGAsession.write(pressSetting);
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(pressSetting.getContent()));
             }
             ////////////////////////////////////////////////
 
@@ -642,7 +664,7 @@ public class ToServerMinaService extends Service {
                 Simple_StationState simple_stationState = new Simple_StationState();
                 simple_stationState = (Simple_StationState) message;
                 Constants.FPGAsession.write(simple_stationState);
-                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(simple_stationState.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(simple_stationState.getContent()));
             }
             ///////////////////////////////////////////////////
 
@@ -650,7 +672,7 @@ public class ToServerMinaService extends Service {
                 Simple_SweepRange sweep = new Simple_SweepRange();
                 sweep = (Simple_SweepRange) message;
                 Constants.FPGAsession.write(sweep);
-                Log.d("trans","SeverSession 转发设置"+ Arrays.toString(sweep.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(sweep.getContent()));
             }
             ////////////////////////////////////////////////
 
@@ -658,7 +680,7 @@ public class ToServerMinaService extends Service {
                 Simple_Threshold threshold = new Simple_Threshold();
                 threshold = (Simple_Threshold) message;
                 Constants.FPGAsession.write(threshold);
-                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(threshold.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(threshold.getContent()));
             }
 
             ////////////////////////////////////////////////
@@ -667,7 +689,7 @@ public class ToServerMinaService extends Service {
                 Simple_UploadDataStart data = new Simple_UploadDataStart();
                 data = (Simple_UploadDataStart) message;
                 Constants.FPGAsession.write(data);
-                Log.d("trans", "SeverSession 转发设置"+Arrays.toString(data.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(data.getContent()));
             }
             /////////////////////////////////////////////////////
 
@@ -675,7 +697,7 @@ public class ToServerMinaService extends Service {
                 Simple_UploadDataEnd dataend = new Simple_UploadDataEnd();
                 dataend = (Simple_UploadDataEnd) message;
                 Constants.FPGAsession.write(dataend);
-                Log.d("trans","SeverSession 转发设置"+ Arrays.toString(dataend.getContent()));
+                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(dataend.getContent()));
             }
 
             //======================================数据转发（查询）===================
@@ -684,7 +706,7 @@ public class ToServerMinaService extends Service {
                 Query_Connect query_connect = new Query_Connect();
                 query_connect = (Query_Connect) message;
                 Constants.FPGAsession.write(query_connect);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_connect.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_connect.getContent()));
             }
 
             ////////////////////////////
@@ -693,7 +715,7 @@ public class ToServerMinaService extends Service {
                 Query_FixCentralFreq query_fixCentralFreq = new Query_FixCentralFreq();
                 query_fixCentralFreq = (Query_FixCentralFreq) message;
                 Constants.FPGAsession.write(query_fixCentralFreq);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_fixCentralFreq.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_fixCentralFreq.getContent()));
             }
             //////////////////////////
 
@@ -701,7 +723,7 @@ public class ToServerMinaService extends Service {
                 Query_FixSetting query_fixSetting = new Query_FixSetting();
                 query_fixSetting = (Query_FixSetting) message;
                 Constants.FPGAsession.write(query_fixSetting);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_fixSetting.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_fixSetting.getContent()));
             }
 
             ///////////////////
@@ -710,7 +732,7 @@ public class ToServerMinaService extends Service {
                 Query_InGain query_inGain = new Query_InGain();
                 query_inGain = (Query_InGain) message;
                 Constants.FPGAsession.write(query_inGain);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_inGain.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_inGain.getContent()));
             }
 
             ///////////////////////////////////
@@ -719,7 +741,7 @@ public class ToServerMinaService extends Service {
                 Query_OutGain query_outGain = new Query_OutGain();
                 query_outGain = (Query_OutGain) message;
                 Constants.FPGAsession.write(query_outGain);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_outGain.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_outGain.getContent()));
             }
 
             ///////////////////////////////////////
@@ -728,7 +750,7 @@ public class ToServerMinaService extends Service {
                 Query_IsTerminalOnline query_isTerminalOnline = new Query_IsTerminalOnline();
                 query_isTerminalOnline = (Query_IsTerminalOnline) message;
                 Constants.FPGAsession.write(query_isTerminalOnline);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_isTerminalOnline.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_isTerminalOnline.getContent()));
             }
             //////////////////////////////////////////
 
@@ -736,7 +758,7 @@ public class ToServerMinaService extends Service {
                 Query_Press query_press = new Query_Press();
                 query_press = (Query_Press) message;
                 Constants.FPGAsession.write(query_press);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_press.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_press.getContent()));
             }
             /////////////////////////////////////////////////////
 
@@ -744,7 +766,7 @@ public class ToServerMinaService extends Service {
                 Query_PressSetting query_pressSetting = new Query_PressSetting();
                 query_pressSetting = (Query_PressSetting) message;
                 Constants.FPGAsession.write(query_pressSetting);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_pressSetting.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_pressSetting.getContent()));
             }
 
             //////////////////////////////////////////
@@ -753,7 +775,7 @@ public class ToServerMinaService extends Service {
                 Query_SweepRange query_sweepRange = new Query_SweepRange();
                 query_sweepRange = (Query_SweepRange) message;
                 Constants.FPGAsession.write(query_sweepRange);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_sweepRange.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_sweepRange.getContent()));
             }
 
             /////////////////////////////////////////
@@ -762,7 +784,7 @@ public class ToServerMinaService extends Service {
                 Query_Threshold query_threshold = new Query_Threshold();
                 query_threshold = (Query_Threshold) message;
                 Constants.FPGAsession.write(query_threshold);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_threshold.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_threshold.getContent()));
             }
 
             ////////////////////////////////////////////
@@ -771,7 +793,7 @@ public class ToServerMinaService extends Service {
                 Query_UploadDataStart uploadData = new Query_UploadDataStart();
                 uploadData = (Query_UploadDataStart) message;
                 Constants.FPGAsession.write(uploadData);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(uploadData.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(uploadData.getContent()));
             }
             ////////////////////////////////////////////
 
@@ -779,10 +801,10 @@ public class ToServerMinaService extends Service {
                 Query_UploadDataEnd query_uploadDataEnd = new Query_UploadDataEnd();
                 query_uploadDataEnd = (Query_UploadDataEnd) message;
                 Constants.FPGAsession.write(query_uploadDataEnd);
-                Log.d("trans","SeverSession 转发查询"+ Arrays.toString(query_uploadDataEnd.getContent()));
+                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_uploadDataEnd.getContent()));
             }
 
-                //======================================================================================================
+            //======================================================================================================
         }
 
         @Override
@@ -792,5 +814,137 @@ public class ToServerMinaService extends Service {
         }
     }
 
+    private static class KeepAliveMessageFactoryImpl implements KeepAliveMessageFactory {
 
+        /*
+         * (non-Javadoc)
+         *
+         * @see
+         * org.apache.mina.filter.keepalive.KeepAliveMessageFactory#getRequest
+         * (org.apache.mina.core.session.IoSession)
+         */
+        @Override
+        public Object getRequest(IoSession session) {
+//            i++;
+//            Log.d("session",i+"");
+//			if (i > 5) {
+//				try {
+//                    Log.d("session","睡眠");
+//					Thread.sleep(40000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+            return heartbeatrequest;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see
+         * org.apache.mina.filter.keepalive.KeepAliveMessageFactory#getResponse
+         * (org.apache.mina.core.session.IoSession, java.lang.Object)
+         */
+        @Override
+        public Object getResponse(IoSession session, Object request) {
+            return null;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see
+         * org.apache.mina.filter.keepalive.KeepAliveMessageFactory#isRequest
+         * (org.apache.mina.core.session.IoSession, java.lang.Object)
+         */
+        @Override
+        public boolean isRequest(IoSession session, Object message) {
+            return false;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see
+         * org.apache.mina.filter.keepalive.KeepAliveMessageFactory#isResponse
+         * (org.apache.mina.core.session.IoSession, java.lang.Object)
+         */
+        @Override
+        public boolean isResponse(IoSession session, Object message) {
+            if (message instanceof HEARTBEATRESPONSE) {
+                Log.d("session","是响应心跳包");
+                return true;
+            }
+            return false;
+        }
+
+    }
+
+    /***
+     * @ClassName: KeepAliveRequestTimeoutHandlerImpl
+     * @Description: 当心跳超时时的处理，也可以用默认处理 这里like
+     */
+    private static class KeepAliveRequestTimeoutHandlerImpl implements KeepAliveRequestTimeoutHandler {
+
+        /*
+         * (non-Javadoc)
+         *
+         * @seeorg.apache.mina.filter.keepalive.KeepAliveRequestTimeoutHandler#
+         * keepAliveRequestTimedOut
+         * (org.apache.mina.filter.keepalive.KeepAliveFilter,
+         * org.apache.mina.core.session.IoSession)
+         */
+        @Override
+        public void keepAliveRequestTimedOut(KeepAliveFilter filter, IoSession session) throws Exception {
+            ((Logger) LOG).info("心跳超时！");
+        }
+
+    }
+
+    private void serviceConnect(DataHandler dataHandler) {
+        while(true) {
+
+            try {
+                Thread.sleep(3000);
+                connector.setConnectTimeoutMillis(30000); //设置连接超时
+                connector.getFilterChain().addLast(
+                        "codec",
+                        new ProtocolCodecFilter(new ToServerProtocolCodecFactory()));
+                connector.getSessionConfig().setReadBufferSize(1024);
+                connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, IDELTIMEOUT);
+                /** 主角登场 */
+                KeepAliveMessageFactory heartBeatFactory = new KeepAliveMessageFactoryImpl();
+                KeepAliveFilter heartBeat = new KeepAliveFilter(heartBeatFactory);
+                /** 是否回发 */
+                heartBeat.setForwardEvent(true);
+                /** 发送频率 */
+                heartBeat.setRequestInterval(HEARTBEATRATE);
+                connector.getSessionConfig().setKeepAlive(true);
+                connector.getFilterChain().addLast("heartbeat", heartBeat);
+                /****************************/
+                connector.setHandler(dataHandler);
+                // 这里是异步操作 连接后立即返回
+                ConnectFuture future = connector.connect(new InetSocketAddress(
+                        "27.17.8.142", 9000));
+// ConnectFuture future = connector.connect(new InetSocketAddress(
+//                            "115.156.208.51",9123));
+//                    ConnectFuture future = connector.connect(new InetSocketAddress(
+//                            Constants.IPValue, Constants.PORTValue));
+                future.awaitUninterruptibly();// 等待连接创建完成
+
+                session = future.getSession();
+                if(session.isConnected()) {
+                    Constants.SERVERsession = session;
+                    break;
+                }
+//             session.getCloseFuture().awaitUninterruptibly();// 等待连接断开
+//             connector.dispose();
+            } catch (Exception e) {
+            }
+        }
+
+    }
 }
+
+

@@ -92,9 +92,9 @@ public class Service_abnormal extends Activity {
         list2 = new ArrayList<String>();
         list2.add("5/5");
         list2.add("2.5/2.5");
-        list2.add("1/1");
-        list2.add("0.5/0.5");
-        list2.add("0.1/0.1");
+        list2.add("1.25/1.25");
+        list2.add("0.625/0.625");
+        list2.add("0.125/0.125");
 
         //2.新建数组适配器
         adapter2 = new ArrayAdapter<String>(Service_abnormal.this, android.R.layout.simple_spinner_item, list2);

@@ -32,7 +32,6 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
 
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
-        Log.d("abcd", "尝试实时功率谱解码器");
         if(Constants.flag ) {
             Constants.buffer.flip();
             Constants.buffer.limit(Constants.positionValue);
@@ -46,7 +45,6 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
 //                }
 //            }
             byte functionCode = Constants.buffer.get();
-            Log.d("abcd", "Constants.buffer实时功率谱解码器functionCode" + functionCode);
             if (functionCode == 0x51 || functionCode == 0x53) {
                 Constants.Isstop=false;
                 return MessageDecoderResult.OK;
@@ -60,7 +58,6 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
                 return MessageDecoderResult.NEED_DATA;
             } else {
                 byte head=in.get();
-                Log.d("abcd", "实时功率谱解码器找帧头" + head);
 //                while (head != (byte) 0x55) {
 //                    i++;
 //                    head=in.get();
@@ -70,7 +67,6 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
 //                    }
 //                }
                 byte functionCode = in.get();
-                Log.d("abcd", "实时功率谱解码器functionCode" + functionCode);
                 if (functionCode == 0x51 || functionCode == 0x53) {
                     Constants.Isstop=false;
                     return MessageDecoderResult.OK;
@@ -121,8 +117,6 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
                 if (b[1] == (byte) 0x51 && b[1612] == (byte) 0xaa) {
                     long a = System.currentTimeMillis();
                     PowerSpectrumAndAbnormalPonit PSAP = byte2Object(b);
-                    Log.d("psap", Arrays.toString(PSAP.getPSpower()));
-
                     if (PSAP != null) {
                         TimerTask task = new TimerTask() {
                             public void run() {
@@ -132,15 +126,13 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
                         };
                         Timer timer = new Timer();
                         timer.schedule(task, 200);
-
                         out.write(PSAP);
-                        Log.d("psap", Arrays.toString(b));
-                        Log.d("psap", "当前帧总共段数：" + PSAP.getTotalBand());
-                        Log.d("psap", "当前帧所在序号：" + PSAP.getNumN());
+//                        Log.d("psap", "当前帧总共段数：" + PSAP.getTotalBand());
+//                        Log.d("psap", "当前帧所在序号：" + PSAP.getNumN());
                         Constants.NotFill = false;//收成功，NotFill表示没满的变量
                         k++;
                         Log.d("sucess", "成功次数：" + String.valueOf(k));
-                        System.out.println("fine功率谱和异常频点解码完成.......");
+                        //System.out.println("fine功率谱和异常频点解码完成.......");
                     }
                 } else {
                     Constants.failCount++;

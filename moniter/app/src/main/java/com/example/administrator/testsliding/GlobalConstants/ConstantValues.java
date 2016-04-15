@@ -111,4 +111,7 @@ public interface ConstantValues {
 
 	public String ConnectPCBQuery= "COM.EXAMPLE.ConnectPCBQuery";
 	public String ConnectPCB= "COM.EXAMPLE.ConnectPCB";
+
+	public String IsOnlieQuery= "COM.EXAMPLE.IsOnlieQuery";
+
 }

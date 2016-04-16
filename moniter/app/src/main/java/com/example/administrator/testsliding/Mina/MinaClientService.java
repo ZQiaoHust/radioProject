@@ -535,7 +535,6 @@ public class MinaClientService extends Service {
         dbHelper = new DatabaseHelper(this);
         db = dbHelper.getWritableDatabase();
         myApplication = (MyApplication) getApplication();
-        Log.d("service", "service运行次数" + Constants.sevCount);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConstantValues.InGainSet);

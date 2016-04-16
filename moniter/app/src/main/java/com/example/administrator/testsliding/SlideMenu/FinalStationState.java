@@ -50,7 +50,6 @@ public class FinalStationState extends Activity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(ConstantValues.StationStateQuery)) {
-
                 data = intent.getParcelableExtra("data");
                 if (data == null) {
                     return;
@@ -135,6 +134,7 @@ public class FinalStationState extends Activity {
         setContentView(R.layout.station);
         IntentFilter filter=new IntentFilter();
         filter.addAction(ConstantValues.StationStateQuery);
+        filter.addAction(ConstantValues.RREQUSTNETWORK);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(StationStateReceiver, filter);
         Initing();
@@ -191,7 +191,6 @@ public class FinalStationState extends Activity {
                 query.setFuncID((byte)0x1C);//0x1C
                 Broadcast.sendBroadCast(FinalStationState.this,
                         ConstantValues.IsOnlieQuery, "IsOnlieQuery", query);
-
                // fpgaInfo=new QueryFPGANetwork();
 
             }
@@ -209,29 +208,11 @@ public class FinalStationState extends Activity {
                     System.arraycopy(b,5,b1,0,10);
                     net.setStyleAndLocation(b1);
                     net.setEquipmentID(Constants.ID);
-//                   net.setStyle((byte) 1);
-////经度
-//                    byte[] bytes=new byte[4];
-//                    bytes[0]=0;
-//                    bytes[1]=114&0xff;
-//                    bytes[2]=108;
-//                    bytes[3]= (byte) (174&0xff);
-//                   net.setLongtitude(bytes);
-//				   //纬度
-//                    byte[] bytes1=new byte[3];
-//					bytes1[0]=30;
-//                    bytes1[1]= (byte) (132&0xff);
-//                    bytes1[2]=95;
-//                    net.setLatitude(bytes1);
-//
-//                    byte[] bytes2=new byte[2];
-//                    net.setHeight(bytes2);
                     Broadcast.sendBroadCast(FinalStationState.this,
                             ConstantValues.REQUSTNETWORK, "network", net);
                     //启动与中心站连接的service
 //                    Intent intent = new Intent(FinalStationState.this, ToServerMinaService.class);
 //                    startService(intent);
-
                 }
                 else {
                     Toast.makeText(FinalStationState.this,"请先查询FPGA的信息",Toast.LENGTH_SHORT).show();

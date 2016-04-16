@@ -142,7 +142,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(net);
+                        Constants.SERVERsession.write(net);
                         Constants.FILEsession.write(net);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -155,7 +155,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(radio);
+                        Constants.SERVERsession.write(radio);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -167,7 +167,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(route);
+                        Constants.SERVERsession.write(route);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -179,7 +179,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(locate);
+                        Constants.SERVERsession.write(locate);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -192,7 +192,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(reg);
+                        Constants.SERVERsession.write(reg);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -204,7 +204,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(cur);
+                        Constants.SERVERsession.write(cur);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -217,7 +217,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(data);
+                        Constants.SERVERsession.write(data);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -229,7 +229,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(ter);
+                        Constants.SERVERsession.write(ter);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -241,7 +241,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(online);
+                        Constants.SERVERsession.write(online);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -253,7 +253,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(register);
+                        Constants.SERVERsession.write(register);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -265,7 +265,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(spec);
+                        Constants.SERVERsession.write(spec);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -277,7 +277,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(IQ);
+                        Constants.SERVERsession.write(IQ);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -289,7 +289,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(sweep);
+                        Constants.SERVERsession.write(sweep);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -301,7 +301,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(fix);
+                        Constants.SERVERsession.write(fix);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -313,7 +313,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(press);
+                        Constants.SERVERsession.write(press);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -325,7 +325,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(modify);
+                        Constants.SERVERsession.write(modify);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -337,7 +337,7 @@ public class ToServerMinaService extends Service {
                         return;
                     }
                     try {
-                        session.write(antenna);
+                        Constants.SERVERsession.write(antenna);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -432,6 +432,8 @@ public class ToServerMinaService extends Service {
                     if(session.isConnected()) {
                         Constants.SERVERsession = session;
                         break;
+                    }else{
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                 }
@@ -459,7 +461,6 @@ public class ToServerMinaService extends Service {
                 throws Exception {
             if (message instanceof RequstNetworkReply) {
                 RequstNetworkReply networkReply = (RequstNetworkReply) message;
-                Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RREQUSTNETWORK, "requstNet", networkReply);
             }

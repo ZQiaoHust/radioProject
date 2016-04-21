@@ -157,9 +157,9 @@ public class Share_fragment extends Fragment {
                                             //将功率谱对象用服务器的session发出去
                                             Constants.FILEsession.write(ToPS);
                                             //在这里更新数据库，将文件是否上传的标志位置为1
-                                            ContentValues cvUpload = new ContentValues();
-                                            cvUpload.put("upload", 1);
-                                            db.update("localFile", cvUpload, "filename=?", new String[]{name});
+//                                            ContentValues cvUpload = new ContentValues();
+//                                            cvUpload.put("upload", 1);
+//                                            db.update("localFile", cvUpload, "filename=?", new String[]{name});
                                         } catch (FileNotFoundException e) {
                                             e.printStackTrace();
                                         } catch (IOException e) {
@@ -211,9 +211,9 @@ public class Share_fragment extends Fragment {
                                             //将功率谱对象用服务器的session发出去
                                             Constants.FILEsession.write(ToPS);
                                             //在这里更新数据库，将文件是否上传的标志位置为1
-                                            ContentValues cvUpload = new ContentValues();
-                                            cvUpload.put("upload", 1);
-                                            db.update("localFile", cvUpload, "filename=?", new String[]{name});
+//                                            ContentValues cvUpload = new ContentValues();
+//                                            cvUpload.put("upload", 1);
+//                                            db.update("localFile", cvUpload, "filename=?", new String[]{name});
                                         } catch (FileNotFoundException e) {
                                             e.printStackTrace();
                                         } catch (IOException e) {
@@ -270,9 +270,9 @@ public class Share_fragment extends Fragment {
                                                 //将功率谱对象用服务器的session发出去
                                                 Constants.FILEsession.write(ToPS);
                                                 //在这里更新数据库，将文件是否上传的标志位置为1
-                                                ContentValues cvUpload = new ContentValues();
-                                                cvUpload.put("upload", 1);
-                                                db.update("localFile", cvUpload, "filename=?", new String[]{name});
+//                                                ContentValues cvUpload = new ContentValues();
+//                                                cvUpload.put("upload", 1);
+//                                                db.update("localFile", cvUpload, "filename=?", new String[]{name});
                                             } catch (FileNotFoundException e) {
                                                 e.printStackTrace();
                                             } catch (IOException e) {
@@ -420,55 +420,96 @@ public class Share_fragment extends Fragment {
         }
         return Filename;
     }
-    private void uploadIQFile() {
-        File file = new File(IQFILE_PATH);
-        if (!file.exists()) {
-            return;
-        }
-        String[] tempList = file.list();
-        for (int i = 0; i < tempList.length; i++) {
-            String name=tempList[i];
-            File f = new File(IQFILE_PATH, name);
-        /* 取得扩展名 */
-            String end = name
-                    .substring(name.lastIndexOf(".") + 1, name.length())
-                    .toLowerCase();
-            String befoe=name.substring(0,name.lastIndexOf(".") );
-            if(end.equals("uniq")){
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(f);
-                    byte[] content = new byte[fis.available()];
-                    byte[] buffer = new byte[content.length];
-                    while ((fis.read(buffer)) != -1) {
-                        content = buffer;
-                    }
-                    //将文件里的内容转化为对象
-                    ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
-                    ToWave.setContent(content);
-                    ToWave.setContentLength(content.length);
-                     String upname= befoe  + ".iq";
-                    ToWave.setFileName(upname);
-                    ToWave.setFileNameLength((short) upname.getBytes(Charset.forName("UTF-8")).length);
-                    try {
-                        Constants.FILEsession.write(ToWave);
-                        if(tempList.length>10) {
-                            f.delete();//上传后删除
-                        }else{
-                            File f2=new File(IQFILE_PATH, upname);
-                            f.renameTo(f2);
-                        }
-                    }catch(Exception e){
 
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+    private void uploadIQFile() {
+        Cursor c = db.rawQuery("SELECT filename from iqFile  where  upload=0", null);
+
+        while (c.moveToNext()) {
+            //上传文件
+            String name = c.getString(c.getColumnIndex("fileName"));
+            File file = new File(PSFILE_PATH, name);
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                byte[] content = new byte[fis.available()];
+                byte[] buffer = new byte[content.length];
+                while ((fis.read(buffer)) != -1) {
+                    content = buffer;
                 }
+                //将文件里的内容转化为对象
+                ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
+                ToWave.setContent(content);
+                ToWave.setContentLength(content.length);
+                ToWave.setFileName(name);
+                ToWave.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
+                try {
+                    Constants.FILEsession.write(ToWave);
+//                        if (file.list().length > 100) {
+//                            //保留最新10个文件
+//                            String temp = tempList[1];
+//                            File ff = new File(IQFILE_PATH, temp);
+//                            ff.delete();//上传后删除
+//                        }
+
+                } catch (Exception e) {
+
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
+//    private void uploadIQFile() {
+//        File file = new File(IQFILE_PATH);
+//        if (!file.exists()) {
+//            return;
+//        }
+//        String[] tempList = file.list();
+//        for (int i = 0; i < tempList.length; i++) {
+//            String name=tempList[i];
+//            File f = new File(IQFILE_PATH, name);
+//        /* 取得扩展名 */
+//            String end = name
+//                    .substring(name.lastIndexOf(".") + 1, name.length())
+//                    .toLowerCase();
+//            String befoe=name.substring(0,name.lastIndexOf(".") );
+//            if(end.equals("uniq")){
+//                FileInputStream fis = null;
+//                try {
+//                    fis = new FileInputStream(f);
+//                    byte[] content = new byte[fis.available()];
+//                    byte[] buffer = new byte[content.length];
+//                    while ((fis.read(buffer)) != -1) {
+//                        content = buffer;
+//                    }
+//                    //将文件里的内容转化为对象
+//                    ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
+//                    ToWave.setContent(content);
+//                    ToWave.setContentLength(content.length);
+//                     String upname= befoe  + ".iq";
+//                    ToWave.setFileName(upname);
+//                    ToWave.setFileNameLength((short) upname.getBytes(Charset.forName("UTF-8")).length);
+//                    try {
+//                        Constants.FILEsession.write(ToWave);
+//                        if(tempList.length>10) {
+//                            f.delete();//上传后删除
+//                        }else{
+//                            File f2=new File(IQFILE_PATH, upname);
+//                            f.renameTo(f2);
+//                        }
+//                    }catch(Exception e){
+//
+//                    }
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 }
 
 

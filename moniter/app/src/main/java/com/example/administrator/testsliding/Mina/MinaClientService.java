@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.os.Handler;
@@ -355,7 +356,6 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-
                     session.write(data);
 
                 } catch (Exception e) {
@@ -374,7 +374,6 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-
                     session.write(data);
 
                 } catch (Exception e) {
@@ -393,9 +392,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-
                     session.write(data);
-
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -598,24 +595,18 @@ public class MinaClientService extends Service {
                     /**
                      * Fpga的IP
                      */
-                    //HUAWEIAP5  ID=5
+                    //HUAWEIAP5  ID=15
 //                    ConnectFuture future = connector.connect
 //                            (new InetSocketAddress("192.168.43.135", 8899));
 //                    //HUAWEIAP2  ID=12
-                    ConnectFuture future = connector.connect
-                            (new InetSocketAddress("192.168.43.99", 8899));
-                    //HUAWEIAP3,ID为13
 //                    ConnectFuture future = connector.connect
-//                            (new InetSocketAddress("192.168.43.73", 8899));
+//                            (new InetSocketAddress("192.168.43.99", 8899));
+                    //HUAWEIAP3,ID为13
+                    ConnectFuture future = connector.connect
+                            (new InetSocketAddress("192.168.43.73", 8899));
                     //HUAWEIAP4,ID为14
 //                    ConnectFuture future = connector.connect
 //                            (new InetSocketAddress("192.168.43.228", 8899));
-
-                    /**
-                     * Fpga的IP
-                     */
-//                ConnectFuture future=connector.connect
-//                        (new InetSocketAddress(Constants.PCBIP,8080));
 
                     future.awaitUninterruptibly();// 等待连接创建完成
                     session = future.getSession();
@@ -1005,7 +996,6 @@ public class MinaClientService extends Service {
                         temp_IQwave = new ArrayList<>();
                         byte[] byte1 = new byte[6015];
                         System.arraycopy(iQwave.getLocation(), 0, byte1, 0, 9);
-                        Log.d("IQLocation", "IQ数据帧Location：" + Arrays.toString(iQwave.getLocation()));
                         System.arraycopy(iQwave.getIQpara(), 0, byte1, 9, 5);
                         System.arraycopy(iQwave.getIQwave(), 0, byte1, 14, 6001);
                         temp_IQwave.add(byte1);
@@ -1027,7 +1017,6 @@ public class MinaClientService extends Service {
                             Constants.IQCount++;
                             byte[] byte1 = new byte[6015];
                             System.arraycopy(iQwave.getLocation(), 0, byte1, 0, 9);
-                            Log.d("IQLocation", "IQ数据帧Location：" + Arrays.toString(iQwave.getLocation()));
                             System.arraycopy(iQwave.getIQpara(), 0, byte1, 9, 5);
                             System.arraycopy(iQwave.getIQwave(), 0, byte1, 14, 6001);
                             temp_IQwave.add(byte1);
@@ -1039,8 +1028,6 @@ public class MinaClientService extends Service {
                                 byte[] byte1 = new byte[6001];
                                 System.arraycopy(iQwave.getIQwave(), 0, byte1, 0, 6001);
                                 temp_IQwave.add(byte1);
-                                Log.d("IQLocation", "IQ数据帧Location：" + Arrays.toString(iQwave.getLocation()));
-
                             } else {
                                 if (temp_IQwave != null) {
                                     temp_IQwave.clear();
@@ -1366,7 +1353,7 @@ public class MinaClientService extends Service {
         //创建文件
 //        name = String.format("%d-%d-%d-%d-%d-%d-%d.%s", year, month, day, hour, min, sec,
 //                 Constants.ID, "Niq");
-        fname = time + "-" + String.format("%d-%d.%s", Constants.ID, Constants.sequenceID, "uniq");
+        fname = time + "-" + String.format("%d-%d.%s", Constants.ID, Constants.sequenceID, "iq");
 
         if (fname != null) {
             File file = new File(PSdir, fname);
@@ -1383,61 +1370,56 @@ public class MinaClientService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            //在此将文件的信息插入数据库===================
+            ContentValues cv = new ContentValues();
+            cv.put("filename", fname);
+            cv.put("upload", 0);
+            db.insert("iqFile", null, cv);
         }
     }
 
     private void uploadIQFile() {
-        File file = new File(IQFILE_PATH);
-        if (!file.exists()) {
-            return;
-        }
-        String[] tempList = file.list();
-        for (int i = 0; i < tempList.length; i++) {
-            String name = tempList[i];
-            File f = new File(IQFILE_PATH, name);
-        /* 取得扩展名 */
-            String end = name
-                    .substring(name.lastIndexOf(".") + 1, name.length())
-                    .toLowerCase();
-            String befoe = name.substring(0, name.lastIndexOf("."));
-            if (end.equals("uniq")) {
-                FileInputStream fis = null;
+        Cursor c = db.rawQuery("SELECT filename from iqFile  where  upload=0", null);
+
+        while (c.moveToNext()) {
+            //上传文件
+            String name = c.getString(c.getColumnIndex("fileName"));
+            File file = new File(PSFILE_PATH, name);
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                byte[] content = new byte[fis.available()];
+                byte[] buffer = new byte[content.length];
+                while ((fis.read(buffer)) != -1) {
+                    content = buffer;
+                }
+                //将文件里的内容转化为对象
+                ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
+                ToWave.setContent(content);
+                ToWave.setContentLength(content.length);
+                ToWave.setFileName(name);
+                ToWave.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
                 try {
-                    fis = new FileInputStream(f);
-                    byte[] content = new byte[fis.available()];
-                    byte[] buffer = new byte[content.length];
-                    while ((fis.read(buffer)) != -1) {
-                        content = buffer;
-                    }
-                    //将文件里的内容转化为对象
-                    ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
-                    ToWave.setContent(content);
-                    ToWave.setContentLength(content.length);
-                    String upname = befoe + ".iq";
-                    ToWave.setFileName(upname);
-                    ToWave.setFileNameLength((short) upname.getBytes(Charset.forName("UTF-8")).length);
-                    try {
-                        Constants.FILEsession.write(ToWave);
+                    Constants.FILEsession.write(ToWave);
 //                        if (file.list().length > 100) {
 //                            //保留最新10个文件
 //                            String temp = tempList[1];
 //                            File ff = new File(IQFILE_PATH, temp);
 //                            ff.delete();//上传后删除
 //                        }
-                        File f2 = new File(IQFILE_PATH, upname);
-                        f.renameTo(f2);
 
-                    } catch (Exception e) {
+                } catch (Exception e) {
 
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
+
+
 
     private Map<Float, Float> abnormalToList(PowerSpectrumAndAbnormalPonit PSAP, float fisMax, float secMax) {
         Map<Float, Float> map = new HashMap<>();

@@ -324,7 +324,15 @@ public class ComputePara {
             case 0x55:
                 str="QPSK";
                 break;
-
+            case 0x56:
+                str="WCDMA";
+                break;
+            case 0x57:
+                str="CDMA";
+                break;
+            case 0x58:
+                str="GSM/GPRS";
+                break;
 
         }
         return str;

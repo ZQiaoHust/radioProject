@@ -21,6 +21,7 @@ import com.example.administrator.testsliding.Bean.StationState;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.Mina.Broadcast;
+import com.example.administrator.testsliding.Mina.ToServerMinaService;
 import com.example.administrator.testsliding.R;
 import com.example.administrator.testsliding.bean2server.QueryFPGANetwork;
 import com.example.administrator.testsliding.bean2server.RequstNetwork;
@@ -201,7 +202,15 @@ public class FinalStationState extends Activity {
             public void onClick(View v) {
                 RequstNetwork net=new RequstNetwork();
                 if(data!=null){
-                   // net.setEquipmentID(data.getEquipmentID());
+                    //启动与中心站连接的service
+                    Intent intent = new Intent(FinalStationState.this, ToServerMinaService.class);
+                    startService(intent);
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    // net.setEquipmentID(data.getEquipmentID());
                     byte[] b=data.getContent();
                     //终端类型和ID号
                     byte[] b1=new byte[10];
@@ -210,9 +219,6 @@ public class FinalStationState extends Activity {
                     net.setEquipmentID(Constants.ID);
                     Broadcast.sendBroadCast(FinalStationState.this,
                             ConstantValues.REQUSTNETWORK, "network", net);
-                    //启动与中心站连接的service
-//                    Intent intent = new Intent(FinalStationState.this, ToServerMinaService.class);
-//                    startService(intent);
                 }
                 else {
                     Toast.makeText(FinalStationState.this,"请先查询FPGA的信息",Toast.LENGTH_SHORT).show();

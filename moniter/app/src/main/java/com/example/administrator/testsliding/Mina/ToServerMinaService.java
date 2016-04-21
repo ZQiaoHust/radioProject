@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -348,7 +349,31 @@ public class ToServerMinaService extends Service {
 
         }
     };
-
+    /******************************锁屏后CPU唤醒状态**********************************************/
+    PowerManager.WakeLock wakeLock = null;
+    //获取电源锁，保持该服务在屏幕熄灭时仍然获取CPU时，保持运行
+    private void acquireWakeLock()
+    {
+        if (null == wakeLock)
+        {
+            PowerManager pm = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK| PowerManager.ON_AFTER_RELEASE, "ToServerMinaService");
+            if (null != wakeLock)
+            {
+                wakeLock.acquire();
+            }
+        }
+    }
+    //释放设备电源锁
+    private void releaseWakeLock()
+    {
+        if (null != wakeLock)
+        {
+            wakeLock.release();
+            wakeLock = null;
+        }
+    }
+/*******************************************************************************************/
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -384,6 +409,8 @@ public class ToServerMinaService extends Service {
         filter.addAction(ConstantValues.MODIFYINGAIN);
         filter.addAction(ConstantValues.MODIFYANTENNA);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
+
+
         dataHandler = new DataHandler();
         registerReceiver(sendMessage, filter);
         new Thread(new Runnable() {
@@ -396,6 +423,7 @@ public class ToServerMinaService extends Service {
 
         }).start();
 
+        acquireWakeLock();//电源
         super.onCreate();
     }
 
@@ -403,6 +431,7 @@ public class ToServerMinaService extends Service {
     public void onDestroy() {
         unregisterReceiver(sendMessage);
         sendMessage = null;
+        releaseWakeLock();//释放锁
         super.onDestroy();
     }
 
@@ -557,7 +586,7 @@ public class ToServerMinaService extends Service {
                             ConstantValues.RSTATION_REGISTER, "station_register", list_StayionRegister);
                     Log.d("MAP", "收到台站登记属性");
                 } else {
-                    Log.d("MAP", "收到台站登记属性但为空");
+                    Toast.makeText(getBaseContext(), "您所查询的范围内没有相关记录！", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -921,7 +950,7 @@ public class ToServerMinaService extends Service {
                 heartBeat.setForwardEvent(true);
                 /** 发送频率 */
                 heartBeat.setRequestInterval(HEARTBEATRATE);
-                connector.getSessionConfig().setKeepAlive(true);
+                //connector.getSessionConfig().setKeepAlive(true);
                 connector.getFilterChain().addLast("heartbeat", heartBeat);
                 /****************************/
                 connector.setHandler(dataHandler);

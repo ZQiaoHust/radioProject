@@ -106,10 +106,12 @@ public class Map_Route_Result extends Activity {
         ArrayList<MapRadioPointInfo> pointlist=map.getMapRadioPointInfoList();
         for(MapRadioPointInfo point:pointlist){
             Map<String,Object> data=new HashMap<>();
-            String time=point.getYear()+"-"+point.getMonth()+"-"+point.getDate()+""
-                    +point.getHour()+":"+point.getMin();
-            TimeShow timeShow=new TimeShow(point.getYear(),point.getMonth(),point.getDate(),
+            String time=String.format("yyyy-MM-dd HH:mm",point.getYear(),point.getMonth(),point.getDate(),
                     point.getHour(),point.getMin());
+//            String time=point.getYear()+"-"+point.getMonth()+"-"+point.getDate()+""
+//                    +point.getHour()+":"+point.getMin();
+//            TimeShow timeShow=new TimeShow(point.getYear(),point.getMonth(),point.getDate(),
+//                    point.getHour(),point.getMin());
             String location=point.getLongtitudeStyle()+point.getLongitude()+" ,"+
                     point.getLatitudeStyle()+point.getLatitude()+" ,"+point.getHeight();
 //            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");

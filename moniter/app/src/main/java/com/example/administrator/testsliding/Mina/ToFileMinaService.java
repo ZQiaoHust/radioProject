@@ -13,13 +13,16 @@ package com.example.administrator.testsliding.Mina;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.administrator.testsliding.Database.DatabaseHelper;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGAQuery.Query_Connect;
@@ -46,6 +49,7 @@ import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Si
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_Threshold;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_UploadDataEnd;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_UploadDataStart;
+import com.example.administrator.testsliding.bean2server.FileToServerReply;
 import com.example.administrator.testsliding.bean2server.File_ModifyAntenna;
 import com.example.administrator.testsliding.bean2server.File_ModifyIngain;
 import com.example.administrator.testsliding.bean2server.File_ServiceRadio;
@@ -102,8 +106,12 @@ public class ToFileMinaService extends Service {
 
     private String IP = "27.17.8.142";
     private int PORT = 9988;
-    private IoSession session;
+    private  static IoSession session;
     private String TAG = "ToFileMinaService";
+    private  static  IoConnector connector = new NioSocketConnector();
+    private SQLiteDatabase db = null;
+    private DatabaseHelper dbHelper = null;
+
 
 
     @Override
@@ -113,13 +121,15 @@ public class ToFileMinaService extends Service {
 
     @Override
     public void onCreate() {
+        dbHelper = new DatabaseHelper(this);
+        db = dbHelper.getWritableDatabase();
 
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    IoConnector connector = new NioSocketConnector();
+
                     connector.getFilterChain().addLast(
                             "codec",
                             new ProtocolCodecFilter(new ToFileProtocolCodeFactory()));
@@ -132,8 +142,8 @@ public class ToFileMinaService extends Service {
                     future.awaitUninterruptibly();// 等待连接创建完成
                     session = future.getSession();
                     Constants.FILEsession=session;
-                    session.getCloseFuture().awaitUninterruptibly();// 等待连接断开
-                    connector.dispose();
+//                    session.getCloseFuture().awaitUninterruptibly();// 等待连接断开
+//                    connector.dispose();
                 } catch (Exception e) {
 
                 }
@@ -158,6 +168,23 @@ public class ToFileMinaService extends Service {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
+            Log.d("fileSession","断开连接!");
+            while(true) {
+                try {
+                    Thread.sleep(3000);
+                    // 这里是异步操作 连接后立即返回
+                    ConnectFuture future = connector.connect(new InetSocketAddress(
+                            "27.17.8.142", 9988));
+                    future.awaitUninterruptibly();// 等待连接创建完成
+                    session = future.getSession();
+                    if(session.isConnected()) {
+                        Constants.FILEsession = session;
+                        Log.d("fileSession","重新连接!");
+                        break;
+                    }
+                } catch (Exception e) {
+                }
+            }
         }
 
         @Override
@@ -176,6 +203,25 @@ public class ToFileMinaService extends Service {
                 throws Exception {
 
                 //======================================================================================================
+               if(message instanceof FileToServerReply){
+                   FileToServerReply reply= (FileToServerReply) message;
+                   String name=reply.getFileName();
+                   ContentValues cvUpload = new ContentValues();
+                   cvUpload.put("upload", 1);
+                    /* 取得扩展名 */
+                   String end = name
+                           .substring(name.lastIndexOf(".") + 1, name.length())
+                           .toLowerCase();
+                   if(end.equals("pwr")) {
+                       db.update("localFile", cvUpload, "filename=?", new String[]{name});
+                       Log.d("file",name+"上传成功！");
+                   }else  if(end.equals("iq")) {
+                       db.update("iqFile", cvUpload, "filename=?", new String[]{name});
+                       Log.d("file",name+"上传成功！");
+                   }
+
+
+               }
         }
 
         @Override

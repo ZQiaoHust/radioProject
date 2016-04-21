@@ -294,10 +294,20 @@ public class ComputeParaInService {
 //            }
             byte[] og=new byte[8];
             System.arraycopy(bytes,i,og,0,8);
-                organizer=new String(og);
+               // organizer=new String(og);
 
+            if(og[0]==1){
+                organizer="中国联通";
+            }else   if(og[0]==2){
+                organizer="中国移动";
+            }else if(og[0]==3) {
+                organizer = "中国电信";
+            }
+            if(og[1]==1){
+                organizer=organizer+"湖北省分公司";
+            }
 
-            //判断位置
+                //判断位置
             if(bytes[i+11]==0x00)
                 longstyle="E";
             else if(bytes[i+11]==0x01){

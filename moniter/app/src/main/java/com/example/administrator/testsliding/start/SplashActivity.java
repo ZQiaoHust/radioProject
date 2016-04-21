@@ -32,8 +32,8 @@ private TextView tv01,tv02;
 
         super.onCreate(savedInstanceState);
 
-        Intent intent = new Intent(SplashActivity.this, ToServerMinaService.class);
-        startService(intent);
+//        Intent intent = new Intent(SplashActivity.this, ToServerMinaService.class);
+//        startService(intent);
         Intent startServiceIntent=new Intent(SplashActivity.this, MinaClientService.class);
         startService(startServiceIntent);
         Intent fileIntent = new Intent(SplashActivity.this, ToFileMinaService.class);

@@ -24,7 +24,7 @@ public class ToServerIQwaveEncoder implements MessageEncoder<ToServerIQwaveFile>
                        ProtocolEncoderOutput out) throws Exception {
         CharsetEncoder ce = Charset.forName("UTF-8").newEncoder();
 
-        IoBuffer buffer= IoBuffer.allocate(50).setAutoExpand(true);
+        IoBuffer buffer= IoBuffer.allocate(6000).setAutoExpand(true);
         buffer.put((byte)0x00);
         buffer.put((byte)0xff);
         buffer.putShort((short) message.getFileName().getBytes(Charset.forName("UTF-8")).length);

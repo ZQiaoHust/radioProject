@@ -5,7 +5,8 @@ import com.example.administrator.testsliding.Bean.ToServerPowerSpectrumAndAbnorm
 import com.example.administrator.testsliding.bean2server.RequstNetwork;
 import com.example.administrator.testsliding.mina2FPGA.Encode.ToServerIQwaveEncoder;
 import com.example.administrator.testsliding.mina2FPGA.Encode.ToServerPowerSpectrumAndAbnormalPointEncoder;
-import com.example.administrator.testsliding.mina2server.RequstNetworkEncoder;
+import com.example.administrator.testsliding.mina2server.Decoder.FileToServerReplyDecoder;
+import com.example.administrator.testsliding.mina2server.Encoder.RequstNetworkEncoder;
 
 import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 
@@ -16,6 +17,7 @@ public class ToFileProtocolCodeFactory  extends DemuxingProtocolCodecFactory {
 
     public  ToFileProtocolCodeFactory(){
 
+        super.addMessageDecoder(FileToServerReplyDecoder.class);//收到文件后的确认帧
         super.addMessageEncoder(RequstNetwork.class,RequstNetworkEncoder.class);
         //文件上传
         super.addMessageEncoder(ToServerIQwaveFile.class, ToServerIQwaveEncoder.class);

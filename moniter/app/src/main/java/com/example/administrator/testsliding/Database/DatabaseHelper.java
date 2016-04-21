@@ -11,6 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME="sendFileDatabase";//数据库名称
     private static final String TABLE_NAME="localFile";//表名称
+    private static final String TABLE_NAME_IQ="iqFile";//表名称
     private static final int  version=1;
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, version);
@@ -20,6 +21,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String sql = "create table ["+TABLE_NAME+"](_id INTEGER PRIMARY KEY AUTOINCREMENT,fileName VARCHAR, start INT ,end INT ,isChanged SMALLINT ,upload SMALLINT);";
         db.execSQL(sql);
+        String iqFile = "create table ["+TABLE_NAME_IQ+"](_id INTEGER PRIMARY KEY AUTOINCREMENT,fileName VARCHAR, upload SMALLINT);";
+        db.execSQL(iqFile);
     }
 
     @Override

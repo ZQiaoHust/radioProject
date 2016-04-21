@@ -357,7 +357,7 @@ public class ToServerMinaService extends Service {
         if (null == wakeLock)
         {
             PowerManager pm = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
-            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK| PowerManager.ON_AFTER_RELEASE, "ToServerMinaService");
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK| PowerManager.ON_AFTER_RELEASE,  getClass().getCanonicalName());
             if (null != wakeLock)
             {
                 wakeLock.acquire();
@@ -418,11 +418,8 @@ public class ToServerMinaService extends Service {
             @Override
             public void run() {
                 serviceConnect(dataHandler);
-
             }
-
         }).start();
-
         acquireWakeLock();//电源
         super.onCreate();
     }
@@ -499,14 +496,14 @@ public class ToServerMinaService extends Service {
                 Thread.sleep(1500);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RMAPRADIO, "map_radio", map);
-                Log.d("MAP", "收到态势");
+
             }
             if (message instanceof MapRouteResult) {
                 MapRouteResult map = (MapRouteResult) message;
                 Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RMAPROUTE, "map_route", map);
-                Log.d("MAP", "收到路径");
+
             }
             if (message instanceof File_ServiceRadio) {
                 ArrayList<ListMap> listItems = new ArrayList<>();
@@ -517,7 +514,7 @@ public class ToServerMinaService extends Service {
                 Thread.sleep(1000);
                 Broadcast.sendBroadCastRadioList(getBaseContext(),
                         ConstantValues.RWIRLESSPLAN, "wirlessplan", listItems);
-                Log.d("MAP", "收到无线电规划");
+
             }
 
             if (message instanceof File_StationAll) {
@@ -530,9 +527,8 @@ public class ToServerMinaService extends Service {
                 if (list_stationAlls != null) {
                     Broadcast.sendBroadCastTerminalAllList(getBaseContext(),
                             ConstantValues.RTERMINAL_ALL, "station_allresult", list_stationAlls);
-                    Log.d("MAP", "收到所有终端属性");
                 } else {
-                    Log.d("MAP", "收到所有终端属性但为空");
+                    Toast.makeText(getBaseContext(), "您所查询的范围内没有相关记录！", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -547,9 +543,8 @@ public class ToServerMinaService extends Service {
                 if (list_terminalOnlines != null) {
                     Broadcast.sendBroadCastTerminalOnlineList(getBaseContext(),
                             ConstantValues.RTERMINAL_ONLINE, "terminal_onlineresult", list_terminalOnlines);
-                    Log.d("MAP", "收到在网终端属性");
                 } else {
-                    Log.d("MAP", "收到在网终端属性但为空");
+                    Toast.makeText(getBaseContext(), "您所查询的范围内没有相关记录！", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -565,9 +560,8 @@ public class ToServerMinaService extends Service {
                 if (list_terminalRegister != null) {
                     Broadcast.sendBroadCastTerminalOnlineList(getBaseContext(),
                             ConstantValues.RTERMINAL_REGISTER, "terminal_registerresult", list_terminalRegister);
-                    Log.d("MAP", "收到终端登记属性");
                 } else {
-                    Log.d("MAP", "收到终端登记属性但为空");
+                    Toast.makeText(getBaseContext(), "您所查询的范围内没有相关记录！", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -584,7 +578,6 @@ public class ToServerMinaService extends Service {
                 if (list_StayionRegister != null) {
                     Broadcast.sendBroadCastTerminalAllList(getBaseContext(),
                             ConstantValues.RSTATION_REGISTER, "station_register", list_StayionRegister);
-                    Log.d("MAP", "收到台站登记属性");
                 } else {
                     Toast.makeText(getBaseContext(), "您所查询的范围内没有相关记录！", Toast.LENGTH_SHORT).show();
                 }
@@ -599,7 +592,6 @@ public class ToServerMinaService extends Service {
                 Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RSTATION_CURRENT, "station_current", reply);
-                Log.d("MAP", "收到台站当前属性");
             }
 
             //=======================================================================

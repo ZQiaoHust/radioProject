@@ -107,9 +107,6 @@ public class ConnectPCB extends Activity {
                     return;
                 }
                 try {
-                    Connect connect=new Connect();
-                    connect.setConn(connectStyle);
-                    Broadcast.sendBroadCast(ConnectPCB.this,ConstantValues.ConnectPCB,"connectPCB",connect);
                     if(connectStyle==1) {
                         //获取连接到手机热点的硬件ip
 //                        PCBIP = getConnectIp();
@@ -118,6 +115,9 @@ public class ConnectPCB extends Activity {
                         Intent startServiceIntent = new Intent(ConnectPCB.this, MinaClientService.class);
                         startService(startServiceIntent);
                     }
+                    Connect connect=new Connect();
+                    connect.setConn(connectStyle);
+                    Broadcast.sendBroadCast(ConnectPCB.this,ConstantValues.ConnectPCB,"connectPCB",connect);
 
                 } catch (Exception e) {
                     e.printStackTrace();

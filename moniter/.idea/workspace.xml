@@ -6,7 +6,8 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="ERROR" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
     <option name="TOOL_WINDOW_REGEXP_FILTER" value="false" />
   </component>
   <component name="ChangeListManager">
@@ -30,53 +31,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ToFileMinaService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToFileMinaService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="209" column="45" selection-start-line="209" selection-start-column="45" selection-end-line="209" selection-end-column="45" />
-              <folding>
-                <element signature="e#0#239#0" expanded="false" />
-                <element signature="imports" expanded="false" />
-                <element signature="e#6751#6752#0" expanded="false" />
-                <element signature="e#6778#6779#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ToFileProtocolCodeFactory.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToFileProtocolCodeFactory.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="23" column="24" selection-start-line="23" selection-start-column="24" selection-end-line="23" selection-end-column="24" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FileToServerReplyDecoder.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/mina2server/Decoder/FileToServerReplyDecoder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="21" column="9" selection-start-line="21" selection-start-column="9" selection-end-line="21" selection-end-column="9" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="MinaClientService.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/MinaClientService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="602" column="77" selection-start-line="601" selection-start-column="21" selection-end-line="602" selection-end-column="77" />
+            <state vertical-scroll-proportion="-15.3">
+              <caret line="95" column="33" selection-start-line="95" selection-start-column="33" selection-end-line="95" selection-end-column="33" />
               <folding>
-                <element signature="method#uploadIQFile#0;class#MinaClientService#0" expanded="false" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#20484#21664#0" expanded="true" />
+                <element signature="e#21663#21664#0" expanded="true" />
+                <element signature="e#21934#21935#0" expanded="true" />
+                <element signature="e#21961#21962#0" expanded="true" />
+                <element signature="e#22782#34190#0" expanded="true" />
+                <element signature="e#34189#34190#0" expanded="true" />
+                <element signature="e#53861#53869#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConnectPCB.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/SlideMenu/ConnectPCB.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="110" column="40" selection-start-line="110" selection-start-column="40" selection-end-line="110" selection-end-column="40" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -85,68 +64,41 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToServerMinaService.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="420" column="0" selection-start-line="420" selection-start-column="0" selection-end-line="420" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AndroidManifest.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="156" column="33" selection-start-line="156" selection-start-column="33" selection-end-line="156" selection-end-column="33" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Stations_registerResult.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/tab1/Stations_registerResult.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="122" column="56" selection-start-line="122" selection-start-column="56" selection-end-line="122" selection-end-column="56" />
+              <caret line="635" column="0" selection-start-line="635" selection-start-column="0" selection-end-line="635" selection-end-column="0" />
               <folding>
-                <element signature="imports" expanded="false" />
-                <element signature="e#3943#3944#0" expanded="false" />
-                <element signature="e#4012#4013#0" expanded="false" />
+                <element signature="e#19791#19931#0" expanded="true" />
+                <element signature="e#19930#19931#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Map_Route_Result.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/tab1/Map_Route_Result.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="105" column="78" selection-start-line="105" selection-start-column="78" selection-end-line="105" selection-end-column="78" />
-              <folding>
-                <element signature="imports" expanded="false" />
-                <element signature="e#2849#2850#0" expanded="false" />
-                <element signature="e#2911#2912#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Constants.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Constants.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/GlobalConstants/Constants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="2.511628">
-              <caret line="34" column="28" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="33" column="24" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ComputeParaInService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/compute/ComputeParaInService.java">
+      <file leaf-file-name="FinalStationState.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/SlideMenu/FinalStationState.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="372" column="0" selection-start-line="372" selection-start-column="0" selection-end-line="372" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
+              <caret line="209" column="48" selection-start-line="209" selection-start-column="48" selection-end-line="209" selection-end-column="48" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SplashActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/start/SplashActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.35268506">
+              <caret line="24" column="49" selection-start-line="24" selection-start-column="49" selection-end-line="24" selection-end-column="49" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -3309,14 +3261,15 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/tab3/Share_fragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/compute/ComputePara.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/compute/ComputeParaInService.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/start/SplashActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/SlideMenu/FinalStationState.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToFileMinaService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/tab1/Map_Route_Result.java" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToFileMinaService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/SlideMenu/FinalStationState.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToServerMinaService.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/MinaClientService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/GlobalConstants/Constants.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/MinaClientService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/SlideMenu/ConnectPCB.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/start/SplashActivity.java" />
       </list>
     </option>
   </component>
@@ -3351,8 +3304,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -3421,14 +3374,80 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="start" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testSliding_heartBeats" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testsliding" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SlideMenu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testSliding_heartBeats" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testsliding" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Mina" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testSliding_heartBeats" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testsliding" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="GlobalConstants" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="ProjectPane" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -3716,7 +3735,7 @@
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5835655" sideWeight="0.5028653" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Android Monitor" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.7799443" sideWeight="0.49713466" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.7799443" sideWeight="0.49713466" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -3724,7 +3743,7 @@
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3295129" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295129" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
@@ -3754,26 +3773,19 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/mina2server/Decoder/ModifyAntennaDecoder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="42" column="28" selection-start-line="42" selection-start-column="28" selection-end-line="42" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToFileMinaService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="199" column="0" selection-start-line="199" selection-start-column="0" selection-end-line="199" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/MinaClientService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="1408" column="47" selection-start-line="1408" selection-start-column="47" selection-end-line="1408" selection-end-column="47" />
           <folding>
-            <element signature="method#uploadIQFile#0;class#MinaClientService#0" expanded="false" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#20484#21664#0" expanded="true" />
+            <element signature="e#21663#21664#0" expanded="true" />
+            <element signature="e#21934#21935#0" expanded="true" />
+            <element signature="e#21961#21962#0" expanded="true" />
+            <element signature="e#22782#34190#0" expanded="true" />
+            <element signature="e#34189#34190#0" expanded="true" />
+            <element signature="e#53861#53869#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3804,7 +3816,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="879" column="25" selection-start-line="879" selection-start-column="25" selection-end-line="880" selection-end-column="9" />
-          <folding />
+          <folding>
+            <element signature="e#19791#19931#0" expanded="true" />
+            <element signature="e#19930#19931#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -3820,7 +3835,14 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#uploadIQFile#0;class#MinaClientService#0" expanded="false" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#20484#21664#0" expanded="true" />
+            <element signature="e#21663#21664#0" expanded="true" />
+            <element signature="e#21934#21935#0" expanded="true" />
+            <element signature="e#21961#21962#0" expanded="true" />
+            <element signature="e#22782#34190#0" expanded="true" />
+            <element signature="e#34189#34190#0" expanded="true" />
+            <element signature="e#53861#53869#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3844,7 +3866,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="424" column="21" selection-start-line="424" selection-start-column="21" selection-end-line="424" selection-end-column="21" />
-          <folding />
+          <folding>
+            <element signature="e#19791#19931#0" expanded="true" />
+            <element signature="e#19930#19931#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -3860,7 +3885,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="424" column="21" selection-start-line="424" selection-start-column="21" selection-end-line="424" selection-end-column="21" />
-          <folding />
+          <folding>
+            <element signature="e#19791#19931#0" expanded="true" />
+            <element signature="e#19930#19931#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -3876,7 +3904,14 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#uploadIQFile#0;class#MinaClientService#0" expanded="false" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#20484#21664#0" expanded="true" />
+            <element signature="e#21663#21664#0" expanded="true" />
+            <element signature="e#21934#21935#0" expanded="true" />
+            <element signature="e#21961#21962#0" expanded="true" />
+            <element signature="e#22782#34190#0" expanded="true" />
+            <element signature="e#34189#34190#0" expanded="true" />
+            <element signature="e#53861#53869#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3893,7 +3928,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="424" column="21" selection-start-line="424" selection-start-column="21" selection-end-line="424" selection-end-column="21" />
-          <folding />
+          <folding>
+            <element signature="e#19791#19931#0" expanded="true" />
+            <element signature="e#19930#19931#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -3909,7 +3947,14 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="605" column="77" selection-start-line="605" selection-start-column="77" selection-end-line="605" selection-end-column="77" />
           <folding>
-            <element signature="method#uploadIQFile#0;class#MinaClientService#0" expanded="false" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#20484#21664#0" expanded="true" />
+            <element signature="e#21663#21664#0" expanded="true" />
+            <element signature="e#21934#21935#0" expanded="true" />
+            <element signature="e#21961#21962#0" expanded="true" />
+            <element signature="e#22782#34190#0" expanded="true" />
+            <element signature="e#34189#34190#0" expanded="true" />
+            <element signature="e#53861#53869#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -4033,37 +4078,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/start/SplashActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4107402">
-          <caret line="32" column="43" selection-start-line="32" selection-start-column="43" selection-end-line="32" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/SlideMenu/FinalStationState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.47024673">
-          <caret line="218" column="53" selection-start-line="218" selection-start-column="53" selection-end-line="218" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/compute/ComputePara.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.039187226">
           <caret line="337" column="0" selection-start-line="337" selection-start-column="0" selection-end-line="337" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToFileMinaService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="209" column="45" selection-start-line="209" selection-start-column="45" selection-end-line="209" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#239#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-            <element signature="e#6751#6752#0" expanded="false" />
-            <element signature="e#6778#6779#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4077,48 +4095,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/mina2server/Decoder/FileToServerReplyDecoder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="9" selection-start-line="21" selection-start-column="9" selection-end-line="21" selection-end-column="9" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://E:/android sdk/sdk2/sources/android-23/android/os/PowerManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="2.6052248">
           <caret line="90" column="39" selection-start-line="90" selection-start-column="23" selection-end-line="90" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToServerMinaService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="420" column="0" selection-start-line="420" selection-start-column="0" selection-end-line="420" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="156" column="33" selection-start-line="156" selection-start-column="33" selection-end-line="156" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/tab1/Stations_registerResult.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="122" column="56" selection-start-line="122" selection-start-column="56" selection-end-line="122" selection-end-column="56" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#3943#3944#0" expanded="false" />
-            <element signature="e#4012#4013#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4134,30 +4114,114 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/compute/ComputeParaInService.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/mina2server/Decoder/FileToServerReplyDecoder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="372" column="0" selection-start-line="372" selection-start-column="0" selection-end-line="372" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.039187226">
+          <caret line="21" column="9" selection-start-line="21" selection-start-column="9" selection-end-line="21" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/tab1/Stations_registerResult.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3918723">
+          <caret line="122" column="56" selection-start-line="122" selection-start-column="56" selection-end-line="122" selection-end-column="56" />
           <folding>
             <element signature="imports" expanded="false" />
+            <element signature="e#3943#3944#0" expanded="false" />
+            <element signature="e#4012#4013#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/MinaClientService.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/compute/ComputeParaInService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7445573">
+          <caret line="372" column="0" selection-start-line="372" selection-start-column="0" selection-end-line="372" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.42113322">
+          <caret line="156" column="33" selection-start-line="156" selection-start-column="33" selection-end-line="156" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToFileMinaService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.35268506">
+          <caret line="172" column="39" selection-start-line="172" selection-start-column="39" selection-end-line="172" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/android sdk/sdk2/sources/android-23/java/lang/Class.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6458636">
+          <caret line="381" column="14" selection-start-line="381" selection-start-column="14" selection-end-line="381" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/ToServerMinaService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="602" column="77" selection-start-line="601" selection-start-column="21" selection-end-line="602" selection-end-column="77" />
+          <caret line="635" column="0" selection-start-line="635" selection-start-column="0" selection-end-line="635" selection-end-column="0" />
           <folding>
-            <element signature="method#uploadIQFile#0;class#MinaClientService#0" expanded="false" />
+            <element signature="e#19791#19931#0" expanded="true" />
+            <element signature="e#19930#19931#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/GlobalConstants/Constants.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.511628">
-          <caret line="34" column="28" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="33" column="24" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/Mina/MinaClientService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-15.3">
+          <caret line="95" column="33" selection-start-line="95" selection-start-column="33" selection-end-line="95" selection-end-column="33" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#20484#21664#0" expanded="true" />
+            <element signature="e#21663#21664#0" expanded="true" />
+            <element signature="e#21934#21935#0" expanded="true" />
+            <element signature="e#21961#21962#0" expanded="true" />
+            <element signature="e#22782#34190#0" expanded="true" />
+            <element signature="e#34189#34190#0" expanded="true" />
+            <element signature="e#53861#53869#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/SlideMenu/FinalStationState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="209" column="48" selection-start-line="209" selection-start-column="48" selection-end-line="209" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/SlideMenu/ConnectPCB.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="110" column="40" selection-start-line="110" selection-start-column="40" selection-end-line="110" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/administrator/testsliding/start/SplashActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.35268506">
+          <caret line="24" column="49" selection-start-line="24" selection-start-column="49" selection-end-line="24" selection-end-column="49" />
           <folding />
         </state>
       </provider>

@@ -168,7 +168,6 @@ public class ToFileMinaService extends Service {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
-            Log.d("fileSession","断开连接!");
             while(true) {
                 try {
                     Thread.sleep(3000);
@@ -179,7 +178,6 @@ public class ToFileMinaService extends Service {
                     session = future.getSession();
                     if(session.isConnected()) {
                         Constants.FILEsession = session;
-                        Log.d("fileSession","重新连接!");
                         break;
                     }
                 } catch (Exception e) {
@@ -214,10 +212,8 @@ public class ToFileMinaService extends Service {
                            .toLowerCase();
                    if(end.equals("pwr")) {
                        db.update("localFile", cvUpload, "filename=?", new String[]{name});
-                       Log.d("file",name+"上传成功！");
                    }else  if(end.equals("iq")) {
                        db.update("iqFile", cvUpload, "filename=?", new String[]{name});
-                       Log.d("file",name+"上传成功！");
                    }
 
 

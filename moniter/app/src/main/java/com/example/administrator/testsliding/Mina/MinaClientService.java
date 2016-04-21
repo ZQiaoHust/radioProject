@@ -80,12 +80,21 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by jinaghao on 15/11/18.
  */
 public class MinaClientService extends Service {
-    private IoSession session;
+    private  static IoSession session=null;
+    private static  IoConnector connector = new NioSocketConnector();
     private SQLiteDatabase db = null;
     private DatabaseHelper dbHelper = null;
     private MyApplication myApplication;
     ComputePara computePara = new ComputePara();
+
     private Boolean Ispsfull = false;//queshao
+    /*************Fpga的IP*************/
+//    private static String IP="192.168.43.135";// //HUAWEIAP5  ID=15
+    private static String IP="192.168.43.228"; //HUAWEIAP4,ID为14
+    //private static String IP="192.168.43.73";//HUAWEIAP3,ID为13
+    //private static String IP="192.168.43.99";//HUAWEIAP2  ID=12
+    private static int PORT=8899;
+    private String FpgaIP;
 
     private float firstMax = 0, secMax = 0;//需要压制的频点
     List<byte[]> temp_powerSpectrum;
@@ -94,7 +103,6 @@ public class MinaClientService extends Service {
     List<float[]> temp_drawWaterfall;
     List<float[]> temp_drawBackSpectrum;
     Map<Float, Float> map_abnormal;
-
 
     List<byte[]> temp_IQwave;
     int SweepParaList_length;
@@ -142,7 +150,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -159,7 +167,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -175,7 +183,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -193,7 +201,7 @@ public class MinaClientService extends Service {
                 }
                 try {
 
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -211,7 +219,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -228,7 +236,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -245,9 +253,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-
-                    session.write(data);
-
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -263,9 +269,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-
-                    session.write(data);
-
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -281,9 +285,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-
-                    session.write(data);
-
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -299,9 +301,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-
-                    session.write(data);
-
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -319,7 +319,7 @@ public class MinaClientService extends Service {
                 }
                 try {
 
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -337,9 +337,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-
-                    session.write(data);
-
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -356,7 +354,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -374,7 +372,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -392,7 +390,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -410,7 +408,7 @@ public class MinaClientService extends Service {
                 }
                 try {
 
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -429,7 +427,7 @@ public class MinaClientService extends Service {
                 }
                 try {
 
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -447,9 +445,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-
-                    session.write(data);
-
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -467,7 +463,7 @@ public class MinaClientService extends Service {
                 }
                 try {
 
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -481,7 +477,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -498,7 +494,7 @@ public class MinaClientService extends Service {
                 }
                 try {
 
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -515,7 +511,7 @@ public class MinaClientService extends Service {
                     return;
                 }
                 try {
-                    session.write(data);
+                    Constants.FPGAsession.write(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -573,48 +569,23 @@ public class MinaClientService extends Service {
             @Override
             public void run() {
                 try {
-                    //异常频点和频谱
-//                    int size=Constants.Queue_SpectrumVSAbnormal.size();
-//                    Log.d("qwr",String.valueOf(size));
-
-                    IoConnector connector = new NioSocketConnector();
-
                     connector.setHandler(new MyClientHandler());
-
                     connector.getFilterChain().addLast("codec",
                             new ProtocolCodecFilter(new ToFPGAProtocolFactory()));
-
                     connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 1);
-                    // connector.getSessionConfig().setReadBufferSize(1024);
-
 
 //                    ArrayList<String> ipList = getConnectIp();
-//                    String FpgaIP = (String) ipList.get(1);
+//                    FpgaIP = (String) ipList.get(1);
 //                    ConnectFuture future = connector.connect
-//                            (new InetSocketAddress(FpgaIP, 8899));
-                    /**
-                     * Fpga的IP
-                     */
-                    //HUAWEIAP5  ID=15
-//                    ConnectFuture future = connector.connect
-//                            (new InetSocketAddress("192.168.43.135", 8899));
-//                    //HUAWEIAP2  ID=12
-//                    ConnectFuture future = connector.connect
-//                            (new InetSocketAddress("192.168.43.99", 8899));
-                    //HUAWEIAP3,ID为13
-                    ConnectFuture future = connector.connect
-                            (new InetSocketAddress("192.168.43.73", 8899));
-                    //HUAWEIAP4,ID为14
-//                    ConnectFuture future = connector.connect
-//                            (new InetSocketAddress("192.168.43.228", 8899));
+//                            (new InetSocketAddress(FpgaIP, PORT));
 
+                    ConnectFuture future = connector.connect
+                            (new InetSocketAddress(IP, PORT));
                     future.awaitUninterruptibly();// 等待连接创建完成
                     session = future.getSession();
                     Constants.FPGAsession = session;
-                    session.getCloseFuture().awaitUninterruptibly();//等待连接断开
-                    connector.dispose();
-
-
+//                    session.getCloseFuture().awaitUninterruptibly();//等待连接断开
+//                    connector.dispose();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1073,6 +1044,23 @@ public class MinaClientService extends Service {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
+            while(true) {
+                try {
+                    Thread.sleep(3000);
+                    // 这里是异步操作 连接后立即返回
+                    ConnectFuture future = connector.connect(new InetSocketAddress(
+                            IP, PORT));
+//                    ConnectFuture future = connector.connect
+//                            (new InetSocketAddress(FpgaIP, PORT));
+                    future.awaitUninterruptibly();// 等待连接创建完成
+                    session = future.getSession();
+                    if(session.isConnected()) {
+                        Constants.FPGAsession = session;
+                        break;
+                    }
+                } catch (Exception e) {
+                }
+            }
             super.sessionClosed(session);
         }
 

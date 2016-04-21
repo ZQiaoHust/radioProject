@@ -202,14 +202,6 @@ public class FinalStationState extends Activity {
             public void onClick(View v) {
                 RequstNetwork net=new RequstNetwork();
                 if(data!=null){
-                    //启动与中心站连接的service
-                    Intent intent = new Intent(FinalStationState.this, ToServerMinaService.class);
-                    startService(intent);
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     // net.setEquipmentID(data.getEquipmentID());
                     byte[] b=data.getContent();
                     //终端类型和ID号

@@ -55,12 +55,12 @@ public class StationStateDecoder implements MessageDecoder {
                 stationState.setOnNet(accept[4]);
                 stationState.setModel(accept[5]);
                 stationState.setEastORwest(accept[6]);
-                float longtitude= (float) ((accept[7] &0xff)+((accept[8]>>>2)&0xff)/60.0+
-                                        (((accept[2]&0x03)<<8)+(accept[9]&0xff))/60000.0);
+                float longtitude= (float) ((accept[7] &0xff)+((accept[8]>>2)&0x3f)/60.0+
+                                        (((accept[8]&0x03)<<8)+(accept[9]&0xff))/60000.0);
                         //computePara.BitDecimal2float(accept[8] ,accept[9] );
                 stationState.setLongtitude(longtitude);
                 stationState.setNorthORsouth(accept[10] >> 7);
-                float latitude= (float) ((accept[10]&0x7f)+((accept[11]>>>2)&0xff)/60.0+
+                float latitude= (float) ((accept[10]&0x7f)+((accept[11]>>2)&0x3f)/60.0+
                                         (((accept[11]&0x03)<<8)+(accept[12]&0xff))/60000.0);
                         //computePara.BitDecimal2float( accept[11],accept[12]);
                 stationState.setLatitude(latitude);

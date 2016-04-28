@@ -121,7 +121,7 @@ public class ToFileMinaService extends Service {
 
     @Override
     public void onCreate() {
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = DatabaseHelper.getInstance(this);
         db = dbHelper.getWritableDatabase();
 
         new Thread(new Runnable() {
@@ -205,18 +205,18 @@ public class ToFileMinaService extends Service {
                    FileToServerReply reply= (FileToServerReply) message;
                    String name=reply.getFileName();
                    ContentValues cvUpload = new ContentValues();
-                   cvUpload.put("upload", 1);
+                   cvUpload.put("upload", 2);
                     /* 取得扩展名 */
                    String end = name
                            .substring(name.lastIndexOf(".") + 1, name.length())
                            .toLowerCase();
                    if(end.equals("pwr")) {
                        db.update("localFile", cvUpload, "filename=?", new String[]{name});
-                   }else  if(end.equals("iq")) {
+                       Log.d("file","上传成功"+name);
+                   } else  if(end.equals("iq")) {
                        db.update("iqFile", cvUpload, "filename=?", new String[]{name});
+                       Log.d("file","上传成功"+name);
                    }
-
-
                }
         }
 

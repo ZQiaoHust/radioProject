@@ -9,24 +9,55 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DB_NAME="sendFileDatabase";//数据库名称
+    private static final String DB_NAME="sendFileDatabase.db";//数据库名称
     private static final String TABLE_NAME="localFile";//表名称
     private static final String TABLE_NAME_IQ="iqFile";//表名称
     private static final int  version=1;
-    public DatabaseHelper(Context context) {
+    private static DatabaseHelper mInstance;
+
+
+    public static final String sql = "create table ["+TABLE_NAME+"](_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "fileName VARCHAR UNIQUE, " +
+            "start INT ," +
+            "end INT ," +
+            "isChanged SMALLINT ," +
+            "upload SMALLINT," +
+            "times SMALLINT);";
+    public static final  String iqFile = "create table ["+TABLE_NAME_IQ+"](_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "fileName VARCHAR," +
+            "upload SMALLINT," +
+            "_times SMALLINT);";
+
+    private DatabaseHelper(Context context) {
         super(context, DB_NAME, null, version);
     }
 
+    public synchronized static DatabaseHelper getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new DatabaseHelper(context);
+        }
+        return mInstance;
+    }
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "create table ["+TABLE_NAME+"](_id INTEGER PRIMARY KEY AUTOINCREMENT,fileName VARCHAR, start INT ,end INT ,isChanged SMALLINT ,upload SMALLINT);";
         db.execSQL(sql);
-        String iqFile = "create table ["+TABLE_NAME_IQ+"](_id INTEGER PRIMARY KEY AUTOINCREMENT,fileName VARCHAR, upload SMALLINT);";
         db.execSQL(iqFile);
+       //this.deleteDatabase("sendFileDatabase");删除数据库
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        switch (oldVersion) {
+            case 1:
+                //db.execSQL("alter table iqFile add column _times SMALLINT");
+                break;
+            case 2:
+                break;
+            case 3:
+                //db.execSQL("alter table localFile add column times SMALLINT");
+                break;
+            default:
+        }
     }
 }
+

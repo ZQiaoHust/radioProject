@@ -32,7 +32,7 @@ import java.util.Queue;
  * 
  */
 public class Constants {
-	public static  int ID=14;
+	public static  int ID=15;
 	public static IoSession FPGAsession=null;
 	public static IoSession SERVERsession=null;
 	public static IoSession FILEsession=null;
@@ -54,8 +54,6 @@ public class Constants {
 	public static int IQCount=0;//段数计数器
 	public static int BackgroundCount=0;//背景pinpu段数计数器
 
-
-
 	public static boolean NotFill=false;//频谱数据没有收满
 	public static boolean Backfail=false;//背景频谱数据接收失败
 	public static boolean IsJump=false;//背景频谱数据接收失败h后让解码器跳转到实时频谱
@@ -67,7 +65,6 @@ public class Constants {
 	public static ContextBackground ctxBack;//背景频谱数据
 	public  static  int  sevCount;
 	public static IQContext ctxIQ;//IQ波
-
 
 	public  static  int  judgePower;//功率谱变化判断门限
 	public  static  int  selectRate;//抽取倍率

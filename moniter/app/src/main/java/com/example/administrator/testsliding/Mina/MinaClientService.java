@@ -89,10 +89,11 @@ public class MinaClientService extends Service {
 
     private Boolean Ispsfull = false;//queshao
     /*************Fpga的IP*************/
-//    private static String IP="192.168.43.135";// //HUAWEIAP5  ID=15
-    private static String IP="192.168.43.228"; //HUAWEIAP4,ID为14
-    //private static String IP="192.168.43.73";//HUAWEIAP3,ID为13
+   private static String IP="192.168.43.135"; //HUAWEIAP5  ID=15
+    //private static String IP="192.168.43.228"; //HUAWEIAP4,ID为14
+//    private static String IP="192.168.43.73";//HUAWEIAP3,ID为13
     //private static String IP="192.168.43.99";//HUAWEIAP2  ID=12
+
     private static int PORT=8899;
     private String FpgaIP;
 
@@ -525,7 +526,7 @@ public class MinaClientService extends Service {
     @Override
     public void onCreate() {
         Constants.sevCount++;
-        dbHelper = new DatabaseHelper(this);
+        dbHelper=DatabaseHelper.getInstance(this);//单例模式
         db = dbHelper.getWritableDatabase();
         myApplication = (MyApplication) getApplication();
 
@@ -598,6 +599,7 @@ public class MinaClientService extends Service {
     public void onDestroy() {
         unregisterReceiver(ActivityReceiver);
         ActivityReceiver = null;
+        db.close();
         super.onDestroy();
     }
 
@@ -618,7 +620,8 @@ public class MinaClientService extends Service {
                 SweepParaList_length = Constants.SweepParaList.size();
                 final int firstart = Constants.SweepParaList.get(0).getStartNum();//输入扫频范围第一组的起点对应的段号
                 final int lastend = Constants.SweepParaList.get(SweepParaList_length - 1).getEndNum();//输入扫频范围最后
-
+                myApplication.setSweepStart((firstart-1)*25+70);
+                myApplication.setSweepEnd(lastend*25+70);
                 final PowerSpectrumAndAbnormalPonit PSAP = (PowerSpectrumAndAbnormalPonit) message;
                 if (PSAP != null) {
 
@@ -802,8 +805,6 @@ public class MinaClientService extends Service {
                                 }
                             }
                             //=============================异常频点=================================================
-
-
                         }
                     }).start();
                 }
@@ -1044,6 +1045,7 @@ public class MinaClientService extends Service {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
+            Log.d("session","与FPGA断开！");
             while(true) {
                 try {
                     Thread.sleep(3000);
@@ -1061,7 +1063,7 @@ public class MinaClientService extends Service {
                 } catch (Exception e) {
                 }
             }
-            super.sessionClosed(session);
+
         }
 
         @Override
@@ -1178,58 +1180,37 @@ public class MinaClientService extends Service {
             fname = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "fine", "pwr");
 
             //判断是否是一秒内的文件，如果是，需要加上1s序号
-            File[] PSFile = PSdir.listFiles();
-            if (PSFile.length > 0) {
-                for (int j = 0; j < PSFile.length; j++) {
-                    if (fname.equals(PSFile[j].getName())) {
-                        count++;
-//                    name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day,
-//                            hour, min, sec, count, Constants.ID, "fine", "pwr");
-                        fname = time + "-" + String.format("%d-%d-%s.%s", count, Constants.ID, "fine", "pwr");
-                    }
-                }
-            }
-
-
-        } else if (PASP.getStyle() == 1) {
-//            name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day, hour, min, sec,
-//                    0, Constants.ID, "coarse", "pwr");
-//
-//            //判断是否是一秒内的文件，如果是，需要加上1s序号
 //            File[] PSFile = PSdir.listFiles();
-//            if (PSFile.length > 0) {
-//                for (int j = 0; j < PSFile.length; j++) {
-//                    if (name == PSFile[j].getName()) {
-//                        int count = 0;
+//            int fileNum=PSFile.length;
+//            if (fileNum> 0) {
+//                for (int j = 0; j < fileNum; j++) {
+//                    if (fname.equals(PSFile[j].getName())) {
 //                        count++;
-//                        name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day,
-//                                hour, min, sec, count, Constants.ID, "coarse", "pwr");
+//                        fname = time + "-" + String.format("%d-%d-%s.%s", count, Constants.ID, "fine", "pwr");
 //                    }
 //                }
 //            }
 
-            fname = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "coarse", "pwr");
 
+        } else if (PASP.getStyle() == 1) {
+            fname = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "coarse", "pwr");
             //判断是否是一秒内的文件，如果是，需要加上1s序号
-            File[] PSFile = PSdir.listFiles();
-            if (PSFile.length > 0) {
-                for (int j = 0; j < PSFile.length; j++) {
-                    if (fname.equals(PSFile[j].getName())) {
-                        count++;
-//                    name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day,
-//                            hour, min, sec, count, Constants.ID, "fine", "pwr");
-                        fname = time + "-" + String.format("%d-%d-%s.%s", count, Constants.ID, "coarse", "pwr");
-                    }
-                }
-            }
+//            File[] PSFile = PSdir.listFiles();
+//            int fileNum=PSFile.length;
+//            if (fileNum > 0) {
+//                for (int j = 0; j < fileNum; j++) {
+//                    if (fname.equals(PSFile[j].getName())) {
+//                        count++;
+//                        fname = time + "-" + String.format("%d-%d-%s.%s", count, Constants.ID, "coarse", "pwr");
+//                    }
+//                }
+//            }
         }
         if (fname != null) {
             File file = new File(PSdir, fname);
-//                                        if (!file.exists()) {
             //获取文件写入流
             try {
                 dos = new DataOutputStream(new FileOutputStream(file));
-//                                                fos = new FileOutputStream(file);
                 dos.write((byte) 0x00);
                 for (int j = 0; j < mlist.size(); j++) {
                     dos.write(mlist.get(j));
@@ -1241,8 +1222,6 @@ public class MinaClientService extends Service {
                 dos.write(0x00);
                 dos.close();
                 y++;
-                Log.d("abcde", "写文件个数：" + y);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1251,8 +1230,14 @@ public class MinaClientService extends Service {
             cv.put("filename", fname);
             cv.put("start", myApplication.getSweepStart());
             cv.put("end", myApplication.getSweepEnd());
+            if(PASP.getIsChange()==0x0f)
+                fileIsChanged=1;
+            else
+                fileIsChanged=0;
+
             cv.put("isChanged", fileIsChanged);
             cv.put("upload", 0);
+            cv.put("times", 0);
             db.insert("localFile", null, cv);
         }
         count = 0;
@@ -1362,48 +1347,72 @@ public class MinaClientService extends Service {
             ContentValues cv = new ContentValues();
             cv.put("filename", fname);
             cv.put("upload", 0);
+            cv.put("_times", 0);
             db.insert("iqFile", null, cv);
         }
     }
 
     private void uploadIQFile() {
+      /*********************************************************************************/
+        Cursor cursor = db.rawQuery("SELECT * FROM iqFile WHERE upload=1", null);
+        while (cursor.moveToNext()) {
+            int times = cursor.getInt(cursor.getColumnIndex("_times"));
+            String name = cursor.getString(cursor.getColumnIndex("fileName"));
+            ContentValues cvUpload = new ContentValues();
+            if(times==3){
+                //如果轮询3次，依旧没有上传成功，则将是否上传成功标志位置为0；
+                cvUpload.put("upload", 0);
+                db.update("iqFile", cvUpload, "filename=?", new String[]{name});
+            }else{
+                //在这里更新数据库，将没有确认上传成功的文件对应上传次数加1
+                times=times+1;
+                cvUpload.put("_times", times);
+                db.update("iqFile", cvUpload, "filename=?", new String[]{name});
+            }
+        }
+        cursor.close();
+        /******************************************************************************/
         Cursor c = db.rawQuery("SELECT filename from iqFile  where  upload=0", null);
-
         while (c.moveToNext()) {
             //上传文件
             String name = c.getString(c.getColumnIndex("fileName"));
-            File file = new File(PSFILE_PATH, name);
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(file);
-                byte[] content = new byte[fis.available()];
-                byte[] buffer = new byte[content.length];
-                while ((fis.read(buffer)) != -1) {
-                    content = buffer;
-                }
-                //将文件里的内容转化为对象
-                ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
-                ToWave.setContent(content);
-                ToWave.setContentLength(content.length);
-                ToWave.setFileName(name);
-                ToWave.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
+            File file = new File(IQFILE_PATH, name);
+            if(!file.exists()){
+                //如果文件不存在，从数据库删除记录
+                db.delete("iqFile","filename=?", new String[]{name});
+            }else {
+                FileInputStream fis = null;
                 try {
-                    Constants.FILEsession.write(ToWave);
-//                        if (file.list().length > 100) {
-//                            //保留最新10个文件
-//                            String temp = tempList[1];
-//                            File ff = new File(IQFILE_PATH, temp);
-//                            ff.delete();//上传后删除
-//                        }
+                    fis = new FileInputStream(file);
+                    byte[] content = new byte[fis.available()];
+                    byte[] buffer = new byte[content.length];
+                    while ((fis.read(buffer)) != -1) {
+                        content = buffer;
+                    }
+                    //将文件里的内容转化为对象
+                    ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
+                    ToWave.setContent(content);
+                    ToWave.setContentLength(content.length);
+                    ToWave.setFileName(name);
+                    ToWave.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
+                    try {
+                        Constants.FILEsession.write(ToWave);
+                        ContentValues cv = new ContentValues();
+                        cv.put("upload", 1);
+                        db.update("iqFile", cv, "filename=?", new String[]{name});
+                        Log.d("file", "上传iq" + name);
+                    } catch (Exception e) {
 
-                } catch (Exception e) {
-
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        }
+        if (c != null) {
+            c.close();
         }
     }
 

@@ -13,15 +13,19 @@ package com.example.administrator.testsliding.Mina;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.administrator.testsliding.Bean.RequestNetworkAgain;
+import com.example.administrator.testsliding.Database.DatabaseHelper;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
 import com.example.administrator.testsliding.HeartBeat.HEARTBEATREQUEST;
@@ -98,6 +102,7 @@ import org.apache.mina.filter.keepalive.KeepAliveMessageFactory;
 import org.apache.mina.filter.keepalive.KeepAliveRequestTimeoutHandler;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,6 +114,10 @@ import java.util.logging.Logger;
  * @Description: TODO
  */
 public class ToServerMinaService extends Service {
+    public static final String IQFILE_PATH = Environment.getExternalStorageDirectory().
+            getAbsolutePath() + "/IQwaveFile/";
+    private SQLiteDatabase db = null;
+    private DatabaseHelper dbHelper = null;
     /**
      * 30秒后超时
      */
@@ -134,7 +143,6 @@ public class ToServerMinaService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.d("map", "ACTION" + action);
 
             switch (action) {
                 case ConstantValues.REQUSTNETWORK:
@@ -381,6 +389,8 @@ public class ToServerMinaService extends Service {
 
     @Override
     public void onCreate() {
+        dbHelper=DatabaseHelper.getInstance(this);//单例模式
+        db = dbHelper.getWritableDatabase();
         heartbeatrequest = new HEARTBEATREQUEST();
         heartbeatresponse = new HEARTBEATRESPONSE();
         byte[] request = {(byte) 0x55, (byte) 0x66};

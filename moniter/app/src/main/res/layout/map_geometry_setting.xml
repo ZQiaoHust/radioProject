@@ -138,10 +138,17 @@
 
     </RadioGroup>
 
+    <CheckBox
+        android:id="@+id/chBox_TPOA"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="T-POA定位"
+        android:layout_marginTop="10dp"/>
+
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:text="查看时间段"
         android:textSize="18sp"
         android:gravity="bottom"

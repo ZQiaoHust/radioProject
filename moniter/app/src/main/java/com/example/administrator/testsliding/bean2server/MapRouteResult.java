@@ -11,6 +11,16 @@ import java.util.ArrayList;
 public class MapRouteResult implements Parcelable{
     private int centralFreq;
     private int  band;
+    //TPOA定位的结果
+    private String longtitudeStyle;//东西经
+    private float longitude;
+    private String latitudeStyle;//南北纬
+    private float latitude;//纬度
+    private int height;
+
+    private float equalPower;//等效发射功率
+    private int CEPradius;//CEP半径
+
     private ArrayList<MapRadioPointInfo> mapRadioPointInfoList;//每一时刻的信息
 
     public MapRouteResult(){
@@ -21,6 +31,13 @@ public class MapRouteResult implements Parcelable{
     protected MapRouteResult(Parcel in) {
         centralFreq = in.readInt();
         band = in.readInt();
+        longtitudeStyle = in.readString();
+        longitude = in.readFloat();
+        latitudeStyle = in.readString();
+        latitude = in.readFloat();
+        height = in.readInt();
+        equalPower = in.readFloat();
+        CEPradius = in.readInt();
         mapRadioPointInfoList = in.createTypedArrayList(MapRadioPointInfo.CREATOR);
     }
 
@@ -63,6 +80,61 @@ public class MapRouteResult implements Parcelable{
         this.mapRadioPointInfoList = mapRadioPointInfoList;
     }
 
+    public String getLongtitudeStyle() {
+        return longtitudeStyle;
+    }
+
+    public void setLongtitudeStyle(String longtitudeStyle) {
+        this.longtitudeStyle = longtitudeStyle;
+    }
+
+    public float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitudeStyle() {
+        return latitudeStyle;
+    }
+
+    public void setLatitudeStyle(String latitudeStyle) {
+        this.latitudeStyle = latitudeStyle;
+    }
+
+    public float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public float getEqualPower() {
+        return equalPower;
+    }
+
+    public void setEqualPower(float equalPower) {
+        this.equalPower = equalPower;
+    }
+
+    public int getCEPradius() {
+        return CEPradius;
+    }
+
+    public void setCEPradius(int CEPradius) {
+        this.CEPradius = CEPradius;
+    }
 
     @Override
     public int describeContents() {
@@ -73,6 +145,13 @@ public class MapRouteResult implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(centralFreq);
         dest.writeInt(band);
+        dest.writeString(longtitudeStyle);
+        dest.writeFloat(longitude);
+        dest.writeString(latitudeStyle);
+        dest.writeFloat(latitude);
+        dest.writeInt(height);
+        dest.writeFloat(equalPower);
+        dest.writeInt(CEPradius);
         dest.writeTypedList(mapRadioPointInfoList);
     }
 }

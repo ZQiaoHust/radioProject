@@ -21,6 +21,8 @@ import com.example.administrator.testsliding.bean2server.InteractionFixmodeReque
 import com.example.administrator.testsliding.bean2server.InteractionPressmodeRequest;
 import com.example.administrator.testsliding.bean2server.InteractionSweepModeRequest;
 import com.example.administrator.testsliding.bean2server.LocationAbnormalRequest;
+import com.example.administrator.testsliding.bean2server.MapInterpolation;
+import com.example.administrator.testsliding.bean2server.MapInterpolationReply;
 import com.example.administrator.testsliding.bean2server.MapRadio;
 import com.example.administrator.testsliding.bean2server.MapRoute;
 import com.example.administrator.testsliding.bean2server.ModifyAntenna;
@@ -32,6 +34,7 @@ import com.example.administrator.testsliding.bean2server.Station_RegisterRequst;
 import com.example.administrator.testsliding.bean2server.TerminalAttributes_All;
 import com.example.administrator.testsliding.bean2server.Terminal_Online;
 import com.example.administrator.testsliding.bean2server.Terminal_Register;
+import com.example.administrator.testsliding.mina2server.Decoder.MapInterpolationDecoder;
 import com.example.administrator.testsliding.mina2server.Encoder.HistoryIQEncoder;
 import com.example.administrator.testsliding.mina2server.Encoder.InteractionFixmodelEncoder;
 import com.example.administrator.testsliding.mina2server.Encoder.InteractionPressmodeEncoder;
@@ -39,6 +42,7 @@ import com.example.administrator.testsliding.mina2server.Encoder.InteractionSwee
 import com.example.administrator.testsliding.mina2server.Decoder.LocationAbnormalDecode;
 import com.example.administrator.testsliding.mina2server.Encoder.LocationAbnormalEncoder;
 import com.example.administrator.testsliding.mina2server.Decoder.MapRadioDecoder;
+import com.example.administrator.testsliding.mina2server.Encoder.MapInterPolationEncoder;
 import com.example.administrator.testsliding.mina2server.Encoder.MapRadioEncoder;
 import com.example.administrator.testsliding.mina2server.Decoder.MapRouteDecoder;
 import com.example.administrator.testsliding.mina2server.Encoder.MapRouteEncoder;
@@ -153,6 +157,9 @@ public class ToServerProtocolCodecFactory extends DemuxingProtocolCodecFactory {
         //态势图
         super.addMessageEncoder(MapRadio.class,MapRadioEncoder.class);
         super.addMessageDecoder(MapRadioDecoder.class);
+        super.addMessageEncoder(MapInterpolation.class, MapInterPolationEncoder.class);
+        super.addMessageDecoder(MapInterpolationDecoder.class);//插值
+
         //路径图
         super.addMessageEncoder(MapRoute.class,MapRouteEncoder.class);
         super.addMessageDecoder(MapRouteDecoder.class);

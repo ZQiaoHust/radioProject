@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -28,6 +30,8 @@ import java.util.Map;
 public class Map_Route_Result extends Activity {
     private TextView tv_data,tv_freq,tv_band;
     private ListView mlistView;
+    private LinearLayout lilay01,lilay02,lilay03;
+    private TextView tv_CEP01,tv_CEP02,tv_CEP03;
 
     private ArrayList<Map<String,Object>> mlist;
     private  MapRouteResult map;
@@ -47,6 +51,17 @@ public class Map_Route_Result extends Activity {
                     tv_data.setText("中心站数据");
                     tv_freq.setText(String.valueOf(map.getCentralFreq()));
                     tv_band.setText(String.valueOf(map.getBand()));
+                    if(map.getCEPradius()!=0||map.getEqualPower()!=0){
+                        lilay01.setVisibility(View.VISIBLE);
+                        lilay02.setVisibility(View.VISIBLE);
+                        lilay03.setVisibility(View.VISIBLE);
+                        String location=map.getLongtitudeStyle()+map.getLongitude()+" ,"+
+                                map.getLatitudeStyle()+map.getLatitude()+" ,"+map.getHeight();
+                        tv_CEP01.setText(location);
+                        tv_CEP02.setText(String.valueOf(map.getEqualPower()));
+                        tv_CEP03.setText(String.valueOf(map.getCEPradius()));
+                    }
+
                     mlist = Object2List(map);
                 }
                 if (mlist != null) {
@@ -98,6 +113,12 @@ public class Map_Route_Result extends Activity {
         tv_data= (TextView) findViewById(R.id.tv_datafrom);
         tv_freq= (TextView) findViewById(R.id.tv_centralFreq);
         tv_band= (TextView) findViewById(R.id.tv_band);
+        lilay01= (LinearLayout) findViewById(R.id.lilay_CEP01);
+        lilay02= (LinearLayout) findViewById(R.id.lilay_CEP02);
+        lilay03= (LinearLayout) findViewById(R.id.lilay_CEP03);
+        tv_CEP01= (TextView) findViewById(R.id.tv_CEPlocation);
+        tv_CEP02= (TextView) findViewById(R.id.tv_CEPpow);
+        tv_CEP03= (TextView) findViewById(R.id.tv_CEPradius);
         mlistView= (ListView) findViewById(R.id.listview_mapRoute);
         mlist=new ArrayList<>();
     }

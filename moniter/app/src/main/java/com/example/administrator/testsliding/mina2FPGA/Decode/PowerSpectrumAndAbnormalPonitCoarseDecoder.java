@@ -109,13 +109,13 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
                 buffer.put(in);// 添加到保存数据的buffer中
             }
             if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
-                final byte[] b = new byte[1613];
+                final byte[] b = new byte[1614];
                 byte[] temp = new byte[(int)length];
                 in.get(temp,0, (int) (length-buffer.position()));//最后一次in的数据可能有多的
                 buffer.put(temp);
                 buffer.flip();
                 buffer.get(b);
-                if (b[0] == (byte) 0x55 && b[1612] == (byte) 0xaa) {
+                if (b[0] == (byte) 0x55 && b[1613] == (byte) 0xaa) {
 
                     PowerSpectrumAndAbnormalPonit PSAP = byte2Object(b);
                     if (PSAP != null) {
@@ -126,7 +126,7 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
                             }
                         };
                         Timer timer = new Timer();
-                        timer.schedule(task, 200);
+                        timer.schedule(task, 20);
                         out.write(PSAP);
                         Constants.NotFill = false;//收成功，NotFill表示没满的变量
                         k++;
@@ -167,19 +167,19 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
         PSAP.setSweepModel(((bytes[18] >> 6) & 0x03));
         PSAP.setFileSendmodel(((bytes[18] >> 4) & 0x03));
         PSAP.setIsChange((bytes[18] & 0x0f));
-        PSAP.setTotalBand(((bytes[19] >> 4) & 0x0f));
-        PSAP.setNumN((bytes[19] & 0x0f));//扫频总段数的序号
-        PSAP.setPSbandNum((bytes[20] & 0xff));
+        PSAP.setTotalBand((bytes[19] & 0xff));
+        PSAP.setNumN((bytes[20] & 0xff));//扫频总段数的序号
+        PSAP.setPSbandNum((bytes[21] & 0xff));
         byte[] b2 = new byte[1536];
-        System.arraycopy(bytes, 21, b2, 0, 1536);
+        System.arraycopy(bytes, 22, b2, 0, 1536);
         PSAP.setPSpower(b2);
 
 
         //异常频点
-        PSAP.setAPbandNum((bytes[1578] & 0xff));
-        PSAP.setAPnum((bytes[1579] & 0xff));
+        PSAP.setAPbandNum((bytes[1579] & 0xff));
+        PSAP.setAPnum((bytes[1580] & 0xff));
         byte[] b4 = new byte[30];
-        System.arraycopy(bytes, 1580, b4, 0, 30);
+        System.arraycopy(bytes, 1581, b4, 0, 30);
         PSAP.setAPpower(b4);
 
         return PSAP;
@@ -196,57 +196,5 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
         return ctx;
     }
 
-    /**
-     * 定义一个内部类，用来封转当前解码器中的一些公共数据，主要是用于大数据解析
-     //     */
-//    private class Context {
-//        public IoBuffer buffer;
-//        public long length = 1613 ;
-//        public long matchLength = 0;
-//        public long startTime=0;
-//
-//        public Context() {
-//            buffer = IoBuffer.allocate(1024).setAutoExpand(true);
-//        }
-//
-//        public void setBuffer(IoBuffer buffer) {
-//            this.buffer = buffer;
-//        }
-//
-//        public void setLength(long length) {
-//            this.length = length;
-//        }
-//
-//        public void setMatchLength(long matchLength) {
-//            this.matchLength = matchLength;
-//        }
-//
-//        public IoBuffer getBuffer() {
-//
-//            return buffer;
-//        }
-//
-//        public long getLength() {
-//            return length;
-//        }
-//
-//        public long getMatchLength() {
-//            return matchLength;
-//        }
-//        public long getStartTime() {
-//            return startTime;
-//        }
-//
-//        public void setStartTime(long startTime) {
-//
-//            this.startTime = startTime;
-//        }
 
-//        public void reset() {
-//            this.buffer.clear();
-//            this.length = 1613;
-//            this.matchLength = 0;
-//            this.startTime=0;
-//        }
-//    }
 }

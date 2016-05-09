@@ -1,5 +1,6 @@
 package com.example.administrator.testsliding.compute;
 
+import com.example.administrator.testsliding.bean2server.File_MapInterpolation;
 import com.example.administrator.testsliding.bean2server.File_ModifyAntenna;
 import com.example.administrator.testsliding.bean2server.File_ModifyIngain;
 import com.example.administrator.testsliding.bean2server.File_ServiceRadio;
@@ -10,6 +11,7 @@ import com.example.administrator.testsliding.bean2server.File_TerminalRegister;
 import com.example.administrator.testsliding.bean2server.ListMap;
 import com.example.administrator.testsliding.bean2server.List_StationAll;
 import com.example.administrator.testsliding.bean2server.List_TerminalOnline;
+import com.example.administrator.testsliding.bean2server.MapInterpolationReply;
 import com.example.administrator.testsliding.bean2server.ModifyIngainView;
 
 import java.util.ArrayList;
@@ -432,5 +434,138 @@ public class ComputeParaInService {
 
     }
 
+
+    public MapInterpolationReply File2InterpolationResult(File_MapInterpolation file){
+        MapInterpolationReply map=new MapInterpolationReply();
+        byte[] b1=file.getShowContent();
+        map.setAbFreq(((b1[0] & 0xff) << 8) + (b1[1] & 0xff));
+        map.setaBand(b1[2] & 0xff);
+        //判断位置
+        if(b1[3]==0x00)
+            map.setLongtitudeStyle("E");
+        else if(b1[3]==0x01){
+            map.setLongtitudeStyle("W");
+        }
+        float longtitude=(b1[4]&0xff)+computePara.BitDecimal2float(b1[5],b1[6]);
+        map.setLongitude(longtitude);
+        if((b1[7]>>7)==0x00)
+            map.setLatitudeStyle("N");
+        else if((b1[8]>>7)==0x01){
+            map.setLatitudeStyle("S");
+        }
+        float latitude=(b1[7]&0x7f)+computePara.BitDecimal2float(b1[8],b1[9]);
+        map.setLatitude(latitude);
+        int height=((b1[10]&0x7f)<<8)+(b1[11]&0xff);
+        if((b1[10]>>7)==0x00){
+            map.setHeight(height);
+        }else{
+            map.setHeight(-height);
+        }
+        //判断左下角
+        if(b1[12]==0x00)
+            map.setG1longtitudeStyle("E");
+        else if(b1[12]==0x01){
+            map.setG1longtitudeStyle("W");
+        }
+        float G1longtitude=(b1[13]&0xff)+computePara.BitDecimal2float(b1[14],b1[15]);
+        map.setG1longitude(G1longtitude);
+        if((b1[16]>>7)==0x00)
+            map.setG1latitudeStyle("N");
+        else if((b1[16]>>7)==0x01){
+            map.setG1latitudeStyle("S");
+        }
+        float G1latitude=(b1[16]&0x7f)+computePara.BitDecimal2float(b1[17],b1[18]);
+        map.setG1latitude(G1latitude);
+        int G1height=((b1[19]&0x7f)<<8)+(b1[20]&0xff);
+        if((b1[19]>>7)==0x00){
+            map.setG1height(G1height);
+        }else{
+            map.setG1height(-G1height);
+        }
+        //判断右上角
+        if(b1[21]==0x00)
+            map.setG2longtitudeStyle("E");
+        else if(b1[21]==0x01){
+            map.setG2longtitudeStyle("W");
+        }
+        float G2longtitude=(b1[22]&0xff)+computePara.BitDecimal2float(b1[23],b1[24]);
+        map.setG2longitude(G2longtitude);
+        if((b1[25]>>7)==0x00)
+            map.setG2latitudeStyle("N");
+        else if((b1[26]>>7)==0x01){
+            map.setG2latitudeStyle("S");
+        }
+        float G2latitude=(b1[25]&0x7f)+computePara.BitDecimal2float(b1[26],b1[27]);
+        map.setG2latitude(G2latitude);
+        int G2height=((b1[28]&0x7f)<<8)+(b1[29]&0xff);
+        if((b1[28]>>7)==0x00){
+            map.setG2height(G2height);
+        }else{
+            map.setG2height(-G2height);
+        }
+
+        map.setRadius(getRadius(b1[30]&0xff));
+        map.setDieta((float) getDeita(b1[31]&0xff));
+        map.setFreNum(b1[32]&0xff);
+        map.setFreshtime(b1[33]&0xff);
+        return map;
+    }
+
+    private  int getRadius(int b){
+        int data=0;
+        switch (b){
+            case 1:
+                data=5;
+                break;
+            case 2:
+                data=10;
+                break;
+            case 3:
+                data=20;
+                break;
+            case 4:
+                data=50;
+                break;
+            case 5:
+                data=100;
+                break;
+            case 6:
+                data=200;
+                break;
+            default:
+                break;
+        }
+        return data;
+    }
+
+    private double getDeita(int b){
+        double data=0;
+        switch (b){
+            case 1:
+                data=0.1;
+                break;
+            case 2:
+                data=0.2;
+                break;
+            case 3:
+                data=0.5;
+                break;
+            case 4:
+                data=1;
+                break;
+            case 5:
+                data=2;
+                break;
+            case 6:
+                data=5;
+                break;
+            case 7:
+                data=10;
+                break;
+            default:
+                break;
+        }
+        return data;
+    }
 
 }

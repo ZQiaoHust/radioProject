@@ -18,6 +18,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -25,6 +27,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.administrator.testsliding.Bean.RequestNetworkAgain;
+import com.example.administrator.testsliding.Bean.ToServerIQwaveFile;
 import com.example.administrator.testsliding.Database.DatabaseHelper;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
@@ -54,6 +57,7 @@ import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Si
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_Threshold;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_UploadDataEnd;
 import com.example.administrator.testsliding.bean2Transmit.server2FPGASetting.Simple_UploadDataStart;
+import com.example.administrator.testsliding.bean2server.File_MapInterpolation;
 import com.example.administrator.testsliding.bean2server.File_ModifyAntenna;
 import com.example.administrator.testsliding.bean2server.File_ModifyIngain;
 import com.example.administrator.testsliding.bean2server.File_ServiceRadio;
@@ -71,6 +75,8 @@ import com.example.administrator.testsliding.bean2server.List_StationAll;
 import com.example.administrator.testsliding.bean2server.List_TerminalOnline;
 import com.example.administrator.testsliding.bean2server.LocationAbnormalReply;
 import com.example.administrator.testsliding.bean2server.LocationAbnormalRequest;
+import com.example.administrator.testsliding.bean2server.MapInterpolation;
+import com.example.administrator.testsliding.bean2server.MapInterpolationReply;
 import com.example.administrator.testsliding.bean2server.MapRadio;
 import com.example.administrator.testsliding.bean2server.MapRadioResult;
 import com.example.administrator.testsliding.bean2server.MapRoute;
@@ -102,10 +108,14 @@ import org.apache.mina.filter.keepalive.KeepAliveMessageFactory;
 import org.apache.mina.filter.keepalive.KeepAliveRequestTimeoutHandler;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.logging.Logger;
 
 
@@ -116,8 +126,11 @@ import java.util.logging.Logger;
 public class ToServerMinaService extends Service {
     public static final String IQFILE_PATH = Environment.getExternalStorageDirectory().
             getAbsolutePath() + "/IQwaveFile/";
+    public static final String INTERPOLATION_PATH = Environment.getExternalStorageDirectory().
+            getAbsolutePath() + "/interpolationFile/";
     private SQLiteDatabase db = null;
     private DatabaseHelper dbHelper = null;
+    private DataOutputStream dos;
     /**
      * 30秒后超时
      */
@@ -142,9 +155,25 @@ public class ToServerMinaService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            /************************************************************************************/
             String action = intent.getAction();
 
             switch (action) {
+//                case ConnectivityManager.CONNECTIVITY_ACTION:
+//                    /**监听网络变化的广播**/
+//                    ConnectivityManager connectivityManager=(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//                    NetworkInfo  mobNetInfo=connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+//                    NetworkInfo wifiNetInfo=connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//
+//                    if (!mobNetInfo.isConnected() && !wifiNetInfo.isConnected()) {
+//                        Toast.makeText(getBaseContext(), "网络不可以用", Toast.LENGTH_SHORT).show();
+//                        // BSToast.showLong(context, "网络不可以用");
+//                        //改变背景或者 处理网络的全局变量
+//                    }else {
+//                        //改变背景或者 处理网络的全局变量
+//                    }
+//                    break;
                 case ConstantValues.REQUSTNETWORK:
                     RequstNetwork net = intent.getParcelableExtra("network");
                     if (net == null) {
@@ -165,6 +194,18 @@ public class ToServerMinaService extends Service {
                     }
                     try {
                         Constants.SERVERsession.write(radio);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.MAPINTERPOLATION:
+                    MapInterpolation interpolation=intent.getParcelableExtra("map_inter");
+                    if (interpolation == null) {
+                        return;
+                    }
+                    try {
+                        Constants.SERVERsession.write(interpolation);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -402,6 +443,8 @@ public class ToServerMinaService extends Service {
         filter.addAction(ConstantValues.REQUSTNETWORK);
         filter.addAction(ConstantValues.MAPRADIO);
         filter.addAction(ConstantValues.MAPROUTE);
+        filter.addAction(ConstantValues.MAPINTERPOLATION);
+
         filter.addAction(ConstantValues.ABNORMAL_LOCATION);
         filter.addAction(ConstantValues.STATION_REGISTER);
         filter.addAction(ConstantValues.STATION_CURRENT);
@@ -418,11 +461,15 @@ public class ToServerMinaService extends Service {
         filter.addAction(ConstantValues.TERMINAL_REGISTER);
         filter.addAction(ConstantValues.MODIFYINGAIN);
         filter.addAction(ConstantValues.MODIFYANTENNA);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
 
+        //网络变化
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
 
         dataHandler = new DataHandler();
         registerReceiver(sendMessage, filter);
+
         new Thread(new Runnable() {
 
             @Override
@@ -513,6 +560,20 @@ public class ToServerMinaService extends Service {
                 Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RMAPROUTE, "map_route", map);
+
+            }
+            if (message instanceof File_MapInterpolation) {
+                final File_MapInterpolation map = (File_MapInterpolation) message;
+                MapInterpolationReply inter = compute.File2InterpolationResult(map);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        file2InterpolationPNG(map);
+                    }
+                }).start();
+                Thread.sleep(1000);
+                Broadcast.sendBroadCast(getBaseContext(),
+                        ConstantValues.RMAPINTERPOLATION, "map_interpolation", inter);
 
             }
             if (message instanceof File_ServiceRadio) {
@@ -974,6 +1035,50 @@ public class ToServerMinaService extends Service {
 //             connector.dispose();
             } catch (Exception e) {
             }
+        }
+
+    }
+
+
+    private void file2InterpolationPNG(File_MapInterpolation interfile){
+        byte[] b=interfile.getFileContent();
+        File PSdir = new File(INTERPOLATION_PATH);
+        if (!PSdir.exists()) {
+            PSdir.mkdir();
+        }
+        int matchCount=0;//每次解析完一张图片的长度
+        while(matchCount<b.length) {
+            /*****************解析第一张图片**************************************/
+            int year = ((b[0+matchCount] & 0xff) << 4) + ((b[1+matchCount] >> 4) & 0x0f);
+            int month = b[1+matchCount] & 0x0f;
+            int day = (b[2+matchCount] >> 3) & 0x1f;
+            int hour = ((b[2+matchCount] & 0x07) << 2) + (b[3+matchCount] & 0x03);
+            int min = ((b[3+matchCount] >> 2) & 0x3f);
+            //文件长度
+            int fileLength = ((b[4+matchCount] & 0xff) << 16) + ((b[5+matchCount] & 0xff) << 8) + (b[6+matchCount] & 0xff);
+
+            byte[] content = new byte[fileLength];
+            System.arraycopy(b, 7+matchCount, content, 0, fileLength);
+
+            String name = null;
+            //创建文件
+            name = String.format("%d-%d-%d-%d-%d.%s", year, month, day, hour, min, "png");
+            if (name != null) {
+                File file = new File(PSdir, name);
+                //获取文件写入流
+                try {
+                    dos = new DataOutputStream(new FileOutputStream(file));
+                    dos.write(content);
+                    dos.close();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+            /********************************************************************/
+
+            matchCount+=fileLength+7;
         }
 
     }

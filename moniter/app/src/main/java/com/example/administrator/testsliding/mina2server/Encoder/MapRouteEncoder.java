@@ -20,7 +20,7 @@ public class MapRouteEncoder implements MessageEncoder<MapRoute> {
                        ProtocolEncoderOutput out) throws Exception {
 
         if(map!=null){
-            IoBuffer buffer=IoBuffer.allocate(19,false);
+            IoBuffer buffer=IoBuffer.allocate(20,false);
             byte[] bytes=GetBytes(map);
             buffer.put(bytes);
             buffer.flip();
@@ -40,12 +40,12 @@ public class MapRouteEncoder implements MessageEncoder<MapRoute> {
         b[5]= (byte) ((map.getCentralFreq()>>8)&0xff);//中心频率
         b[6]= (byte) (map.getCentralFreq()&0xff);
         b[7]= (byte) (map.getBand()&0xff);
-        ;
         byte[] byte1=map.getStartTime();
         System.arraycopy(byte1,0,b,8,4);
         byte[] byte2=map.getEndTime();
         System.arraycopy(byte2,0,b,12,4);
-        b[18]= (byte) 0xAA;
+        b[16]=map.getIsTPOA();
+        b[19]= (byte) 0xAA;
         return  b;
 
     }

@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -42,10 +44,12 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
     private EditText et_bandwidth,et_centerfreq;
     private  RadioGroup select_mode,radio_selectData;
     TimePickerView pvTime1 ,pvTime2;
+    private CheckBox cb_TPOA;
 
     ///组帧参数
     private int centralFreq=98,band=20;//中心频率和带宽(初始化界面同步)
     private boolean Ishand=false,Ischoose=false,IsFromCenter=false,IsFromLocal=false;
+    private byte isTPOA=0;//TPOA定位
     private ComputePara computePara=new ComputePara();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,7 +73,7 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
         iuputtime1= (EditText) getActivity().findViewById(R.id.inputTime1_start);
         inputtime2= (EditText)getActivity().findViewById(R.id.inputTime2_end);
         btn_setting= (Button) getActivity().findViewById(R.id.btn_maproute_setting);
-
+        cb_TPOA= (CheckBox) getActivity().findViewById(R.id.chBox_TPOA);
         radio_selectData=(RadioGroup)getActivity().findViewById(R.id.radioGroup_selectCoordinates);
         //时间选择器
         pvTime1 = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
@@ -217,6 +221,15 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
 
             }
         });
+        cb_TPOA.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    isTPOA= (byte) 0xff;
+                }
+            }
+        });
+
         //弹出时间选择器
         iuputtime1.setOnClickListener(new View.OnClickListener() {
 
@@ -232,22 +245,7 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
                 pvTime2.show();
             }
         });
-//        iuputtime1.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
 //
-//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(getActivity());
-//                dateTimePicKDialog.dateTimePicKDialog(iuputtime1);
-//
-//            }
-//        });
-//
-//        inputtime2.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//                DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(getActivity());
-//                dateTimePicKDialog.dateTimePicKDialog(inputtime2);
-//            }
-//        });
 
        btn_setting.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -278,6 +276,7 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
                        byte[] bytes = computePara.Time2Bytes(inputtime2.getText().toString());
                        route.setEndTime(bytes);
                    }
+                   route.setIsTPOA(isTPOA);
                  if(IsFromCenter&&(!IsFromLocal)) {
                        //从中心站获取数据
                        Broadcast.sendBroadCast(getActivity(),

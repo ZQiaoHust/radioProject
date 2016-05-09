@@ -1,10 +1,10 @@
 [
     {
-        "merged": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
-        "source": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+        "merged": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
+        "source": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     },
     {
-        "merged": "E:\\Android project\\my project\\testSliding_heartBeats\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
-        "source": "E:\\Android project\\my project\\testSliding_heartBeats\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+        "merged": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
+        "source": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     }
 ]

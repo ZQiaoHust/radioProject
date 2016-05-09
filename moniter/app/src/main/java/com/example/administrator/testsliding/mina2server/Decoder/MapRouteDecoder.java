@@ -166,7 +166,7 @@ public class MapRouteDecoder implements MessageDecoder {
         map.setCentralFreq(((b[5] & 0xff) << 8) + (b[6] & 0xff));
         map.setBand(b[7] & 0xff);
 
-        for(int i=8;i<length-3;i=i+15){
+        for(int i=8;i<length-17;i=i+15){
             MapRadioPointInfo point=new MapRadioPointInfo();
             point.setYear(((b[i]&0xff)<<4)+((b[i+1]>>4)&0x0f));
             point.setMonth(b[i + 1] & 0x0f);
@@ -205,6 +205,40 @@ public class MapRouteDecoder implements MessageDecoder {
             list.add(point);
         }
         map.setMapRadioPointInfoList(list);
+        if(b[length-18]==(byte)0xFF){
+            //TPOA定位结果
+            if(b[length-17]==0x00)
+                map.setLongtitudeStyle("E");
+            else if(b[length-17]==0x01){
+                map.setLongtitudeStyle("W");
+            }
+
+            float longtitude=(b[length-16]&0xff)+computePara.BitDecimal2float(b[length-15],b[length-14]);
+            map.setLongitude(longtitude);
+            if((b[length-13]>>7)==0x00)
+                map.setLatitudeStyle("N");
+            else if((b[length-13]>>7)==0x01){
+                map.setLatitudeStyle("S");
+            }
+            float latitude=(b[length-13]&0x7f)+ computePara.BitDecimal2float(b[length-12],b[length-11]);
+            map.setLatitude(latitude);
+            int height=((b[length-10]&0x7f)<<8)+(b[length-9]&0xff);
+            if((b[length-10]>>7)==0x00){
+                map.setHeight(height);
+            }else{
+                map.setHeight(-height);
+            }
+
+            //功率
+            float ff= (float) (((b[length-8]&0x7f)<<5)+((b[length-7]>>3)&0x1f)+
+                    ((b[length-7]>>2)&0x01)*0.5+((b[length-7]>>1)&0x01)*0.25+(b[length-7]&0x01)*0.125);
+            if((b[length-8]>>7)==0x00)
+                map.setEqualPower(ff);
+            else
+                map.setEqualPower(-ff);
+
+            map.setCEPradius(((b[length-6]&0xff)<<8)+(b[length-5]&0xff));
+        }
         return map;
     }
 

@@ -89,10 +89,11 @@ public class MinaClientService extends Service {
 
     private Boolean Ispsfull = false;//queshao
     /*************Fpga的IP*************/
-   private static String IP="192.168.43.135"; //HUAWEIAP5  ID=15
-    //private static String IP="192.168.43.228"; //HUAWEIAP4,ID为14
-//    private static String IP="192.168.43.73";//HUAWEIAP3,ID为13
-    //private static String IP="192.168.43.99";//HUAWEIAP2  ID=12
+  // private static String IP="192.168.43.29"; //HUAWEIAP5  ID=15
+    //private static String IP="192.168.43.61"; //HUAWEIAP4,ID为14
+    //private static String IP="192.168.43.34";//HUAWEIAP3,ID为13
+    private static String IP="192.168.43.245";//HUAWEIAP2  ID=12
+    //private static String IP="192.168.43.195";//HUAWEIAP1  ID=11
 
     private static int PORT=8899;
     private String FpgaIP;
@@ -776,7 +777,12 @@ public class MinaClientService extends Service {
                                 if ((num == total) && (Constants.spectrumCount == total)) {
                                     //结束
                                     if ((temp_powerSpectrum.size() == total) && (temp_abnormalPoint.size() == total)) {
+                                        long t1= System.currentTimeMillis();
+                                        Log.d("file","写文件开始时间："+t1);
                                         writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                        long t2= System.currentTimeMillis();
+                                        Log.d("file","写文件结束时间："+t2);
+                                        Log.d("file","写文件耗时："+(t2-t1));
                                         Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
                                         Constants.Queue_DrawRealtimewaterfall.offer(temp_drawWaterfall);
                                     }
@@ -1222,23 +1228,25 @@ public class MinaClientService extends Service {
                 dos.write(0x00);
                 dos.close();
                 y++;
+
+                //在此将文件的信息插入数据库===================
+                ContentValues cv = new ContentValues();
+                cv.put("filename", fname);
+                cv.put("start", myApplication.getSweepStart());
+                cv.put("end", myApplication.getSweepEnd());
+                if(PASP.getIsChange()==0x0f)
+                    fileIsChanged=1;
+                else
+                    fileIsChanged=0;
+
+                cv.put("isChanged", fileIsChanged);
+                cv.put("upload", 0);
+                cv.put("times", 0);
+                db.insert("localFile", null, cv);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //在此将文件的信息插入数据库===================
-            ContentValues cv = new ContentValues();
-            cv.put("filename", fname);
-            cv.put("start", myApplication.getSweepStart());
-            cv.put("end", myApplication.getSweepEnd());
-            if(PASP.getIsChange()==0x0f)
-                fileIsChanged=1;
-            else
-                fileIsChanged=0;
 
-            cv.put("isChanged", fileIsChanged);
-            cv.put("upload", 0);
-            cv.put("times", 0);
-            db.insert("localFile", null, cv);
         }
         count = 0;
     }
@@ -1340,15 +1348,17 @@ public class MinaClientService extends Service {
                 dos.write(0x00);
                 dos.close();
 
+                //在此将文件的信息插入数据库===================
+                ContentValues cv = new ContentValues();
+                cv.put("filename", fname);
+                cv.put("upload", 0);
+                cv.put("_times", 0);
+                db.insert("iqFile", null, cv);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //在此将文件的信息插入数据库===================
-            ContentValues cv = new ContentValues();
-            cv.put("filename", fname);
-            cv.put("upload", 0);
-            cv.put("_times", 0);
-            db.insert("iqFile", null, cv);
+
         }
     }
 

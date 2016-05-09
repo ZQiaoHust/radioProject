@@ -8,7 +8,7 @@ import org.apache.mina.core.buffer.IoBuffer;
  */
 public class Context {
     public IoBuffer buffer;
-    public long length = 1613 ;
+    public long length = 1614 ;
     public long matchLength = 0;
 
     public Context() {
@@ -43,7 +43,7 @@ public class Context {
 
     public void reset() {
         this.buffer.clear();
-        this.length = 1613;
+        this.length = 1614;
         this.matchLength = 0;
 
     }

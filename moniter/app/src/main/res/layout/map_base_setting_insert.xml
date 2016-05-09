@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="选择频率范围"
+        android:textSize="18sp"
+        android:gravity="bottom"
+        android:textColor="#000000"
+        android:background="#73b9a2"
+
+        />
+
+        <RadioGroup
+            android:id = "@+id/select_model_interpolation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/munual_select_interpolation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="true"
+                android:text="@string/handSetting"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/midiuFreq" />
+                <EditText
+                    android:id="@+id/edit_center_interpolation"
+                    android:layout_width="80dp"
+                    android:textSize="15sp"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="@string/aband" />
+                <EditText
+                    android:id="@+id/bandwidth_interpolation"
+                    android:textSize="15sp"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <RadioButton
+                android:id="@+id/straight_select_interpolation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/chooseSeg"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/freqBand" />
+                <Spinner
+                    android:id="@+id/Spinner_base_radio_insert"
+                    android:layout_width="220dp"
+                    style="@style/spinner_style"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </RadioGroup>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="区域地理半径/分辨率设置"
+        android:textSize="18sp"
+        android:gravity="bottom"
+        android:textColor="#000000"
+        android:background="#73b9a2"
+
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            android:text="@string/radiuShow" />
+        <Spinner
+            android:id="@+id/Spinner_radium_insert"
+            android:layout_width="100dp"
+            style="@style/spinner_style"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            android:text="图片分辨率" />
+        <Spinner
+            android:id="@+id/Picture_Dieta"
+            android:layout_width="120dp"
+            style="@style/spinner_style"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            android:text="分辨率（分）" />
+        <Spinner
+            android:id="@+id/Spinner_dieta_insert"
+            android:layout_width="250dp"
+            style="@style/spinner_style"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="间隔时间"
+        android:textSize="18sp"
+        android:gravity="bottom"
+        android:textColor="#000000"
+        android:background="#73b9a2"
+
+        />
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            android:text="@string/freshTime" />
+       <EditText
+           android:id="@+id/et_freshTime_interpolation"
+           android:layout_width="160dp"
+           android:layout_height="40dp"
+           android:gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="分"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="设置时间"
+        android:textSize="18sp"
+        android:gravity="bottom"
+        android:textColor="#000000"
+        android:background="#73b9a2"
+
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            android:text="起始时间："
+            android:background= "#11000044"/>
+        <EditText
+            android:id="@+id/inputTime1_insert"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:focusable="false"
+            android:inputType="none"
+            android:gravity="center"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            android:text="终止时间："
+            android:background= "#11000044"/>
+        <EditText
+            android:id="@+id/inputTime2_insert"
+            android:layout_width="fill_parent"
+            android:textSize="10sp"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:inputType="none"
+            android:gravity="center"/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/btn_mapbase_setting_insert"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:text="@string/setting"/>
+
+</LinearLayout>

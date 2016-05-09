@@ -22,6 +22,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.administrator.testsliding.Bean.RequestNetworkAgain;
 import com.example.administrator.testsliding.Database.DatabaseHelper;
 import com.example.administrator.testsliding.GlobalConstants.ConstantValues;
 import com.example.administrator.testsliding.GlobalConstants.Constants;
@@ -182,6 +183,11 @@ public class ToFileMinaService extends Service {
                     }
                 } catch (Exception e) {
                 }
+            }
+            if(Constants.requestNetcontent!=null) {
+                RequestNetworkAgain request = new RequestNetworkAgain();
+                request.setContent(Constants.requestNetcontent);
+                Constants.FILEsession.write(request);
             }
         }
 

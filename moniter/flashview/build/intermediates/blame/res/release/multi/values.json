@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "E:\\Android project\\my project\\testSliding_heartBeats\\flashview\\build\\intermediates\\res\\merged\\release\\values\\values.xml",
+        "outputFile": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\res\\merged\\release\\values\\values.xml",
         "map": [
             {
                 "to": {
@@ -11,7 +11,7 @@
                     "endOffset": 447
                 },
                 "from": {
-                    "file": "E:\\Android project\\my project\\testSliding_heartBeats\\flashview\\src\\main\\res\\values\\strings.xml",
+                    "file": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 3,
                         "startColumn": 4,
@@ -30,7 +30,7 @@
                     "endOffset": 500
                 },
                 "from": {
-                    "file": "E:\\Android project\\my project\\testSliding_heartBeats\\flashview\\src\\main\\res\\values\\strings.xml",
+                    "file": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 4,
                         "startColumn": 4,
@@ -43,7 +43,7 @@
         ]
     },
     {
-        "outputFile": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\build\\intermediates\\res\\merged\\release\\values\\values.xml",
+        "outputFile": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\release\\values\\values.xml",
         "map": [
             {
                 "to": {
@@ -54,7 +54,7 @@
                     "endOffset": 447
                 },
                 "from": {
-                    "file": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\src\\main\\res\\values\\strings.xml",
+                    "file": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 3,
                         "startColumn": 4,
@@ -73,7 +73,7 @@
                     "endOffset": 500
                 },
                 "from": {
-                    "file": "E:\\Android project\\my project\\testSliding_twoSweep&background\\flashview\\src\\main\\res\\values\\strings.xml",
+                    "file": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\src\\main\\res\\values\\strings.xml",
                     "position": {
                         "startLine": 4,
                         "startColumn": 4,

@@ -8,7 +8,7 @@ import org.apache.mina.core.buffer.IoBuffer;
  */
 public class ContextBackground {
     public IoBuffer buffer;
-    public long length = 1560 ;
+    public long length = 1561;
     public long matchLength = 0;
 
 
@@ -42,7 +42,7 @@ public class ContextBackground {
 
     public void reset() {
         this.buffer.clear();
-        this.length = 1560;
+        this.length = 1561;
         this.matchLength = 0;
 
     }

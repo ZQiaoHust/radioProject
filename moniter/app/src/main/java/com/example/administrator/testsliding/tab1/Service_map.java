@@ -24,6 +24,7 @@ public class Service_map extends FragmentActivity {
     private List<Fragment> list;
     private Map_Heat_Setting mMap_Base_setting;
     private Map_Route_Setting mMap_Route_Setting;
+    private Map_Heat_Setting_Insert mMap_Heat_Setting_Insert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,20 +62,20 @@ public class Service_map extends FragmentActivity {
     private void fragmentPagerSetting() {
 
         mMap_Base_setting = new Map_Heat_Setting();
+        mMap_Heat_Setting_Insert=new Map_Heat_Setting_Insert();
         mMap_Route_Setting = new Map_Route_Setting();
 
         list = new ArrayList<Fragment>();
 
         list.add(mMap_Base_setting);
+        list.add(mMap_Heat_Setting_Insert);
         list.add(mMap_Route_Setting);
-
-
     }
 
     class TabAdapter_chart extends FragmentPagerAdapter {
 
         public String[] TITLES = new String[]
-                {"态势图", "路径图"};
+                {"态势图","插值态势图", "路径图"};
 
         public TabAdapter_chart(FragmentManager fm) {
             super(fm);

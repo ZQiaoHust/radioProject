@@ -106,7 +106,105 @@
         android:layout_width="match_parent">
     </View>
 
+    <LinearLayout
+        android:id="@+id/lilay_CEP01"
+        android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
 
+    <TextView
+        android:text="@string/tlocation"
+        android:layout_width="0dp"
+        android:textColor="#850"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:gravity="center" />
+    <View
+        android:background="#cccccc"
+        android:layout_height="40dp"
+        android:layout_width="1dp">
+
+    </View>
+    <TextView
+        android:id="@+id/tv_CEPlocation"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:gravity="center" />
+
+</LinearLayout>
+    <View
+        android:background="#cccccc"
+        android:layout_height="1dp"
+        android:layout_width="match_parent">
+    </View>
+    <LinearLayout
+        android:id="@+id/lilay_CEP02"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:text="@string/pow"
+            android:layout_width="0dp"
+            android:textColor="#850"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+        <View
+            android:background="#cccccc"
+            android:layout_height="40dp"
+            android:layout_width="1dp">
+
+        </View>
+        <TextView
+            android:id="@+id/tv_CEPpow"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+    </LinearLayout>
+    <View
+        android:background="#cccccc"
+        android:layout_height="1dp"
+        android:layout_width="match_parent">
+    </View>
+    <LinearLayout
+        android:id="@+id/lilay_CEP03"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:text="CEP半径(km)"
+            android:layout_width="0dp"
+            android:textColor="#850"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+        <View
+            android:background="#cccccc"
+            android:layout_height="40dp"
+            android:layout_width="1dp">
+
+        </View>
+        <TextView
+            android:id="@+id/tv_CEPradius"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+    </LinearLayout>
+    <View
+        android:background="#cccccc"
+        android:layout_height="1dp"
+        android:layout_width="match_parent">
+    </View>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

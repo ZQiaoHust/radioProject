@@ -106,16 +106,16 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
                 buffer.put(in);// 添加到保存数据的buffer中
             }
             if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
-                final byte[] b = new byte[1613];
-                byte[] temp = new byte[1613];
+                final byte[] b = new byte[1614];
+                byte[] temp = new byte[1614];
                 in.get(temp,0, (int) (length-buffer.position()));//最后一次in的数据可能有多的
                 buffer.put(temp);
                 // 一定要添加以下这一段，否则不会有任何数据,因为，在执行in.put(buffer)时buffer的起始位置已经移动到最后，所有需要将buffer的起始位置移动到最开始
                 buffer.flip();
                 buffer.get(b);
 
-                if (b[1] == (byte) 0x51 && b[1612] == (byte) 0xaa) {
-                    long a = System.currentTimeMillis();
+                if (b[1] == (byte) 0x51 && b[1613] == (byte) 0xaa) {
+
                     PowerSpectrumAndAbnormalPonit PSAP = byte2Object(b);
                     if (PSAP != null) {
                         TimerTask task = new TimerTask() {
@@ -125,10 +125,20 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
                             }
                         };
                         Timer timer = new Timer();
-                        timer.schedule(task, 200);
+                        timer.schedule(task, 20);
                         out.write(PSAP);
-//                        Log.d("psap", "当前帧总共段数：" + PSAP.getTotalBand());
-//                        Log.d("psap", "当前帧所在序号：" + PSAP.getNumN());
+                       Log.d("file", "当前帧总共段数：" + PSAP.getTotalBand());
+                        Log.d("file", "当前帧所在序号：" + PSAP.getNumN());
+                        long a=0;
+                        if(PSAP.getNumN()==1){
+                           a= System.currentTimeMillis();
+                            Log.d("file","收到第一段时间："+a);
+                        }
+                        if(PSAP.getTotalBand()==PSAP.getNumN()){
+                            long t1= System.currentTimeMillis();
+                            Log.d("file","收齐数据段的时刻："+t1);
+                            Log.d("file","收齐数据段的时间："+(t1-a));
+                        }
                         Constants.NotFill = false;//收成功，NotFill表示没满的变量
                         k++;
                         Log.d("sucess", "成功次数：" + String.valueOf(k));
@@ -167,19 +177,19 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
         PSAP.setSweepModel(((bytes[18] >> 6) & 0x03));
         PSAP.setFileSendmodel(((bytes[18] >> 4) & 0x03));
         PSAP.setIsChange((bytes[18] & 0x0f));
-        PSAP.setTotalBand(((bytes[19] >> 4) & 0x0f));
-        PSAP.setNumN((bytes[19] & 0x0f));//扫频总段数的序号
-        PSAP.setPSbandNum((bytes[20] & 0xff));
+        PSAP.setTotalBand((bytes[19] & 0xff));
+        PSAP.setNumN((bytes[20] & 0xff));//扫频总段数的序号
+        PSAP.setPSbandNum((bytes[21] & 0xff));
         byte[] b2 = new byte[1536];
-        System.arraycopy(bytes, 21, b2, 0, 1536);
+        System.arraycopy(bytes, 22, b2, 0, 1536);
         PSAP.setPSpower(b2);
 
 
         //异常频点
-        PSAP.setAPbandNum((bytes[1578] & 0xff));
-        PSAP.setAPnum((bytes[1579] & 0xff));
+        PSAP.setAPbandNum((bytes[1579] & 0xff));
+        PSAP.setAPnum((bytes[1580] & 0xff));
         byte[] b4 = new byte[30];
-        System.arraycopy(bytes, 1580, b4, 0, 30);
+        System.arraycopy(bytes, 1581, b4, 0, 30);
         PSAP.setAPpower(b4);
 
         return PSAP;

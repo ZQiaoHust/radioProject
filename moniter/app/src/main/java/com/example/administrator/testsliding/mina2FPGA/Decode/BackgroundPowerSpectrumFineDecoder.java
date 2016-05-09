@@ -113,14 +113,14 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
                 buffer.put(in);// 添加到保存数据的buffer中
             }
             if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
-                final byte[] b = new byte[1560];
-                byte[] temp = new byte[1560];
+                final byte[] b = new byte[1561];
+                byte[] temp = new byte[1561];
                 in.get(temp,0, (int) (length-buffer.position()));//最后一次in的数据可能有多的
                 buffer.put(temp);
                 // 一定要添加以下这一段，否则不会有任何数据,因为，在执行in.put(buffer)时buffer的起始位置已经移动到最后，所有需要将buffer的起始位置移动到最开始
                 buffer.flip();
                 buffer.get(b);
-                if (b[1] == (byte) 0x52 && b[1559] == (byte) 0xaa) {
+                if (b[1] == (byte) 0x52 && b[1560] == (byte) 0xaa) {
                     BackgroundPowerSpectrum back = byte2Object(b);
                     if (back != null) {
 
@@ -130,7 +130,7 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
                             }
                         };
                         Timer timer = new Timer();
-                        timer.schedule(task, 200);
+                        timer.schedule(task, 20);
                         out.write(back);
                         Constants.Backfail=false;
                         System.out.println("背景功率谱解码完成.......");
@@ -156,11 +156,11 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
 
     private BackgroundPowerSpectrum byte2Object(byte[] bytes) {
         BackgroundPowerSpectrum back = new BackgroundPowerSpectrum();
-        back.setTotalBand(((bytes[19] >> 4) & 0x0f));
-        back.setNumN((bytes[19] & 0x0f));//扫频总段数的序号
-        back.setPSbandNum((bytes[20] & 0xff));
+        back.setTotalBand((bytes[19]  & 0xff));
+        back.setNumN((bytes[20] & 0xff));//扫频总段数的序号
+        back.setPSbandNum((bytes[21] & 0xff));
         byte[] b2 = new byte[1536];
-        System.arraycopy(bytes, 21, b2, 0, 1536);
+        System.arraycopy(bytes, 22, b2, 0, 1536);
          float[] f1=computePara.Bytes2Power(b2);
         back.setPSpower(f1);
         return back;

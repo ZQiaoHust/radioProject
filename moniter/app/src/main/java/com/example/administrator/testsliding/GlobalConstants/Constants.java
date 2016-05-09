@@ -32,7 +32,7 @@ import java.util.Queue;
  * 
  */
 public class Constants {
-	public static  int ID=15;
+	public static  int ID=12;
 	public static IoSession FPGAsession=null;
 	public static IoSession SERVERsession=null;
 	public static IoSession FILEsession=null;
@@ -45,7 +45,6 @@ public class Constants {
 	public static Queue<List<byte[]>> Queue_IQwave=new LinkedList<>();//IQ波形文件
 
 	public static Queue<Map<Float,Float>> Queue_Abnormal=new LinkedList<>();//IQ波形文件
-
 
 
 	//存储扫频范围参数及对应的起始点

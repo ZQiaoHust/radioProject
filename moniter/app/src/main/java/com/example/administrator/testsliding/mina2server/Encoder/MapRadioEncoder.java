@@ -24,10 +24,7 @@ public class MapRadioEncoder implements MessageEncoder<MapRadio> {
             buffer.put(bytes);
             buffer.flip();
             out.write(buffer);
-            Log.d("map","电磁态势请求数据帧时间: "+System.currentTimeMillis() );
-
         }
-
     }
 
     //电磁分布态势请求数据帧

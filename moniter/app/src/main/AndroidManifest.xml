@@ -85,6 +85,7 @@
             android:theme="@android:style/Theme.Holo.Light"
             >
         </activity>
+
         <activity android:name=".tab1.Service_Interact"></activity>
         <activity android:name=".tab1.Service_ModifyChart"></activity>
         <activity android:name=".tab1.ModifyIngainChart"></activity>
@@ -98,6 +99,7 @@
 
         <activity android:name=".tab1.Map_Heat_Result"></activity>
         <activity android:name=".tab1.Map_Route_Result"></activity>
+        <activity android:name=".tab1.Map_interpolationResult"></activity>
         <activity android:name=".map.Map_StationMap"
             android:theme="@style/MapTheme"
             android:label="@string/demo_name_dianci"
@@ -106,6 +108,10 @@
         <activity android:name=".map.Map_RouteMap"
             android:theme="@style/MapTheme"
             android:label="@string/demo_name_geometry">
+        </activity>
+        <activity android:name=".map.InsertHeatMap"
+            android:theme="@style/MapTheme"
+            android:label="电磁态势（插值）">
         </activity>
         <activity
             android:name=".map.Map_offline"
@@ -161,4 +167,13 @@
         android:smallScreens="true" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <receiver
+        android:name=".receiver.ConnectionChangeReceiver"
+        android:label="NetworkConnection" >
+        <intent-filter>
+            <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            <action android:name="android.intent.action.USER_PRESENT" />
+        </intent-filter>
+    </receiver>
 </manifest>

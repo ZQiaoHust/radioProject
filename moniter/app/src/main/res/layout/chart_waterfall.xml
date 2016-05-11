@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-    <com.example.administrator.testsliding.view.MyTopBar
+    <com.hust.radiofeeler.view.MyTopBar
         android:id="@+id/topbar_chartwater"
         android:layout_width="match_parent"
         android:layout_height="40dp"

@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
 
-    <com.example.administrator.testsliding.view.MyTopBar
+    <com.hust.radiofeeler.view.MyTopBar
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -16,7 +16,7 @@
         custom:titleText_Color="#e0e0e0"
         custom:titleTextSize="8sp">
 
-    </com.example.administrator.testsliding.view.MyTopBar>
+    </com.hust.radiofeeler.view.MyTopBar>
 
 <LinearLayout
     android:layout_width="match_parent"

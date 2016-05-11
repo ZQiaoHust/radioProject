@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-    <com.example.administrator.testsliding.view.MyTopBar
+    <com.hust.radiofeeler.view.MyTopBar
         android:id="@+id/topbar_registerResult"
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -13,7 +13,7 @@
         custom:titleText="台站登记属性表"
         custom:titleText_Color="#ffffff"
         custom:titleTextSize="8sp">
-    </com.example.administrator.testsliding.view.MyTopBar>
+    </com.hust.radiofeeler.view.MyTopBar>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -36,7 +36,7 @@
 
         </View>
 
-        <com.example.administrator.testsliding.view.CHScrollView_StationRegisterResult
+        <com.hust.radiofeeler.view.CHScrollView_StationRegisterResult
             android:id="@+id/item_scroll_title"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -180,7 +180,7 @@
                     android:gravity="center" />
 
             </LinearLayout>
-        </com.example.administrator.testsliding.view.CHScrollView_StationRegisterResult>
+        </com.hust.radiofeeler.view.CHScrollView_StationRegisterResult>
     </LinearLayout>
 
     <ListView

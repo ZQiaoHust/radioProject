@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.administrator.testsliding">
+    package="com.hust.radiofeeler">
     <uses-permission android:name="android.permission.INTERNET"/>
 
 
@@ -12,7 +12,7 @@
         <!--android:supportsRtl="true"-->
         <!--android:theme="@style/AppTheme">-->
     <application
-        android:name=".GlobalConstants.MyApplication"
+        android:name="com.hust.radiofeeler.GlobalConstants.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/app"
         android:label="@string/app_name"
@@ -20,11 +20,11 @@
         android:theme="@style/AppTheme">
 
 
-        <service android:name=".Mina.MinaClientService"></service>
-        <service android:name=".Mina.ToServerMinaService"></service>
-        <service android:name=".Mina.ToFileMinaService"></service>
+        <service android:name="com.hust.radiofeeler.Mina.MinaClientService"></service>
+        <service android:name="com.hust.radiofeeler.Mina.ToServerMinaService"></service>
+        <service android:name="com.hust.radiofeeler.Mina.ToFileMinaService"></service>
         <activity
-            android:name=".start.SplashActivity"
+            android:name="com.hust.radiofeeler.start.SplashActivity"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,89 +32,89 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Mina.MainActivity"
+            android:name="com.hust.radiofeeler.Mina.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             >
         </activity>
 
-        <activity android:name=".SlideMenu.SetPara"></activity>
-        <activity android:name=".SlideMenu.Work_model"></activity>
-        <activity android:name=".SlideMenu.ConnectPCB"></activity>
-        <activity android:name=".SlideMenu.UploadData"></activity>
-        <activity android:name=".SlideMenu.FinalStationState"></activity>
-        <activity android:name=".start.LoginActivity"></activity>
-        <activity android:name=".tab1.Service_map"></activity>
-        <activity android:name=".tab1.Service_abnormal"></activity>
+        <activity android:name="com.hust.radiofeeler.SlideMenu.SetPara"></activity>
+        <activity android:name="com.hust.radiofeeler.SlideMenu.Work_model"></activity>
+        <activity android:name="com.hust.radiofeeler.SlideMenu.ConnectPCB"></activity>
+        <activity android:name="com.hust.radiofeeler.SlideMenu.UploadData"></activity>
+        <activity android:name="com.hust.radiofeeler.SlideMenu.FinalStationState"></activity>
+        <activity android:name="com.hust.radiofeeler.start.LoginActivity"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Service_map"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Service_abnormal"></activity>
         <activity
-            android:name=".map.Service_abnormal_map"
+            android:name="com.hust.radiofeeler.map.Service_abnormal_map"
             android:theme="@style/MapTheme"
             android:label="异常频点辐射源位置图">
         </activity>
-        <activity android:name=".tab1.Service_locationResult"></activity>
-        <activity android:name=".tab1.Service_stations"></activity>
-        <activity android:name=".tab1.Stations_currentResult"></activity>
-        <activity android:name=".map.Stations_CurrentResult_map"
+        <activity android:name="com.hust.radiofeeler.tab1.Service_locationResult"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Service_stations"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Stations_currentResult"></activity>
+        <activity android:name="com.hust.radiofeeler.map.Stations_CurrentResult_map"
             android:theme="@style/MapTheme"
             android:label="登记台站当前位置图">
         </activity>
 
-        <activity android:name=".map.Stations_registerResult_map"
+        <activity android:name="com.hust.radiofeeler.map.Stations_registerResult_map"
             android:theme="@style/MapTheme"
             android:label="登记台站位置图">
         </activity>
-        <activity android:name=".map.Station_all_map"
+        <activity android:name="com.hust.radiofeeler.map.Station_all_map"
             android:theme="@style/MapTheme"
             android:label="全部终端位置图">
         </activity>
-        <activity android:name=".map.Terminal_allregister_map"
+        <activity android:name="com.hust.radiofeeler.map.Terminal_allregister_map"
             android:theme="@style/MapTheme"
             android:label="注册终端位置图">
         </activity>
-        <activity android:name=".map.Terminal_online_map"
+        <activity android:name="com.hust.radiofeeler.map.Terminal_online_map"
             android:theme="@style/MapTheme"
             android:label="在网终端位置图">
         </activity>
-        <activity android:name=".tab1.Stations_registerResult"></activity>
-        <activity android:name=".tab1.Station_AllResult"></activity>
-        <activity android:name=".tab1.Service_Terminal"></activity>
-        <activity android:name=".tab1.Service_radio"></activity>
-        <activity android:name=".tab1.Service_radioResult"></activity>
-        <activity android:name=".tab1.Service_IQ"
+        <activity android:name="com.hust.radiofeeler.tab1.Stations_registerResult"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Station_AllResult"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Service_Terminal"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Service_radio"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Service_radioResult"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Service_IQ"
             android:label="@string/IQ_name"
             android:theme="@android:style/Theme.Holo.Light"
             >
         </activity>
 
-        <activity android:name=".tab1.Service_Interact"></activity>
-        <activity android:name=".tab1.Service_ModifyChart"></activity>
-        <activity android:name=".tab1.ModifyIngainChart"></activity>
-        <activity android:name=".tab1.ModifyAntennaChart"></activity>
-        <activity android:name=".tab2.Chart_spectrum"></activity>
-        <activity android:name=".tab2.Chart_waterfall"></activity>
-        <activity android:name=".tab2.Chart_Abnormal"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Service_Interact"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Service_ModifyChart"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.ModifyIngainChart"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.ModifyAntennaChart"></activity>
+        <activity android:name="com.hust.radiofeeler.tab2.Chart_spectrum"></activity>
+        <activity android:name="com.hust.radiofeeler.tab2.Chart_waterfall"></activity>
+        <activity android:name="com.hust.radiofeeler.tab2.Chart_Abnormal"></activity>
 
 
         <activity android:name="org.achartengine.GraphicalActivity" />
 
-        <activity android:name=".tab1.Map_Heat_Result"></activity>
-        <activity android:name=".tab1.Map_Route_Result"></activity>
-        <activity android:name=".tab1.Map_interpolationResult"></activity>
-        <activity android:name=".map.Map_StationMap"
+        <activity android:name="com.hust.radiofeeler.tab1.Map_Heat_Result"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Map_Route_Result"></activity>
+        <activity android:name="com.hust.radiofeeler.tab1.Map_interpolationResult"></activity>
+        <activity android:name="com.hust.radiofeeler.map.Map_StationMap"
             android:theme="@style/MapTheme"
             android:label="@string/demo_name_dianci"
             >
         </activity>
-        <activity android:name=".map.Map_RouteMap"
+        <activity android:name="com.hust.radiofeeler.map.Map_RouteMap"
             android:theme="@style/MapTheme"
             android:label="@string/demo_name_geometry">
         </activity>
-        <activity android:name=".map.InsertHeatMap"
+        <activity android:name="com.hust.radiofeeler.map.InsertHeatMap"
             android:theme="@style/MapTheme"
             android:label="电磁态势（插值）">
         </activity>
         <activity
-            android:name=".map.Map_offline"
+            android:name="com.hust.radiofeeler.map.Map_offline"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/demo_name_offline"
             android:screenOrientation="portrait"
@@ -122,7 +122,7 @@
         </activity>
 
         <activity
-            android:name=".map.Map_HeatMap"
+            android:name="com.hust.radiofeeler.map.Map_HeatMap"
             android:label="@string/demo_name_radio"
             android:theme="@style/MapTheme"
             android:logo="@drawable/radio_map">

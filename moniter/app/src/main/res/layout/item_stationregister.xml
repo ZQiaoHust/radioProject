@@ -19,7 +19,7 @@
 
     </View>
 
-    <com.example.administrator.testsliding.view.CHScrollView_StationRegisterResult
+    <com.hust.radiofeeler.view.CHScrollView_StationRegisterResult
         android:id="@+id/item_scroll"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -170,6 +170,6 @@
 
 
         </LinearLayout>
-    </com.example.administrator.testsliding.view.CHScrollView_StationRegisterResult>
+    </com.hust.radiofeeler.view.CHScrollView_StationRegisterResult>
 
 </LinearLayout>

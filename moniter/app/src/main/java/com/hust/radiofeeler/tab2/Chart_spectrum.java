@@ -89,10 +89,7 @@ public class Chart_spectrum extends Activity {
 //                InitView(info.start, info.end);
 //            }
             if (msg.what == 1) {
-                long a=System.currentTimeMillis();
                 updateChart();
-                long b= System.currentTimeMillis();
-                Log.d("chart","画图耗时："+(b-a));
             }
         }
     };
@@ -137,8 +134,8 @@ public class Chart_spectrum extends Activity {
         startDateTime = (EditText) findViewById(R.id.inputDate);
         endDateTime = (EditText) findViewById(R.id.inputDate2);
         //时间选择器
-        pvTime1 = new TimePickerView(this, TimePickerView.Type.ALL);
-        pvTime2 = new TimePickerView(this, TimePickerView.Type.ALL);
+        pvTime1 = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
+        pvTime2 = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
         pvTime1.setTime(new Date());
         pvTime1.setCyclic(false);
         pvTime1.setCancelable(true);
@@ -146,8 +143,8 @@ public class Chart_spectrum extends Activity {
         pvTime1.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                startDateTime.setText(getTime(date));
+            public void onTimeSelect(String date) {
+                startDateTime.setText(date);
             }
         });
         pvTime2.setTime(new Date());
@@ -157,8 +154,8 @@ public class Chart_spectrum extends Activity {
         pvTime2.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                endDateTime.setText(getTime(date));
+            public void onTimeSelect(String date) {
+                endDateTime.setText(date);
             }
         });
 
@@ -242,9 +239,11 @@ public class Chart_spectrum extends Activity {
         lock.lock();
         try {
             if (!Constants.Queue_BackgroundSpectrum.isEmpty()) {
-                Log.d("chart","背景频谱容器数量："+Constants.Queue_BackgroundSpectrum.size());
+                int size=Constants.Queue_BackgroundSpectrum.size();
+                Log.d("chart","背景频谱的段数:"+size);
                 backdata = Constants.Queue_BackgroundSpectrum.poll();
-                Log.d("chart","背景频谱的段数："+backdata.size());
+//                if(size>=10)
+//                    Constants.Queue_BackgroundSpectrum.clear();
             }
         } catch (Exception e) {
 
@@ -294,9 +293,12 @@ public class Chart_spectrum extends Activity {
         lock1.lock();
         try {
             if (!Constants.Queue_DrawRealtimeSpectrum.isEmpty()) {
-                Log.d("chart","实时频谱容器数量："+Constants.Queue_DrawRealtimeSpectrum.size());
+                int size=Constants.Queue_DrawRealtimeSpectrum.size();
+                Log.d("chart","实时频谱的段数:"+size);
                 listdata = Constants.Queue_DrawRealtimeSpectrum.poll();
-                Log.d("chart","实时频谱的段数："+listdata.size());
+//                if(size>=10)
+//                    Constants.Queue_DrawRealtimeSpectrum.clear();
+
             }
         } catch (Exception e) {
 

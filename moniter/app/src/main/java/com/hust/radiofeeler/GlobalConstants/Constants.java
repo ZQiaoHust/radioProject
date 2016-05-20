@@ -30,17 +30,14 @@ import java.util.Queue;
  * 
  */
 public class Constants {
-	public static  int ID=15;
+	public static  int ID=12;
 	public static IoSession FPGAsession=null;
 	public static IoSession SERVERsession=null;
 	public static IoSession FILEsession=null;
 
-	public static Queue<List<byte[]>> Queue_RealtimeSpectrum=new LinkedList<>();//实时功率谱数据,供写文件
 	public static Queue<List<float[]>> Queue_DrawRealtimeSpectrum= new LinkedList<>();
 	//public static Queue<List<float[]>> Queue_DrawRealtimewaterfall= new LinkedList<>();
 	public static Queue<List<float[]>> Queue_BackgroundSpectrum=new LinkedList<>();//背景功率谱
-	public static Queue<byte[]> Queue_AbnormalFreq_List=new LinkedList<>();//异常频点数据供列表显示
-	public static Queue<List<byte[]>> Queue_IQwave=new LinkedList<>();//IQ波形文件
 
 	public static Queue<Map<Float,Float>> Queue_Abnormal=new LinkedList<>();//IQ波形文件
 

@@ -1,6 +1,7 @@
 package com.hust.radiofeeler.mina_transmit.server2FPGADecoder;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.bean2Transmit.server2FPGASetting.Simple_FixCentralFreq;

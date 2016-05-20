@@ -32,7 +32,7 @@ public class MapRouteEncoder implements MessageEncoder<MapRoute> {
 
     //请求数据帧
     private byte[] GetBytes(MapRoute map){
-        byte[] b=new byte[19];
+        byte[] b=new byte[20];
         b[0]=0x55;
         b[1]= (byte) 0xA3;
         b[2]= (byte) (map.getEquipmentID()&0xff);

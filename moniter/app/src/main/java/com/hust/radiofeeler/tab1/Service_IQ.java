@@ -58,8 +58,8 @@ public class Service_IQ extends Activity {
         endDateTime = (EditText)findViewById(R.id.inputDate2);
         btn_set= (Button) findViewById(R.id.btn_ID_time);
         //时间选择器
-        pvTime1 = new TimePickerView(this, TimePickerView.Type.ALL);
-        pvTime2 = new TimePickerView(this, TimePickerView.Type.ALL);
+        pvTime1 = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
+        pvTime2 = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
         //控制时间范围
 //        Calendar calendar = Calendar.getInstance();
 //        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
@@ -70,8 +70,9 @@ public class Service_IQ extends Activity {
         pvTime1.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                startDateTime.setText(getTime(date));
+            public void onTimeSelect(String date) {
+//                startDateTime.setText(pvTime1.getTime());
+                startDateTime.setText(date);
             }
         });
         pvTime2.setTime(new Date());
@@ -81,8 +82,9 @@ public class Service_IQ extends Activity {
         pvTime2.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                endDateTime.setText(getTime(date));
+            public void onTimeSelect(String date) {
+                //endDateTime.setText(pvTime2.getTime());
+                endDateTime.setText(date);
             }
         });
 

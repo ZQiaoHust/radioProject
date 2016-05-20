@@ -22,14 +22,9 @@ public class MapRadioDecoder implements MessageDecoder {
     private ComputePara computePara=new ComputePara();
     private final AttributeKey CONTEXT = new AttributeKey(getClass(),
             "context");
-    private boolean flag = false;
-    private int positionValue = 0;
+
     @Override
     public MessageDecoderResult decodable(IoSession ioSession, IoBuffer in) {
-        if (flag == true) {
-            in.limit(positionValue);
-            in.flip();
-        }
         if(in.remaining()<10){
             return MessageDecoderResult.NEED_DATA;
         }else {
@@ -46,10 +41,6 @@ public class MapRadioDecoder implements MessageDecoder {
     @Override
     public MessageDecoderResult decode(IoSession session, IoBuffer in,
                                        ProtocolDecoderOutput out) throws Exception {
-        if (flag == true) {
-            in.limit(positionValue);
-            in.flip();
-        }
 
         Context ctx =getContext(session);//获取session  的context
 
@@ -57,7 +48,6 @@ public class MapRadioDecoder implements MessageDecoder {
         long length=ctx.getLength();//数据总长度
         IoBuffer buffer=ctx.getBuffer();//数据存入buffer
 
-        Log.d("map","电磁态势相应时间: "+System.currentTimeMillis() );
         //第一次取数据
         if(length==0){
             length=in.getLong();
@@ -70,25 +60,22 @@ public class MapRadioDecoder implements MessageDecoder {
         }
         ctx.setMatchLength(matchCount);
         if (in.hasRemaining()) {// 如果buff中还有数据
-            buffer.put(in);// 添加到保存数据的buffer中
+            if(matchCount< length) {
+                buffer.put(in);// 添加到保存数据的buffer中
+            }
             if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
-                byte[] b = new byte[(int) length];
+                final byte[] b = new byte[(int) length];
+                byte[] temp = new byte[(int) length];
+                in.get(temp,0, (int) (length-buffer.position()));//最后一次in的数据可能有多的
+                buffer.put(temp);
+
                 // 一定要添加以下这一段，否则不会有任何数据,因为，在执行in.put(buffer)时buffer的起始位置已经移动到最后，所有需要将buffer的起始位置移动到最开始
                 buffer.flip();
                 buffer.get(b);
                 MapRadioResult map=Byte2Object(b);
                 out.write(map);
-                System.out.println("解码完成.......");
 
-                if (buffer.remaining() > 0) {
-                    IoBuffer temp = IoBuffer.allocate(1024).setAutoExpand(true);
-                    temp.put(buffer);
-                    temp.flip();
-                    in.sweep();
-                    in.put(temp);
-                    positionValue = in.position();
-                    flag = true;
-                }
+
                 ctx.reset();//清空
                 return MessageDecoderResult.OK;
 
@@ -163,7 +150,8 @@ public class MapRadioDecoder implements MessageDecoder {
         map.setFreshTime(b[8] & 0xff);
         map.setNx(b[9] & 0xff);
         map.setNy(b[10] & 0xff);
-        float f1= (float) (((b[11]>>3)&0x1f)+((b[11]>>2)&0x01)*0.5+((b[11]>>1)&0x01)*0.25+(b[11]&0x01)*0.125);
+        //分辨率,低三位是小数
+        float f1= (float) ((b[11]&0xff)/8.0);
         map.setDieta(f1);
         for(int i=12;i<length-3;i=i+16){
             MapRadioPointInfo point=new MapRadioPointInfo();
@@ -201,6 +189,11 @@ public class MapRadioDecoder implements MessageDecoder {
                 point.setEqualPower(ff);
             else
                 point.setEqualPower(-ff);
+//            float ff=((b[i+13]&0x0f)<<8)+(b[i+14] & 0xff);
+//            if (((b[i+13]>>7)&0x01) == 0)
+//                point.setEqualPower(ff/8);
+//            else
+//                point.setEqualPower((float) ((ff-Math.pow(2,16))/8.0));
             //损耗指数
             float f2= (float) (((b[i+15]>>4)&0x0f)+((b[i+15]>>3)&0x01)*0.5+((b[i+15]>>2)&0x01)*0.25+
                     ((b[i+15]>>1)&0x01)*0.125+(b[i+15]&0x01)*0.0625);

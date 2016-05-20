@@ -705,6 +705,7 @@ public class ToServerMinaService extends Service {
                 Simple_FixCentralFreq fixCentral = new Simple_FixCentralFreq();
                 fixCentral = (Simple_FixCentralFreq) message;
                 Constants.FPGAsession.write(fixCentral);
+                Toast.makeText(getBaseContext(), "定频模式已设定", Toast.LENGTH_SHORT).show();
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(fixCentral.getContent()));
             }
             /////////////////////////////////

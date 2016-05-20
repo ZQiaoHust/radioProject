@@ -34,9 +34,8 @@ public class MapRadioEncoder implements MessageEncoder<MapRadio> {
         b[5]= (byte) (map.getCentralFreq()&0xff);
         b[6]= (byte) (map.getBand()&0xff);
         b[7]= (byte) (map.getRadius()&0xff);
-        int aa= (int) map.getDieta();
-        int  xx= (int) ((map.getDieta()-aa)*8);
-        b[8]= (byte) (((aa&0xff)<<3)+(xx&0x07));//分辨率，低三位是小数
+        int  xx= (int) (map.getDieta()*8);//分辨率，低三位是小数
+        b[8]= (byte) (xx&0xff);
         b[9]= (byte) (map.getFreshtime()&0xff);
         byte[] byte1=map.getStartTime();
         System.arraycopy(byte1,0,b,10,4);

@@ -54,7 +54,7 @@ public class IQwaveDecoder implements MessageDecoder {
         IoBuffer buffer =  Constants.ctxIQ.getBuffer();//数据存入buffer
 
         matchCount += in.remaining();
-        Log.d("IQ", "共收到字节：" + String.valueOf(matchCount));
+        Log.d("IQtrans", "共收到字节：" + String.valueOf(matchCount));
         Constants.ctxIQ.setMatchLength(matchCount);
 
         if (in.hasRemaining()) {// 如果in中还有数据
@@ -82,11 +82,11 @@ public class IQwaveDecoder implements MessageDecoder {
                         Timer timer = new Timer();
                         timer.schedule(task, 200);
                         out.write(iQwave);
-                        Log.d("IQ", "当前帧总共段数：" + iQwave.getTotalBands());
-                        Log.d("IQ", "当前帧所在序号：" + iQwave.getNowNum());
+                        Log.d("IQtrans", "当前帧总共段数：" + iQwave.getTotalBands());
+                        Log.d("IQtrans", "当前帧所在序号：" + iQwave.getNowNum());
                         Constants.NotFill = false;//收成功，NotFill表示没满的变量
                         k++;
-                        Log.d("IQ", "成功次数：" + String.valueOf(k));
+                        Log.d("IQtrans", "成功次数：" + String.valueOf(k));
                         System.out.println("IQ波解码完成.......");
                     }
                 } else {

@@ -83,10 +83,10 @@ public class MinaClientService extends Service {
 
     private Boolean Ispsfull = false;//queshao
     /*************Fpga的IP*************/
-  private static String IP="192.168.43.29"; //HUAWEIAP5  ID=15
+  //private static String IP="192.168.43.29"; //HUAWEIAP5  ID=15
     //private static String IP="192.168.43.61"; //HUAWEIAP4,ID为14
     //private static String IP="192.168.43.34";//HUAWEIAP3,ID为13
-    //private static String IP="192.168.43.245";//HUAWEIAP2  ID=12
+   private static String IP="192.168.43.245";//HUAWEIAP2  ID=12
     //private static String IP="192.168.43.195";//HUAWEIAP1  ID=11
 
     private static int PORT=8899;
@@ -277,6 +277,7 @@ public class MinaClientService extends Service {
                 }
                 try {
                     Constants.FPGAsession.write(data);
+                    Toast.makeText(getBaseContext(), "定频模式已设定", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
@@ -816,7 +817,7 @@ public class MinaClientService extends Service {
                                 }
                             }
                             //定时清除缓存
-                            if(Constants.Queue_DrawRealtimeSpectrum.size()>30){
+                            if(Constants.Queue_DrawRealtimeSpectrum.size()>10){
                                 Constants.Queue_DrawRealtimeSpectrum.clear();
                             }
 //                            if(Constants.Queue_DrawRealtimewaterfall.size()>30){
@@ -891,8 +892,8 @@ public class MinaClientService extends Service {
 
                 }
                 //清除缓存
-                if(Constants.Queue_BackgroundSpectrum.size()>30){
-                    Constants.Queue_DrawRealtimeSpectrum.clear();
+                if(Constants.Queue_BackgroundSpectrum.size()>10){
+                    Constants.Queue_BackgroundSpectrum.clear();
                 }
             }
 
@@ -1082,7 +1083,7 @@ public class MinaClientService extends Service {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
-            Log.d("session","与FPGA断开！");
+
             while(true) {
                 try {
                     Thread.sleep(3000);
@@ -1114,7 +1115,7 @@ public class MinaClientService extends Service {
                 Constants.NotFill = false;
                 Constants.ctx.reset();
                 Constants.failCount++;
-                Log.d("fail", "重传次数：" + Constants.failCount);
+                Log.d("trans", "重传次数：" + Constants.failCount);
             }
             if (Constants.Backfail) {
                 Constants.FPGAsession.write(mReceiveWrong);
@@ -1197,13 +1198,38 @@ public class MinaClientService extends Service {
             PSdir.mkdirs();//mkdir()不能创建多个目录
         }
         //取出时间
-        byte[] byte6 = PASP.getLocationandTime();
-        int year = getYear(byte6);
-        int month = getMonth(byte6);
-        int day = getDay(byte6);
-        int hour = getHour(byte6) + 8;
-        int min = getMin(byte6);
-        int sec = getSecond(byte6);
+        byte[] bytes = PASP.getLocationandTime();
+        //location
+        String location=null;
+        if(bytes[0]==0){
+            location="E";
+        }else{
+            location="W";
+        }
+        float longtitude= (float) ((bytes[1] &0xff)+((bytes[2]>>2)&0x3f)/60.0+
+                (((bytes[2]&0x03)<<8)+(bytes[3]&0xff))/60000.0);
+
+        float latitude= (float) ((bytes[4]&0x7f)+((bytes[5]>>2)&0x3f)/60.0+
+                (((bytes[5]&0x03)<<8)+(bytes[6]&0xff))/60000.0);
+
+        java.text.DecimalFormat df = new java.text.DecimalFormat("0.000000");
+        if(longtitude!=0) {
+            location+= df.format(longtitude);//截小数点后6位，返回为String
+        }
+        if((bytes[4] >> 7)==0){
+            location+=",N";
+        }else{
+            location+=",S";
+        }
+        if(latitude!=0) {
+            location+= df.format(latitude);//截小数点后6位，返回为String
+        }
+//        int year = getYear(byte6);
+//        int month = getMonth(byte6);
+//        int day = getDay(byte6);
+//        int hour = getHour(byte6) + 8;
+//        int min = getMin(byte6);
+//        int sec = getSecond(byte6);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         String time = sdf.format(new Date());
@@ -1259,22 +1285,29 @@ public class MinaClientService extends Service {
                 dos.write(0x00);
                 dos.close();
 
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
                 //在此将文件的信息插入数据库===================
                 ContentValues cv = new ContentValues();
                 cv.put("filename", fname);
                 cv.put("start", myApplication.getSweepStart());
                 cv.put("end", myApplication.getSweepEnd());
-                if(PASP.getIsChange()==0x0f)
-                    fileIsChanged=1;
+                cv.put("location", location);
+                cv.put("isShow", 0);
+                if (PASP.getIsChange() == 0x0f)
+                    fileIsChanged = 1;
                 else
-                    fileIsChanged=0;
+                    fileIsChanged = 0;
 
                 cv.put("isChanged", fileIsChanged);
                 cv.put("upload", 0);
                 cv.put("times", 0);
                 db.insert("localFile", null, cv);
-            } catch (Exception e) {
-                e.printStackTrace();
+            }catch(Exception e){
+
             }
 
         }
@@ -1450,13 +1483,13 @@ public class MinaClientService extends Service {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }finally {
-                    if (c != null) {
-                        c.close();
-                    }
+
                 }
             }
         }
-
+        if (c != null) {
+            c.close();
+        }
     }
 
 

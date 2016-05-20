@@ -473,11 +473,12 @@ public class Share_fragment extends Fragment {
                         e.printStackTrace();
                     }
 
-                    if (c != null) {
-                        c.close();
-                    }
+
                 }
             }
+        }
+        if (c != null) {
+            c.close();
         }
 
     }

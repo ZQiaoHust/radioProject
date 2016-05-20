@@ -141,7 +141,7 @@ public class Chart_waterfall extends Activity {
             }
         };
 
-        timer.schedule(task, 1000, 1000);
+        timer.schedule(task, 1000, getFreshTime((endFreq-startFrq)/25+1));
 
 
     }
@@ -172,6 +172,9 @@ public class Chart_waterfall extends Activity {
 //            flist = Constants.Queue_DrawRealtimewaterfall.poll();
         if (!Constants.Queue_DrawRealtimeSpectrum.isEmpty()) {
             flist = Constants.Queue_DrawRealtimeSpectrum.poll();
+            int realsize=Constants.Queue_DrawRealtimeSpectrum.size();
+            if(realsize>=5)
+                Constants.Queue_DrawRealtimeSpectrum.clear();
             List<Column> columns = new ArrayList<Column>();
             List<SubcolumnValue> values;
             if(flist.size()!=total){
@@ -307,6 +310,21 @@ public class Chart_waterfall extends Activity {
         }
 
         return data;
+    }
+
+    private  int  getFreshTime(int band){
+        if(band<5){
+            return 500;
+        }else if(band>=5&&band<10){
+            return 1000;
+        }else if(band>=10&&band<20){
+            return 2000;
+        }else if(band>=20&&band<30){
+            return 3000;
+        }else if(band>=30&&band<=400){
+            return 4000;
+        }
+        return 0;
     }
 
 }

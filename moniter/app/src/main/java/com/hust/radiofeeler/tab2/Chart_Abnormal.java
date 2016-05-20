@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -96,14 +97,13 @@ public class Chart_Abnormal extends Activity {
     @Override
     public void onStart() {
         //回到本fragment时又开始显示
-        Constants.Queue_AbnormalFreq_List.clear();
+        Constants.Queue_Abnormal.clear();
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
 
                 if (msg.what == 1) {
-
                     updateChart();
                 }
             }
@@ -118,7 +118,7 @@ public class Chart_Abnormal extends Activity {
             }
         };
 
-        timer.schedule(task, 1000, 1000);
+        timer.schedule(task, 200, 100);
         super.onStart();
     }
 
@@ -145,6 +145,7 @@ public class Chart_Abnormal extends Activity {
             simpleAdapter.notifyDataSetChanged();
         }
     }
+
 
 
 }

@@ -83,8 +83,8 @@ public class Map_Heat_Setting_Insert extends Fragment implements RadioGroup.OnCh
         btn_setting= (Button) getActivity().findViewById(R.id.btn_mapbase_setting_insert);
 
         //时间选择器
-        pvTime1 = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
-        pvTime2 = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
+        pvTime1 = new TimePickerView(getActivity(), TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
+        pvTime2 = new TimePickerView(getActivity(), TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
         //控制时间范围
 //        Calendar calendar = Calendar.getInstance();
 //        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
@@ -95,8 +95,9 @@ public class Map_Heat_Setting_Insert extends Fragment implements RadioGroup.OnCh
         pvTime1.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                iuputtime1.setText(getTime(date));
+            public void onTimeSelect(String date) {
+               iuputtime1.setText(date);
+                //iuputtime1.setText(pvTime1.getTime());
             }
         });
         pvTime2.setTime(new Date());
@@ -106,8 +107,9 @@ public class Map_Heat_Setting_Insert extends Fragment implements RadioGroup.OnCh
         pvTime2.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                inputtime2.setText(getTime(date));
+            public void onTimeSelect(String date) {
+                inputtime2.setText(date);
+               // inputtime2.setText(pvTime2.getTime());
             }
         });
 

@@ -17,8 +17,8 @@ import java.util.Date;
  */
 public class TimePickerView extends BasePickerView implements View.OnClickListener {
     public enum Type {
-        ALL, YEAR_MONTH_DAY_HOURS_MINS,YEAR_MONTH_DAY, HOURS_MINS, MONTH_DAY_HOUR_MIN , YEAR_MONTH
-    }// 五种选择模式，年月日时分秒，年月日时分，年月日，时分，月日时分
+        ALL, YEAR_MONTH_DAY, HOURS_MINS, MONTH_DAY_HOUR_MIN , YEAR_MONTH
+    }// 四种选择模式，年月日时分，年月日，时分，月日时分
 
     WheelTime wheelTime;
     private View btnSubmit, btnCancel;
@@ -52,9 +52,7 @@ public class TimePickerView extends BasePickerView implements View.OnClickListen
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hours = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        int sec = calendar.get(Calendar.SECOND);
-
-        wheelTime.setPicker(year, month, day, hours, minute,sec);
+        wheelTime.setPicker(year, month, day, hours, minute);
 
     }
 
@@ -84,8 +82,7 @@ public class TimePickerView extends BasePickerView implements View.OnClickListen
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hours = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        int sec = calendar.get(Calendar.SECOND);
-        wheelTime.setPicker(year, month, day, hours, minute,sec);
+        wheelTime.setPicker(year, month, day, hours, minute);
     }
 
 //    /**
@@ -125,14 +122,12 @@ public class TimePickerView extends BasePickerView implements View.OnClickListen
             return;
         } else {
             if (timeSelectListener != null) {
-//                try {
-//                    Date date = WheelTime.dateFormat.parse(wheelTime.getTime());
-//                    timeSelectListener.onTimeSelect(date);
-                    String time=getFormattime(wheelTime.getTime());
-                    timeSelectListener.onTimeSelect(time);
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    Date date = WheelTime.dateFormat.parse(wheelTime.getTime());
+                    timeSelectListener.onTimeSelect(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
             dismiss();
             return;
@@ -140,8 +135,7 @@ public class TimePickerView extends BasePickerView implements View.OnClickListen
     }
 
     public interface OnTimeSelectListener {
-        //public void onTimeSelect(Date date);
-        public void onTimeSelect(String date);
+        public void onTimeSelect(Date date);
     }
 
     public void setOnTimeSelectListener(OnTimeSelectListener timeSelectListener) {
@@ -150,30 +144,5 @@ public class TimePickerView extends BasePickerView implements View.OnClickListen
 
     public void setTitle(String title){
         tvTitle.setText(title);
-    }
-
-    public String getTime(){
-        return wheelTime.getTime();
-    }
-
-
-    public String getFormattime(String time) {
-        String[] array = time.split("-");
-        // [2015, 01, 01 17:21]
-        String year = array[0];
-        String month = array[1].length() == 1 ? "0" + array[1] : array[1];
-        String[] array2 = array[2].trim().split(" ");
-        String day = array2[0].length() == 1 ? "0" + array2[0] : array2[0];
-        String[] array3 = array2[1].split(":");
-        String hour = array3[0].length() == 1 ? "0" + array3[0] : array3[0];
-        String min = array3[1].length() == 1 ? "0" + array3[1] : array3[1];
-
-        String sec =null;
-        if(array3.length==3)
-            sec=array3[2].length() == 1 ? "0" + array3[2] : array3[2];
-        String ntime = year + "年" + month + "月" + day + "日 " + hour + ":" + min;
-        if(sec!=null)
-            ntime+=":"+sec;
-        return ntime;
     }
 }

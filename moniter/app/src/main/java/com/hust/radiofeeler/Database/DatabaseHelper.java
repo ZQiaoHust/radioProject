@@ -12,18 +12,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME="sendFileDatabase.db";//数据库名称
     private static final String TABLE_NAME="localFile";//表名称
     private static final String TABLE_NAME_IQ="iqFile";//表名称
-    private static final int  version=3;
+    private static final int  version=2;
     private static DatabaseHelper mInstance;
 
-    /**
-     * 文件名，扫频范围，经纬度，经纬度是否已显式标志，文件上传标志，文件重传次数
-     */
+
     public static final String sql = "create table ["+TABLE_NAME+"](_id INTEGER PRIMARY KEY AUTOINCREMENT," +
             "fileName VARCHAR UNIQUE, " +
-            "start SMALLINT ," +
-            "end SMALLINT ," +
+            "start INT ," +
+            "end INT ," +
             "location VARCHAR ," +
-            "isShow SMALLINT,"+
             "isChanged SMALLINT ," +
             "upload SMALLINT," +
             "times SMALLINT);";
@@ -54,9 +51,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         switch (oldVersion) {
             case 1:
                 db.execSQL("alter table localFile add column location VARCHAR");
-                break;
-            case 2:
-                db.execSQL("alter table localFile add column isShow SMALLINT");
                 break;
             default:
         }

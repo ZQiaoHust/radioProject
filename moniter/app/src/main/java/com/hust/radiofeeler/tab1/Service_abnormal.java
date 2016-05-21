@@ -68,6 +68,7 @@ public class Service_abnormal extends Activity {
         et_inputtime= (EditText) findViewById(R.id.inputDate_abnormal);
         //时间选择器
         pvTime = new TimePickerView(this, TimePickerView.Type.ALL);
+        pvTime = new TimePickerView(this, TimePickerView.Type.ALL);
         //控制时间范围
 //        Calendar calendar = Calendar.getInstance();
 //        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
@@ -78,9 +79,8 @@ public class Service_abnormal extends Activity {
         pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(String date) {
-                //et_inputtime.setText(getTime(date));
-                et_inputtime.setText(date);
+            public void onTimeSelect(Date date) {
+                et_inputtime.setText(getTime(date));
             }
         });
     }
@@ -226,6 +226,9 @@ public class Service_abnormal extends Activity {
         });
 
     }
-
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        return format.format(date);
+    }
 
 }

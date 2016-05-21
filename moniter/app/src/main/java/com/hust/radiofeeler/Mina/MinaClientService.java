@@ -83,10 +83,10 @@ public class MinaClientService extends Service {
 
     private Boolean Ispsfull = false;//queshao
     /*************Fpga的IP*************/
-  //private static String IP="192.168.43.29"; //HUAWEIAP5  ID=15
+  private static String IP="192.168.43.29"; //HUAWEIAP5  ID=15
     //private static String IP="192.168.43.61"; //HUAWEIAP4,ID为14
     //private static String IP="192.168.43.34";//HUAWEIAP3,ID为13
-   private static String IP="192.168.43.245";//HUAWEIAP2  ID=12
+    //private static String IP="192.168.43.245";//HUAWEIAP2  ID=12
     //private static String IP="192.168.43.195";//HUAWEIAP1  ID=11
 
     private static int PORT=8899;
@@ -817,7 +817,7 @@ public class MinaClientService extends Service {
                                 }
                             }
                             //定时清除缓存
-                            if(Constants.Queue_DrawRealtimeSpectrum.size()>10){
+                            if(Constants.Queue_DrawRealtimeSpectrum.size()>30){
                                 Constants.Queue_DrawRealtimeSpectrum.clear();
                             }
 //                            if(Constants.Queue_DrawRealtimewaterfall.size()>30){
@@ -892,8 +892,8 @@ public class MinaClientService extends Service {
 
                 }
                 //清除缓存
-                if(Constants.Queue_BackgroundSpectrum.size()>10){
-                    Constants.Queue_BackgroundSpectrum.clear();
+                if(Constants.Queue_BackgroundSpectrum.size()>30){
+                    Constants.Queue_DrawRealtimeSpectrum.clear();
                 }
             }
 
@@ -1296,7 +1296,6 @@ public class MinaClientService extends Service {
                 cv.put("start", myApplication.getSweepStart());
                 cv.put("end", myApplication.getSweepEnd());
                 cv.put("location", location);
-                cv.put("isShow", 0);
                 if (PASP.getIsChange() == 0x0f)
                     fileIsChanged = 1;
                 else

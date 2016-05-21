@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.bigkoo.pickerview.TimePickerView;
 import com.hust.radiofeeler.GlobalConstants.ConstantValues;
 import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.Mina.Broadcast;
@@ -22,9 +21,7 @@ import com.hust.radiofeeler.bean2server.Station_CurrentRequst;
 import com.hust.radiofeeler.compute.ComputePara;
 import com.hust.radiofeeler.view.DateTimePickDialogUtil2Mius;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,7 +35,6 @@ public class Stations_current extends Fragment  {
     private Spinner spinner_location, spinner_IQ;
     private List<String> list1, list2;
     private ArrayAdapter<String> adapter1, adapter2;
-    TimePickerView pvTime;
 
     private EditText et_IQblock,et_inputtime;
     private ComputePara computePara =new ComputePara();
@@ -70,20 +66,6 @@ public class Stations_current extends Fragment  {
 
         et_IQblock = (EditText) getActivity().findViewById(R.id.et_IQblock);
         et_inputtime= (EditText) getActivity().findViewById(R.id.inputDate_current);
-
-        pvTime = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
-        pvTime.setTime(new Date());
-        pvTime.setCyclic(false);
-        pvTime.setCancelable(true);
-        //时间选择后回调
-        pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
-
-            @Override
-            public void onTimeSelect(String date) {
-               // et_inputtime.setText(pvTime.getTime());
-                et_inputtime.setText(date);
-            }
-        });
 
     }
 
@@ -170,18 +152,11 @@ public class Stations_current extends Fragment  {
             }
         });
 
-//        et_inputtime.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                DateTimePickDialogUtil2Mius dateTimePicKDialog = new DateTimePickDialogUtil2Mius(getActivity());
-//                dateTimePicKDialog.dateTimePicKDialog(et_inputtime);
-//            }
-//        });
         et_inputtime.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                pvTime.show();
+                DateTimePickDialogUtil2Mius dateTimePicKDialog = new DateTimePickDialogUtil2Mius(getActivity());
+                dateTimePicKDialog.dateTimePicKDialog(et_inputtime);
             }
         });
 
@@ -221,9 +196,6 @@ public class Stations_current extends Fragment  {
         });
     }
 
-    public static String getTime(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
-        return format.format(date);
-    }
+
 
 }

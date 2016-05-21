@@ -57,15 +57,9 @@ public class TerminalOnlineDecoder implements MessageDecoder {
         ctx.setMatchLength(matchCount);
     }
     if (in.hasRemaining()) {// 如果buff中还有数据
-        if(matchCount< length) {
-            buffer.put(in);// 添加到保存数据的buffer中
-        }
+        buffer.put(in);// 添加到保存数据的buffer中
         if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
-            final byte[] b = new byte[(int) length];
-            byte[] temp = new byte[(int) length];
-            in.get(temp,0, (int) (length-buffer.position()));//最后一次in的数据可能有多的
-            buffer.put(temp);
-
+            byte[] b = new byte[(int) length];
             // 一定要添加以下这一段，否则不会有任何数据,因为，在执行in.put(buffer)时buffer的起始位置已经移动到最后，所有需要将buffer的起始位置移动到最开始
             buffer.flip();
             buffer.get(b);
@@ -74,6 +68,13 @@ public class TerminalOnlineDecoder implements MessageDecoder {
             out.write(file);
             System.out.println("解码完成.......");
 
+            if(buffer.remaining() > 0) {
+                IoBuffer temp = IoBuffer.allocate(1024).setAutoExpand(true);
+                temp.put(buffer);
+                temp.flip();
+                in.sweep();
+                in.put(temp);
+            }
             ctx.reset();
             return MessageDecoderResult.OK;
 

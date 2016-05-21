@@ -127,19 +127,16 @@ public class Map_Route_Result extends Activity {
         ArrayList<MapRadioPointInfo> pointlist=map.getMapRadioPointInfoList();
         for(MapRadioPointInfo point:pointlist){
             Map<String,Object> data=new HashMap<>();
-
-            String year = String.valueOf(point.getYear());
-            String month = String.valueOf(point.getMonth()< 10 ? "0" + point.getMonth() : point.getMonth());
-            String day = String.valueOf(point.getDate()< 10 ? "0" + point.getDate() : point.getDate());
-
-            String hour = String.valueOf(point.getHour()< 10 ? "0" + point.getHour() : point.getHour());
-            String min = String.valueOf(point.getMin()< 10 ? "0" + point.getMin() : point.getMin());
-
-            String time= year + "-" + month + "-" + day + " " + hour + ":" + min;
-
+            String time=String.format("yyyy-MM-dd HH:mm",point.getYear(),point.getMonth(),point.getDate(),
+                    point.getHour(),point.getMin());
+//            String time=point.getYear()+"-"+point.getMonth()+"-"+point.getDate()+""
+//                    +point.getHour()+":"+point.getMin();
+//            TimeShow timeShow=new TimeShow(point.getYear(),point.getMonth(),point.getDate(),
+//                    point.getHour(),point.getMin());
             String location=point.getLongtitudeStyle()+point.getLongitude()+" ,"+
                     point.getLatitudeStyle()+point.getLatitude()+" ,"+point.getHeight();
-//
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//            String time=sdf.format(timeShow);
             data.put("item_time",time);
             data.put("item_location",location);
             data.put("item_power",point.getEqualPower());

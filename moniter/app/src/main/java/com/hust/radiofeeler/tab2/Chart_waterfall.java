@@ -172,9 +172,6 @@ public class Chart_waterfall extends Activity {
 //            flist = Constants.Queue_DrawRealtimewaterfall.poll();
         if (!Constants.Queue_DrawRealtimeSpectrum.isEmpty()) {
             flist = Constants.Queue_DrawRealtimeSpectrum.poll();
-            int realsize=Constants.Queue_DrawRealtimeSpectrum.size();
-            if(realsize>=5)
-                Constants.Queue_DrawRealtimeSpectrum.clear();
             List<Column> columns = new ArrayList<Column>();
             List<SubcolumnValue> values;
             if(flist.size()!=total){

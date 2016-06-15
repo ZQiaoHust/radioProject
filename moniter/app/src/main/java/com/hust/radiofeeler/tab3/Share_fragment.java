@@ -277,6 +277,7 @@ public class Share_fragment extends Fragment {
     }
 
     private void uploadIQFile() {
+
         /*********************************************************************************/
         Cursor cursor = db.rawQuery("SELECT * FROM iqFile WHERE upload=1", null);
         while (cursor.moveToNext()) {
@@ -390,6 +391,8 @@ public class Share_fragment extends Fragment {
 //    }
 
     private void uploadPowerSpectrumFile(Cursor c,int pace){
+        if(Constants.isUpload!=0)//上传关闭
+            return ;
         int i = 0, fileNum = 0;
        if(c==null)
            return ;

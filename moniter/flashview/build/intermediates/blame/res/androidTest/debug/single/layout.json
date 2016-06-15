@@ -4,7 +4,15 @@
         "source": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\bundles\\debug\\res\\layout\\layout_slideshow.xml"
     },
     {
+        "merged": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\layout_slideshow.xml",
+        "source": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\build\\intermediates\\bundles\\debug\\res\\layout\\layout_slideshow.xml"
+    },
+    {
         "merged": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\layout_slideshow.xml",
         "source": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\bundles\\debug\\res\\layout\\layout_slideshow.xml"
+    },
+    {
+        "merged": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\layout_slideshow.xml",
+        "source": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\build\\intermediates\\bundles\\debug\\res\\layout\\layout_slideshow.xml"
     }
 ]

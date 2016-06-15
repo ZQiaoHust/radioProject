@@ -220,8 +220,6 @@ public class Map_RouteMap extends Activity {
     @Override
     protected void onDestroy() {
         mRoute_MapView.onDestroy();
-
-
         super.onDestroy();
     }
 
@@ -328,75 +326,4 @@ public class Map_RouteMap extends Activity {
         return color;
     }
 
-    //打开实时功率谱文件  并将相应频段范围的数据存到数组中显示
-    private void OpenRealTimeSpectrunfile() {
-
-        int temp = 0;
-        int len = 0;
-        ArrayList fileName = GetFileName(PSFILE_PATH);
-        BubbleSortDateFile(fileName);
-       // for (int i = 0; i < fileName.size(); i++)
-            //Log.e("FileName", String.valueOf(fileName.get(i)));
-        {
-            File file = new File(PSFILE_PATH,
-                    String.valueOf(fileName.get(0)));
-            FileInputStream in = null;
-            try {
-                in = new FileInputStream(file);
-                byte[] content = new byte[4000];
-                byte[] buffer = new byte[4000];
-                while ((temp = in.read(buffer)) != -1) {
-                    content = buffer;
-
-                }
-                Log.e("FileFirst", Integer.toHexString(content[0] & 0xFF) );
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-
-    //获取当前目录下所有的功率谱文件 按时间顺序
-    public ArrayList<String> GetFileName(String fileAbsolutePath) {
-        ArrayList<String> Filename = new ArrayList<>();
-        File file = new File(fileAbsolutePath);
-        File[] subFile = file.listFiles();
-
-        for (int iFileLength = 0; iFileLength < subFile.length; iFileLength++) {
-            // 判断是否为文件夹
-            if (!subFile[iFileLength].isDirectory()) {
-                String name = subFile[iFileLength].getName();
-                // 判断是否为pwr结尾
-                if (name.trim().toLowerCase().endsWith(".pwr")) {
-                    Filename.add(name);
-                }
-            }
-        }
-        return Filename;
-    }
-
-    private ArrayList<String> BubbleSortDateFile(ArrayList<String> arrayList) {
-
-        String temp; // 记录临时中间值
-        int size = arrayList.size(); // 数组大小
-        for (int i = 0; i < size - 1; i++) {
-            for (int j = i + 1; j < size; j++) {
-                if (arrayList.get(i).compareTo(arrayList.get(j)) >0) { // 交换两数的位置
-                    temp = arrayList.get(i);
-                    arrayList.set(i, arrayList.get(j)) ;
-                    arrayList.set(j,temp) ;
-                }
-            }
-        }
-        return  arrayList;
-    }
 }

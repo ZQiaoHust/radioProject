@@ -1,8 +1,13 @@
 package com.hust.radiofeeler.Mina;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -12,13 +17,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.R;
 import com.hust.radiofeeler.SlideMenu.ConnectPCB;
 import com.hust.radiofeeler.SlideMenu.FinalStationState;
@@ -36,6 +46,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener{
+   //Android 6.0
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
     private Intent mIntent;
     //private ViewPager viewPager;
     private NoScrollViewPager viewPager;
@@ -53,6 +69,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 //        if (savedInstanceState == null) {
 //            getSupportFragmentManager().beginTransaction().add(R.id.container, new PlaceholderFragment()).commit();
 //        }
@@ -92,6 +109,19 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    MainActivity.this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+
     }
 
     @Override
@@ -103,26 +133,27 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.offset_settings) {
+            showDialog_Save();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -299,5 +330,45 @@ public class MainActivity extends AppCompatActivity
                 viewPager.setCurrentItem(3, true);
                 break;
         }
+    }
+
+    private void showDialog_Save() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.offset_setting, null);
+        final EditText EditText01 = (EditText) view.findViewById(R.id.edit1);
+        final EditText EditText02 = (EditText) view.findViewById(R.id.edit2);
+
+        AlertDialog.Builder bulider = new AlertDialog.Builder(this);
+        bulider.setTitle("请输入经纬度偏移量");
+        bulider.setIcon(R.drawable.ditu2);
+
+        bulider.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(!EditText01.getText().toString().equals("")) {
+
+                    Constants.LON_OFFSET = Double.
+                            parseDouble(EditText01.getText().toString());
+                }
+                if(!EditText02.getText().toString().equals("")) {
+                    Constants.LAT_OFFSET = Double.
+                            parseDouble(EditText02.getText().toString());
+                }
+
+                Toast.makeText(MainActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+        bulider.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this, "设置失败", Toast.LENGTH_SHORT).show();
+            }
+        });
+        bulider.setView(view);
+        AlertDialog dialog = bulider.create();
+        dialog.show();
     }
 }

@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.pickerview.TimePickerView;
 import com.hust.radiofeeler.GlobalConstants.ConstantValues;
 import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.Mina.Broadcast;
@@ -23,7 +24,9 @@ import com.hust.radiofeeler.bean2server.InteractionFixmodeRequest;
 import com.hust.radiofeeler.compute.ComputePara;
 import com.hust.radiofeeler.view.DateTimePickDialogUtil2Mius;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,6 +42,7 @@ public class Interact_work2 extends Fragment {
     private EditText et_frequency01;
     private EditText et_frequency02;
     private EditText et_frequency03;
+    TimePickerView pvTime;
 
     private Spinner spinner_IQ;
     private List<String> list;
@@ -97,7 +101,21 @@ public class Interact_work2 extends Fragment {
         editList.add(et_frequency02);
         editList.add(et_frequency03);
 
+        pvTime = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
+        //控制时间范围
+//        Calendar calendar = Calendar.getInstance();
+//        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
+        pvTime.setTime(new Date());
+        pvTime.setCyclic(false);
+        pvTime.setCancelable(true);
+        //时间选择后回调
+        pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
+            @Override
+            public void onTimeSelect(String date) {
+                inputDate.setText(date);
+            }
+        });
     }
     /**
      * spinner初始化
@@ -110,9 +128,9 @@ public class Interact_work2 extends Fragment {
         list = new ArrayList<String>();
         list.add("5/5");
         list.add("2.5/2.5");
-        list.add("1/1");
-        list.add("0.5/0.5");
-        list.add("0.1/0.1");
+        list.add("1.25/1.25");
+        list.add("0.625/0.625");
+        list.add("0.125/0.125");
 
         //2.新建数组适配器
         adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item,list);
@@ -172,10 +190,7 @@ public class Interact_work2 extends Fragment {
 
         inputDate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                DateTimePickDialogUtil2Mius dateTimePicKDialog = new DateTimePickDialogUtil2Mius(getActivity());
-                dateTimePicKDialog.dateTimePicKDialog(inputDate);
-
+                pvTime.show();
             }
         });
 
@@ -226,5 +241,9 @@ public class Interact_work2 extends Fragment {
                 }
             }
         });
+    }
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        return format.format(date);
     }
 }

@@ -5,7 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/flashview/flashview.iml" filepath="$PROJECT_DIR$/flashview/flashview.iml" />
       <module fileurl="file://$PROJECT_DIR$/pickerview/pickerview.iml" filepath="$PROJECT_DIR$/pickerview/pickerview.iml" />
-      <module fileurl="file://$PROJECT_DIR$/testSliding_sendFile_instertMap.iml" filepath="$PROJECT_DIR$/testSliding_sendFile_instertMap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testSliding_0526_realtimeRoute.iml" filepath="$PROJECT_DIR$/testSliding_0526_realtimeRoute.iml" />
     </modules>
   </component>
 </project>

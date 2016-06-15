@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -83,10 +84,10 @@ public class MinaClientService extends Service {
 
     private Boolean Ispsfull = false;//queshao
     /*************Fpga的IP*************/
-  private static String IP="192.168.43.29"; //HUAWEIAP5  ID=15
+  //private static String IP="192.168.43.29"; //HUAWEIAP5  ID=15
     //private static String IP="192.168.43.61"; //HUAWEIAP4,ID为14
     //private static String IP="192.168.43.34";//HUAWEIAP3,ID为13
-    //private static String IP="192.168.43.245";//HUAWEIAP2  ID=12
+  // private static String IP="192.168.43.245";//HUAWEIAP2  ID=12
     //private static String IP="192.168.43.195";//HUAWEIAP1  ID=11
 
     private static int PORT=8899;
@@ -570,19 +571,38 @@ public class MinaClientService extends Service {
 //                    FpgaIP = (String) ipList.get(1);
 //                    ConnectFuture future = connector.connect
 //                            (new InetSocketAddress(FpgaIP, PORT));
+                    while(true) {
+                        try {
+                            Thread.sleep(300);
+                            // 这里是异步操作 连接后立即返回
+                            ConnectFuture future = connector.connect(new InetSocketAddress(
+                                    Constants.IP, PORT));
+                            future.awaitUninterruptibly();// 等待连接创建完成
+                            session = future.getSession();
+                            if(session.isConnected()) {
+                                Constants.FPGAsession = session;
+                                Looper.prepare();
+                                Toast.makeText(getBaseContext(),"连接成功！",Toast.LENGTH_SHORT).show();
+                                Constants.ID=getId(Constants.IP);
+                                Looper.loop();//
+                                break;
+                            }else{
+                                Looper.prepare();
+                                Toast.makeText(getBaseContext(),"连接失败！",Toast.LENGTH_SHORT).show();
+                                Looper.loop();//
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                    ConnectFuture future = connector.connect
-                            (new InetSocketAddress(IP, PORT));
-                    future.awaitUninterruptibly();// 等待连接创建完成
-                    session = future.getSession();
-                    Constants.FPGAsession = session;
-//                    session.getCloseFuture().awaitUninterruptibly();//等待连接断开
-//                    connector.dispose();
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+
         super.onCreate();
     }
 
@@ -817,7 +837,7 @@ public class MinaClientService extends Service {
                                 }
                             }
                             //定时清除缓存
-                            if(Constants.Queue_DrawRealtimeSpectrum.size()>30){
+                            if(Constants.Queue_DrawRealtimeSpectrum.size()>10){
                                 Constants.Queue_DrawRealtimeSpectrum.clear();
                             }
 //                            if(Constants.Queue_DrawRealtimewaterfall.size()>30){
@@ -876,7 +896,7 @@ public class MinaClientService extends Service {
                             }
                         }
                     }
-                    if ((back.getNumN() == back.getTotalBand()) && (Constants.BackgroundCount == total)) {
+                    if ((back.getNumN() == back.getTotalBand()) && (Constants.BackgroundCount == back.getTotalBand() )) {
                         //结束
                         Lock lock = new ReentrantLock(); //锁对象
                         lock.lock();
@@ -892,8 +912,9 @@ public class MinaClientService extends Service {
 
                 }
                 //清除缓存
-                if(Constants.Queue_BackgroundSpectrum.size()>30){
-                    Constants.Queue_DrawRealtimeSpectrum.clear();
+                Log.d("MainClient","背景："+Constants.Queue_BackgroundSpectrum.size());
+                if(Constants.Queue_BackgroundSpectrum.size()>10){
+                    Constants.Queue_BackgroundSpectrum.clear();
                 }
             }
 
@@ -1089,7 +1110,7 @@ public class MinaClientService extends Service {
                     Thread.sleep(3000);
                     // 这里是异步操作 连接后立即返回
                     ConnectFuture future = connector.connect(new InetSocketAddress(
-                            IP, PORT));
+                            Constants.IP, PORT));
 //                    ConnectFuture future = connector.connect
 //                            (new InetSocketAddress(FpgaIP, PORT));
                     future.awaitUninterruptibly();// 等待连接创建完成
@@ -1193,10 +1214,8 @@ public class MinaClientService extends Service {
      * @param ablist
      */
     private void writeFlie(PowerSpectrumAndAbnormalPonit PASP, List<byte[]> mlist, List<byte[]> ablist) {
-        File PSdir = new File(PSFILE_PATH);
-        if (!PSdir.exists()) {
-            PSdir.mkdirs();//mkdir()不能创建多个目录
-        }
+        int times=0;//辅助传输
+
         //取出时间
         byte[] bytes = PASP.getLocationandTime();
         //location
@@ -1232,7 +1251,9 @@ public class MinaClientService extends Service {
 //        int sec = getSecond(byte6);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        String time = sdf.format(new Date());
+        Date date=new Date();
+        String time = sdf.format(date);
+        long timeSec=date.getTime()/1000;//存储到秒
         String fname = null;
         //String name = null;
         int count = 0;
@@ -1240,6 +1261,7 @@ public class MinaClientService extends Service {
         if (PASP.getStyle() == 0) {
 //        name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day, hour, min, sec,
 //                0, Constants.ID, "fine", "pwr");
+
             fname = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "fine", "pwr");
 
             //判断是否是一秒内的文件，如果是，需要加上1s序号
@@ -1256,7 +1278,8 @@ public class MinaClientService extends Service {
 
 
         } else if (PASP.getStyle() == 1) {
-            fname = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "coarse", "pwr");
+
+            fname = time + "-" +  String.format("%d-%d-%s.%s", 0, Constants.ID, "coarse", "pwr");
             //判断是否是一秒内的文件，如果是，需要加上1s序号
 //            File[] PSFile = PSdir.listFiles();
 //            int fileNum=PSFile.length;
@@ -1269,25 +1292,37 @@ public class MinaClientService extends Service {
 //                }
 //            }
         }
-        if (fname != null) {
-            File file = new File(PSdir, fname);
-            //获取文件写入流
-            try {
-                dos = new DataOutputStream(new FileOutputStream(file));
-                dos.write((byte) 0x00);
-                for (int j = 0; j < mlist.size(); j++) {
-                    dos.write(mlist.get(j));
+        if(fname == null)
+            return ;
+
+            if(Constants.isUpload!=0){
+                //上传关闭
+                //本地路径入库，不生成文件
+                times=2;
+            }else {
+                File PSdir = new File(PSFILE_PATH);
+                if (!PSdir.exists()) {
+                    PSdir.mkdirs();//mkdir()不能创建多个目录
                 }
-                dos.write(0xff);
-                for (int k = 0; k < ablist.size(); k++) {
-                    dos.write(ablist.get(k));
-                }
-                dos.write(0x00);
-                dos.close();
+                File file = new File(PSdir, fname);
+                //获取文件写入流
+                try {
+                    dos = new DataOutputStream(new FileOutputStream(file));
+                    dos.write((byte) 0x00);
+                    for (int j = 0; j < mlist.size(); j++) {
+                        dos.write(mlist.get(j));
+                    }
+                    dos.write(0xff);
+                    for (int k = 0; k < ablist.size(); k++) {
+                        dos.write(ablist.get(k));
+                    }
+                    dos.write(0x00);
+                    dos.close();
 
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             try {
                 //在此将文件的信息插入数据库===================
@@ -1296,6 +1331,7 @@ public class MinaClientService extends Service {
                 cv.put("start", myApplication.getSweepStart());
                 cv.put("end", myApplication.getSweepEnd());
                 cv.put("location", location);
+                cv.put("isShow", 0);
                 if (PASP.getIsChange() == 0x0f)
                     fileIsChanged = 1;
                 else
@@ -1303,14 +1339,13 @@ public class MinaClientService extends Service {
 
                 cv.put("isChanged", fileIsChanged);
                 cv.put("upload", 0);
-                cv.put("times", 0);
+                cv.put("times", times);
+                cv.put("fileTime",timeSec);
                 db.insert("localFile", null, cv);
             }catch(Exception e){
 
             }
 
-        }
-        count = 0;
     }
 
     /**
@@ -1374,6 +1409,7 @@ public class MinaClientService extends Service {
      * @param mlist
      */
     private void writeIQFlie(IQwave iQwave, List<byte[]> mlist) {
+
         ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
         File PSdir = new File(IQFILE_PATH);
         if (!PSdir.exists()) {
@@ -1539,7 +1575,29 @@ public class MinaClientService extends Service {
         }
         return map;
     }
-
+  private int getId(String IP){
+      int id=0;
+      switch(IP){
+          case "192.168.43.195":
+              id=11;
+              break;
+          case "192.168.43.245":
+              id=12;
+              break;
+          case "192.168.43.34":
+              id=13;
+              break;
+          case "192.168.43.61":
+              id=14;
+              break;
+          case "192.168.43.29":
+              id=15;
+              break;
+          default:
+              break;
+      }
+      return id;
+  }
 }
 
 

@@ -111,10 +111,10 @@ public class Chart_waterfall extends Activity {
         super.onResume();
        // Constants.Queue_DrawRealtimewaterfall.clear();
         Constants.Queue_DrawRealtimeSpectrum.clear();
-
         if (Constants.SweepParaList.size() != 0) {
             startFrq = (int)Constants.SweepParaList.get(0).getSegStart();
             endFreq =(int) Constants.SweepParaList.get(Constants.SweepParaList.size() - 1).getSegEnd();
+
         }
         new Thread() {
             @Override
@@ -133,9 +133,9 @@ public class Chart_waterfall extends Activity {
                 message.what = 1;
                 int mdata=endFreq-startFrq;
                 if(mdata<=1000){//fine
-                    message.arg1 =mdata/25+1 ;
+                    message.arg1 = (endFreq-70)/25-(startFrq-70)/25+ 1;
                 }else {//coarse
-                    message.arg1= mdata/800 + 1;
+                    message.arg1= (endFreq-70)/800-(startFrq-70)/800 + 1;
                 }
                 handler.sendMessage(message);
             }
@@ -172,6 +172,9 @@ public class Chart_waterfall extends Activity {
 //            flist = Constants.Queue_DrawRealtimewaterfall.poll();
         if (!Constants.Queue_DrawRealtimeSpectrum.isEmpty()) {
             flist = Constants.Queue_DrawRealtimeSpectrum.poll();
+            int realsize=Constants.Queue_DrawRealtimeSpectrum.size();
+            if(realsize>=5)
+                Constants.Queue_DrawRealtimeSpectrum.clear();
             List<Column> columns = new ArrayList<Column>();
             List<SubcolumnValue> values;
             if(flist.size()!=total){

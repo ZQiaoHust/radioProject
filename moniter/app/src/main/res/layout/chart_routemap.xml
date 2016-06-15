@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:background="#ffffff"
+    android:orientation="vertical">
+
+    <com.hust.radiofeeler.view.MyTopBar
+        android:id="@+id/topbar_chart"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        custom:leftBackground="@drawable/ic_menu_back"
+        custom:rightBackground="@drawable/map_settings"
+        custom:titleText="实时路径图"
+        custom:titleText_Color="#ffffff"
+        custom:titleTextSize="5sp"/>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/bMapView_local"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true" />
+    <Button
+        android:id="@+id/btn_local_mode"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="卫星" />
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

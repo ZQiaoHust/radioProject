@@ -48,10 +48,10 @@ public class PressSettingDecoder implements MessageDecoder {
                 pressSetting.setPressMode(accept[4]);
                 pressSetting.setStyle(accept[5] >> 4);
                 pressSetting.setBand(accept[5] & 0x0f);
-                pressSetting.setT1((accept[6] << 8) + accept[7]);
-                pressSetting.setT2((accept[8] << 8) + accept[9]);
-                pressSetting.setT3((accept[10] << 8) + accept[11]);
-                pressSetting.setT4((accept[12] << 8) + accept[13]);
+                pressSetting.setT1(((accept[6]&0xff) << 8) + (accept[7]&0xff));
+                pressSetting.setT2(((accept[8]&0xff) << 8)+ (accept[9]&0xff));
+                pressSetting.setT3(((accept[10]&0xff) << 8) + (accept[11]&0xff));
+                pressSetting.setT4(((accept[12]&0xff) << 8) + (accept[13]&0xff));
                 pressSetting.setContent(accept);
 
                 out.write(pressSetting);

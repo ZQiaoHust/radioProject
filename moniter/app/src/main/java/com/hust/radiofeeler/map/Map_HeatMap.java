@@ -17,6 +17,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.CircleOptions;
 import com.baidu.mapapi.map.HeatMap;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
@@ -57,13 +58,14 @@ public class Map_HeatMap extends Activity {
     private double Ratio;
     //网格化点数组
     public static List<PointInfo> poinList = new ArrayList<PointInfo>();
-
+    private double last_distance,current_distance;
+    private double Power_circle;
 
     //模拟收到的数据
     public static List<PointInfo> AbnormalPointList = new ArrayList<PointInfo>();
     //线程终止位
     public volatile boolean exit = false;
-
+    ArrayList<MapRadioPointInfo> mapRadioPointInfoList = new ArrayList<MapRadioPointInfo>();
 
 
 
@@ -141,6 +143,17 @@ public class Map_HeatMap extends Activity {
 
          /*intent方法*/
         map = getIntent().getParcelableExtra(Map_Heat_Result.PAR_KEY);
+//        map.setDieta(2.6125f);
+//        map.setBand(50);
+//        map.setFreshNum(10);
+//        map.setFreshTime(10000);
+//        MapRadioPointInfo mMapRadioInfo1 = new MapRadioPointInfo(5,2016,20,14,"E",22,114.256741f,"N",30.784514f,100,20,2.3784f);
+//        mapRadioPointInfoList.add(0, mMapRadioInfo1);
+//        MapRadioPointInfo mMapRadioInfo2 = new MapRadioPointInfo(5,2016,20,14,"E",22,114.116741f,"N",30.722514f,100,20,2.3784f);
+//        mapRadioPointInfoList.add(0,mMapRadioInfo2);
+//        MapRadioPointInfo mMapRadioInfo3 = new MapRadioPointInfo(5,2016,20,14,"E",22,114.236741f,"N",30.713514f,100,20,2.3784f);
+//        mapRadioPointInfoList.add(0,mMapRadioInfo3);
+//        map.setMapRadioPointInfoList(mapRadioPointInfoList);
         if (null == map) {
             return;
         }
@@ -160,23 +173,26 @@ public class Map_HeatMap extends Activity {
         final Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 LatLng centerLat;
-                if ((msg.what >= 0) && (msg.what <= 9) && (msg.what <  HeatMapPointList.size())) {
+                float Power;
+                if ((msg.what >= 0) && (msg.what <= 9) && (msg.what < HeatMapPointList.size())) {
                     Log.d("pocess", "now is inside handler");
                     mMapView.getMap().clear();
                     poinList.clear();
                     //设置中心点
-                    centerLat = new LatLng( HeatMapPointList.get(msg.what).getLatitude(),HeatMapPointList.get(msg.what).getLongitude());
+                    centerLat = new LatLng(HeatMapPointList.get(msg.what).getLatitude(), HeatMapPointList.get(msg.what).getLongitude());
+                    Log.d("pocess", "now is inside handler" + HeatMapPointList.get(msg.what).getLatitude() + "," + HeatMapPointList.get(msg.what).getLongitude());
+                    Power = HeatMapPointList.get(msg.what).getEqualPower();
+                    Ratio = HeatMapPointList.get(msg.what).getrPara();
                     MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(centerLat);
                     mBaiduMap.setMapStatus(u1);
                     MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
                     mBaiduMap.setMapStatus(msu);
                     //添加标记
+
                     addMarker(centerLat);
-                    ComputeMapNetPoint(centerLat.longitude, centerLat.latitude, HeatMapPointList.get(msg.what).getHeight(), HeatMapPointList.get(msg.what).getEqualPower(),
-                            HeatMapPointList.get(msg.what).getrPara(),Ratio, Nx,Ny);
-                    //addRadioMap(poinList, 2.66);
+
+                    addRadioMap(centerLat, Ratio, Power);
                 } else {
-                    Log.d("pocess", "now is here 12");
                     exit = true;
                 }
                 super.handleMessage(msg);
@@ -194,7 +210,7 @@ public class Map_HeatMap extends Activity {
                             Log.e("pocess ","now is "+String.valueOf(i)+"message");
                             handler.sendMessage(message);//发送消息
                             Log.e("pocess", "now is here 12");
-                            Thread.sleep(10000);//线程暂停3秒，单位毫秒
+                            Thread.sleep(3000);//线程暂停3秒，单位毫
 
                              }
 
@@ -231,40 +247,26 @@ public class Map_HeatMap extends Activity {
         mBaiduMap.addOverlay(ooD);
     }
 
-       private void addRadioMap(List<PointInfo> infos,double mRatio) {
+    private void addRadioMap(LatLng  centerLatlng,double mRatio,float Power) {
+        last_distance = 0;
+        int responceColor;
+        for(int  i = 7;i>0;i--) {
 
-           LatLng LeftOnPoint;
-           LatLng RightOnPoint;
-           LatLng LeftDownPoint;
-           LatLng RightDownPoint;
-           //MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(18.0f);
-           //mBaiduMap.setMapStatus(msu);
 
-           int color;
-           double spectrum = 0;
-           List<LatLng> pts = new ArrayList<LatLng>();
-           for (PointInfo info : infos) {
-               // 功率谱
-               spectrum = info.getPower();
-               // spectrum_16 = Integer.toHexString(spectrum);
-               color = getResponseColor(spectrum);
-//               OverlayOptions ooCircle = new CircleOptions().fillColor(color)
-//                       .center(latLng).radius(1000);
-               // 添加多边形
-               LeftOnPoint = new LatLng(info.getLatitude() - mRatio / 120, info.getLongtitude() - mRatio / 120);
-               RightOnPoint = new LatLng(info.getLatitude() - mRatio / 120, info.getLongtitude() + mRatio / 120);
-               RightDownPoint = new LatLng(info.getLatitude() + mRatio / 120, info.getLongtitude() + mRatio / 120);
-               LeftDownPoint = new LatLng(info.getLatitude() + mRatio / 120, info.getLongtitude() - mRatio / 120);
+            Log.e("power is:", String.valueOf(Power));
+            // LatLng llCircle = new LatLng(AbnormalReply.getLatitude(), AbnormalReply.getLongitude());
+            Power_circle = Power - 10 *i;
+            responceColor = getResponseColor(Power_circle);
+            current_distance = Math.sqrt(Math.pow(10, (Power - Power_circle) / (5 * mRatio)));
+            Log.e("distance", String.valueOf(current_distance));
+            OverlayOptions ooCircle = new CircleOptions().fillColor(responceColor)
+                    .center(centerLatlng).radius((int) ((current_distance)));
 
-               pts.add(LeftOnPoint);
-               pts.add(RightOnPoint);
-               pts.add(RightDownPoint);
-               pts.add(LeftDownPoint);
-               OverlayOptions ooPolygon = new PolygonOptions().points(pts).fillColor(color);
-               mBaiduMap.addOverlay(ooPolygon);
-               pts.clear();
-           }
-       }
+            mBaiduMap.addOverlay(ooCircle);
+        }
+
+
+    }
 
     public void clearClick() {
         // 清除所有图层
@@ -411,63 +413,63 @@ public class Map_HeatMap extends Activity {
         return color;
     }
 
-    //网格化
-    private void ComputeMapNetPoint(double Longtitude,double Latitude,double Height,double Power,double index,double Ratio,int Nx,int Ny){
-         double PI = 3.14159265358979323846;
-         double H0=6378137;//地球半径，单位米
-         double mConstant=21600;//计算的常数：360*60
-
-         double mLatitude;//纬度
-         double mLongitude;//经度
-         double mHeight;//高度
-         double mPower;//功率值
-         double Rindex;//损耗指数
-        // double mRadius; //半径
-         double mRatio;//分辨率
-         double DetaY,DetaX;
-         double d;//距离
-
-
-
-        mLatitude=Latitude;
-        mLongitude=Longtitude;
-        mHeight=Height;
-        mPower=Power;
-        Rindex=index;
-        //mRadius=Radius;
-        mRatio=Ratio;
-
-        Log.e("cy yyyypower", String.valueOf(mPower));
-
-        //======计算网格数据==============================================================//
-        DetaY=2*PI*(H0+mHeight)*mRatio/mConstant;
-        DetaX=DetaY*Math.cos(mLatitude);
-        //Nx= (int) (mRadius/DetaX);
-        //Ny= (int) (mRadius/DetaY);
-        Log.e("detaX", String.valueOf( DetaY));
-        Log.e("detay", String.valueOf(DetaX));
-        for(int i=-Nx;i<=Nx;i++)
-            for(int j=-Ny;j<=Ny;j++){
-                PointInfo mpointInfo=new PointInfo();
-                mpointInfo.latitude=mLatitude+i*mRatio/60.0;
-                mpointInfo.longtitude=mLongitude+j*mRatio/60.0;
-                mpointInfo.xheight=mHeight;
-                Log.e("cyyyyy", String.valueOf(i));
-                Log.e("cyyyyy", String.valueOf(j));
-                //计算距离
-                double dd=Math.pow(i*DetaY,2)+Math.pow(j*DetaY,2);
-               // Log.e("cyyyyy", String.valueOf(dd));
-               // d=Math.sqrt(dd);
-                //mpointInfo.power=10*Math.log10(mPower/Math.pow(d,Rindex)*1000) ;
-                //第二种计算功率的方法
-                 mpointInfo.power=mPower-5*Rindex*Math.log10(dd);
-
-                poinList.add(mpointInfo);
-            }
-        addRadioMap(poinList,Ratio);
-
-
-    }
-
+//    //网格化
+//    private void ComputeMapNetPoint(double Longtitude,double Latitude,double Height,double Power,double index,double Ratio,int Nx,int Ny){
+//         double PI = 3.14159265358979323846;
+//         double H0=6378137;//地球半径，单位米
+//         double mConstant=21600;//计算的常数：360*60
+//
+//         double mLatitude;//纬度
+//         double mLongitude;//经度
+//         double mHeight;//高度
+//         double mPower;//功率值
+//         double Rindex;//损耗指数
+//        // double mRadius; //半径
+//         double mRatio;//分辨率
+//         double DetaY,DetaX;
+//         double d;//距离
+//
+//
+//
+//        mLatitude=Latitude;
+//        mLongitude=Longtitude;
+//        mHeight=Height;
+//        mPower=Power;
+//        Rindex=index;
+//        //mRadius=Radius;
+//        mRatio=Ratio;
+//
+//        Log.e("cy yyyypower", String.valueOf(mPower));
+//
+//        //======计算网格数据==============================================================//
+//        DetaY=2*PI*(H0+mHeight)*mRatio/mConstant;
+//        DetaX=DetaY*Math.cos(mLatitude);
+//        //Nx= (int) (mRadius/DetaX);
+//        //Ny= (int) (mRadius/DetaY);
+//        Log.e("detaX", String.valueOf( DetaY));
+//        Log.e("detay", String.valueOf(DetaX));
+//        for(int i=-Nx;i<=Nx;i++)
+//            for(int j=-Ny;j<=Ny;j++){
+//                PointInfo mpointInfo=new PointInfo();
+//                mpointInfo.latitude=mLatitude+i*mRatio/60.0;
+//                mpointInfo.longtitude=mLongitude+j*mRatio/60.0;
+//                mpointInfo.xheight=mHeight;
+//                Log.e("cyyyyy", String.valueOf(i));
+//                Log.e("cyyyyy", String.valueOf(j));
+//                //计算距离
+//                double dd=Math.pow(i*DetaY,2)+Math.pow(j*DetaY,2);
+//               // Log.e("cyyyyy", String.valueOf(dd));
+//               // d=Math.sqrt(dd);
+//                //mpointInfo.power=10*Math.log10(mPower/Math.pow(d,Rindex)*1000) ;
+//                //第二种计算功率的方法
+//                 mpointInfo.power=mPower-5*Rindex*Math.log10(dd);
+//
+//                poinList.add(mpointInfo);
+//            }
+//        addRadioMap(poinList,Ratio);
+//
+//
+//    }
+//
 
 }

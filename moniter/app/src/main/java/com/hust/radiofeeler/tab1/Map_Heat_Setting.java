@@ -74,8 +74,8 @@ public class Map_Heat_Setting extends Fragment implements RadioGroup.OnCheckedCh
         btn_setting= (Button) getActivity().findViewById(R.id.btn_mapbase_setting);
 
         //时间选择器
-        pvTime1 = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
-        pvTime2 = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
+        pvTime1 = new TimePickerView(getActivity(), TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
+        pvTime2 = new TimePickerView(getActivity(), TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
         //控制时间范围
 //        Calendar calendar = Calendar.getInstance();
 //        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
@@ -86,8 +86,9 @@ public class Map_Heat_Setting extends Fragment implements RadioGroup.OnCheckedCh
         pvTime1.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                iuputtime1.setText(getTime(date));
+            public void onTimeSelect(String date) {
+                iuputtime1.setText(date);
+                //iuputtime1.setText(pvTime1.getTime());
             }
         });
         pvTime2.setTime(new Date());
@@ -97,8 +98,9 @@ public class Map_Heat_Setting extends Fragment implements RadioGroup.OnCheckedCh
         pvTime2.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                inputtime2.setText(getTime(date));
+            public void onTimeSelect(String date) {
+                inputtime2.setText(date);
+               // inputtime2.setText(pvTime2.getTime());
             }
         });
 
@@ -263,10 +265,10 @@ public class Map_Heat_Setting extends Fragment implements RadioGroup.OnCheckedCh
                     if (Ishand && (!Ischoose)) {
                         //手动
                         if (!et_centerfreq.getText().toString().equals("")) {
-                            map.setCentralFreq(Integer.parseInt(et_centerfreq.getText().toString()));
+                            map.setCentralFreq((int) Double.parseDouble(et_centerfreq.getText().toString()));
                         }
                         if (!et_bandwidth.getText().toString().equals("")) {
-                            map.setBand(Integer.parseInt(et_bandwidth.getText().toString()));
+                            map.setBand((int) Double.parseDouble(et_bandwidth.getText().toString()));
                         }
 
                     } else if ((!Ishand) && Ischoose) {
@@ -276,13 +278,13 @@ public class Map_Heat_Setting extends Fragment implements RadioGroup.OnCheckedCh
                         Toast.makeText(getContext(), "请正确输入！", Toast.LENGTH_SHORT).show();
                     }
                     if (!et_radius.getText().toString().equals("")) {
-                        map.setRadius(Integer.parseInt(et_radius.getText().toString()));
+                        map.setRadius((int) Float.parseFloat(et_radius.getText().toString()));
                     }
                     if (!et_dieta.getText().toString().equals("")) {
                         map.setDieta(Float.parseFloat(et_dieta.getText().toString()));
                     }
                     if (!et_fresh.getText().toString().equals("")) {
-                        map.setFreshtime(Integer.parseInt(et_fresh.getText().toString()));
+                        map.setFreshtime((int) Float.parseFloat(et_fresh.getText().toString()));
                     }
                     if (!iuputtime1.getText().toString().equals("")) {
                         byte[] bytes = computePara.Time2Bytes(iuputtime1.getText().toString());

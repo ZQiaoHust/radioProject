@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
     TimePickerView pvTime1 ,pvTime2;
     private CheckBox cb_TPOA;
 
+    public  final static String LOCAL_ROUTE_KEY = "com.example.administrator.testsliding.LOCALROUTE_data";
     ///组帧参数
     private int centralFreq=98,band=20;//中心频率和带宽(初始化界面同步)
     private boolean Ishand=false,Ischoose=false,IsFromCenter=false,IsFromLocal=false;
@@ -75,8 +77,8 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
         cb_TPOA= (CheckBox) getActivity().findViewById(R.id.chBox_TPOA);
         radio_selectData=(RadioGroup)getActivity().findViewById(R.id.radioGroup_selectCoordinates);
         //时间选择器
-        pvTime1 = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
-        pvTime2 = new TimePickerView(getActivity(), TimePickerView.Type.ALL);
+        pvTime1 = new TimePickerView(getActivity(), TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
+        pvTime2 = new TimePickerView(getActivity(), TimePickerView.Type.YEAR_MONTH_DAY_HOURS_MINS);
         //控制时间范围
 //        Calendar calendar = Calendar.getInstance();
 //        pvTime.setRange(calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.YEAR));
@@ -87,8 +89,9 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
         pvTime1.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                iuputtime1.setText(getTime(date));
+            public void onTimeSelect(String date) {
+               iuputtime1.setText(date);
+               // iuputtime1.setText(pvTime1.getTime());
             }
         });
         pvTime2.setTime(new Date());
@@ -98,8 +101,9 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
         pvTime2.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                inputtime2.setText(getTime(date));
+            public void onTimeSelect(String date) {
+               inputtime2.setText(date);
+                //inputtime2.setText(pvTime2.getTime());
             }
         });
     }
@@ -255,16 +259,17 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
                    if (Ishand && (!Ischoose)) {
                        //手动
                        if (!et_centerfreq.getText().toString().equals("")) {
-                           route.setCentralFreq(Integer.parseInt(et_centerfreq.getText().toString()));
+                           route.setCentralFreq((int) Float.parseFloat(et_centerfreq.getText().toString()));
                        }
                        if (!et_bandwidth.getText().toString().equals("")) {
-                           route.setBand(Integer.parseInt(et_bandwidth.getText().toString()));
+                           route.setBand((int) Float.parseFloat(et_bandwidth.getText().toString()));
                        }
 
                    } else if ((!Ishand) && Ischoose) {
                        route.setCentralFreq(centralFreq);
                        route.setBand(band);
                    } else {
+
                        Toast.makeText(getContext(), "请正确输入！", Toast.LENGTH_SHORT).show();
                    }
                    if (!iuputtime1.getText().toString().equals("")) {
@@ -276,18 +281,27 @@ public class Map_Route_Setting extends Fragment implements RadioGroup.OnCheckedC
                        route.setEndTime(bytes);
                    }
                    route.setIsTPOA(isTPOA);
-                 if(IsFromCenter&&(!IsFromLocal)) {
+                   if(IsFromCenter&&(!IsFromLocal)) {
                        //从中心站获取数据
                        Broadcast.sendBroadCast(getActivity(),
                                ConstantValues.MAPROUTE, "map_route", route);
                        getActivity(). findViewById(R.id.selectCoordinates01).setEnabled(false);
+                       Intent intent = new Intent(getActivity(), Map_Route_Result.class);
+                       startActivity(intent);
 
-                  }else if(IsFromLocal&&(!IsFromCenter)) {
-                      //本地取
+                   }else if(IsFromLocal&&(!IsFromCenter)) {
+                       //本地取
+
+                       route.setStartTime(iuputtime1.getText().toString().getBytes());
+                       Intent intent = new Intent(getActivity(), Map_Route_local_Result.class);
+                       Bundle bundle = new Bundle();
+                       bundle.putParcelable(LOCAL_ROUTE_KEY, route);
+                       intent.putExtras(bundle);
+
+                       startActivity(intent);
                    }
 
-                   Intent intent = new Intent(getActivity(), Map_Route_Result.class);
-                   startActivity(intent);
+
                } catch (Exception e) {
                    Toast.makeText(getContext(), "请正确输入！", Toast.LENGTH_SHORT).show();
                }

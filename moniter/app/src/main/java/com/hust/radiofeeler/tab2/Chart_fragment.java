@@ -30,7 +30,7 @@ public class Chart_fragment extends Fragment {
 //    private Chart_waterfall mChart_waterfall;
 //
 //    private Chart_Abnormal mChart_Abnormal;
-    private Button btn_spectrum,btn_water,btn_abnormal;
+    private Button btn_spectrum,btn_water,btn_abnormal,btn_realtime;
 
 
     @Nullable
@@ -92,7 +92,7 @@ public class Chart_fragment extends Fragment {
         btn_spectrum= (Button) getActivity().findViewById(R.id.btn_spectrum);
         btn_water= (Button) getActivity().findViewById(R.id.btn_water);
         btn_abnormal= (Button) getActivity().findViewById(R.id.btn_abnormal);
-
+        btn_realtime= (Button) getActivity().findViewById(R.id.btn_realtimeRoute);
         btn_spectrum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +114,13 @@ public class Chart_fragment extends Fragment {
                 startActivity(intent);
             }
         });
-
+        btn_realtime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(),Chart_RouteMap.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initView() {

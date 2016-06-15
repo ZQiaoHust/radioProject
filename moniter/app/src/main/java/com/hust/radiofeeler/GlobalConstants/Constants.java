@@ -30,10 +30,16 @@ import java.util.Queue;
  * 
  */
 public class Constants {
-	public static  int ID=15;
+	public static  int ID=11;
+	public  static String IP="192.168.43.195";
+	public  static String serverIP=null;
+	public  static int serverPort=0;
+	public  static String fileIP=null;
+	public  static int filePort=0;
 	public static IoSession FPGAsession=null;
 	public static IoSession SERVERsession=null;
 	public static IoSession FILEsession=null;
+	public  static  int  isUpload=0;//功率谱和异常频点上传开启标志，0表示开启，其他表示关闭
 
 	public static Queue<List<float[]>> Queue_DrawRealtimeSpectrum= new LinkedList<>();
 	//public static Queue<List<float[]>> Queue_DrawRealtimewaterfall= new LinkedList<>();
@@ -73,4 +79,13 @@ public class Constants {
 	public static int sequenceID;//文件服务器发过来的任务序列号
 
 	public static byte[] requestNetcontent;//申请入网
+
+	//偏移量
+	public static double LAT_OFFSET=0.003345;
+	public static double LON_OFFSET=0.01216;
+
+	//扫频起止时间
+	public static String time;
+
+
 }

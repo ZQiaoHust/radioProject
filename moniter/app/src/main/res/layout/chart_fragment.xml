@@ -57,5 +57,14 @@
         android:textSize="20sp"
         android:layout_margin="3dp"
         android:text="异常频点表"/>
+    <Button
+        android:id="@+id/btn_realtimeRoute"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#56abe4"
+        android:textSize="20sp"
+        android:layout_margin="3dp"
+        android:text="实时路径图"/>
 
 </LinearLayout>

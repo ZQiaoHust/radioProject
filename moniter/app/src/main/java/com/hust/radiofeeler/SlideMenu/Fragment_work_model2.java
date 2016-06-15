@@ -111,8 +111,6 @@ public class Fragment_work_model2 extends Fragment {
                 toast.setGravity(Gravity.TOP , 0, 800);
                 toast.show();
             }
-
-
         }
     };
 
@@ -127,8 +125,6 @@ public class Fragment_work_model2 extends Fragment {
         getActivity().registerReceiver(fixFreqReceiver, filter);
         initspinnerSetting();
         InitEvent();
-
-
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -164,8 +160,9 @@ public class Fragment_work_model2 extends Fragment {
         pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
 
             @Override
-            public void onTimeSelect(Date date) {
-                inputDate.setText(getTime(date));
+            public void onTimeSelect(String date) {
+                inputDate.setText(date);
+
             }
         });
     }
@@ -206,13 +203,13 @@ public class Fragment_work_model2 extends Fragment {
                         IQwidth = 2.5;
                         break;
                     case 2:
-                        IQwidth = 1;
+                        IQwidth = 1.25;
                         break;
                     case 3:
-                        IQwidth = 0.5;
+                        IQwidth = 0.625;
                         break;
                     case 4:
-                        IQwidth = 0.1;
+                        IQwidth = 0.125;
                         break;
                 }
             }

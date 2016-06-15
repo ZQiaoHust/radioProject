@@ -102,9 +102,10 @@
     <LinearLayout
         android:id="@+id/reLay_singlePress"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="100dp"
         android:background="#ffffff"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
 
 
         <LinearLayout
@@ -125,6 +126,7 @@
                 android:id="@+id/et_T1"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:maxLines="1" />
 
 
@@ -140,6 +142,7 @@
                 android:id="@+id/et_T2"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:maxLines="1" />
 
 
@@ -158,10 +161,11 @@
     <LinearLayout
         android:id="@+id/reLay_doublePress"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="100dp"
         android:background="#ffffff"
         android:orientation="vertical"
         android:visibility="gone"
+
         >
 
         <LinearLayout
@@ -190,6 +194,7 @@
                     android:id="@+id/et_doubleT1"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:maxLines="1" />
 
                 <TextView
@@ -203,6 +208,7 @@
                     android:id="@+id/et_doubleT2"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:maxLines="1" />
 
             </LinearLayout>
@@ -225,11 +231,13 @@
                     android:id="@+id/et_doubleT3"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:maxLines="1" />
                 <EditText
                     android:id="@+id/et_doubleT4"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:maxLines="1" />
 
                 <TextView

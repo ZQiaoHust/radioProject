@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         custom:leftBackground="@drawable/ic_menu_back"
+
         custom:titleText="频谱图"
         custom:titleText_Color="#ffffff"
         custom:titleTextSize="8sp"/>

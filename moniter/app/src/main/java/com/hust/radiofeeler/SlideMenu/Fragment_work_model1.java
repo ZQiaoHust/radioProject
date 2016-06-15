@@ -32,6 +32,7 @@ import com.hust.radiofeeler.Mina.Broadcast;
 import com.hust.radiofeeler.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -269,6 +270,7 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                     {
                         Broadcast.sendBroadCast(getActivity(),
                                 ConstantValues.SweepRangeSet, "SweepRangeSet", sweepRange);
+
                     }
 
                 }else if(IsZHISetting0K){
@@ -296,6 +298,8 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                     {
                         Broadcast.sendBroadCast(getActivity(),
                                 ConstantValues.SweepRangeSet, "SweepRangeSet", sweepRange);
+
+
                     }
                 }else if(IsDUOSetting0K){
                         IsDUOSetting0K = false;
@@ -330,6 +334,7 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                                         {
                                             Broadcast.sendBroadCast(getActivity(),
                                                     ConstantValues.SweepRangeSet, "SweepRangeSet", sweepRange);
+
                                         }
                                     }
                                 } catch (Exception e) {
@@ -575,4 +580,6 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
         WorkModelReceiver=null;
 
     }
+
+
 }

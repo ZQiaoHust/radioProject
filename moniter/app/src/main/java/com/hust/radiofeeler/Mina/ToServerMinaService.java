@@ -19,12 +19,15 @@ import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.hust.radiofeeler.Bean.RequestNetworkAgain;
+import com.hust.radiofeeler.Bean.UploadData;
 import com.hust.radiofeeler.Database.DatabaseHelper;
 import com.hust.radiofeeler.GlobalConstants.ConstantValues;
 import com.hust.radiofeeler.GlobalConstants.Constants;
@@ -503,11 +506,12 @@ public class ToServerMinaService extends Service {
                     Thread.sleep(3000);
                     // 这里是异步操作 连接后立即返回
                     ConnectFuture future = connector.connect(new InetSocketAddress(
-                            "27.17.8.142", 9000));
+                            Constants.serverIP, Constants.serverPort));
                     future.awaitUninterruptibly();// 等待连接创建完成
                     session = future.getSession();
                     if(session.isConnected()) {
                         Constants.SERVERsession = session;
+
                         break;
                     }else{
                         Toast.makeText(getBaseContext(), "请检查网络", Toast.LENGTH_SHORT).show();
@@ -544,14 +548,14 @@ public class ToServerMinaService extends Service {
             //处理从服务端接收到的消息
             if (message instanceof MapRadioResult) {
                 MapRadioResult map = (MapRadioResult) message;
-                Thread.sleep(1500);
+//                Thread.sleep(1500);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RMAPRADIO, "map_radio", map);
 
             }
             if (message instanceof MapRouteResult) {
                 MapRouteResult map = (MapRouteResult) message;
-                Thread.sleep(1000);
+//                Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RMAPROUTE, "map_route", map);
 
@@ -565,7 +569,7 @@ public class ToServerMinaService extends Service {
                         file2InterpolationPNG(map);
                     }
                 }).start();
-                Thread.sleep(1000);
+//                Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RMAPINTERPOLATION, "map_interpolation", inter);
 
@@ -772,19 +776,37 @@ public class ToServerMinaService extends Service {
             }
 
             ////////////////////////////////////////////////
-
+            //异常频点功率谱上传开启设置
             if (message instanceof Simple_UploadDataStart) {
                 Simple_UploadDataStart data = new Simple_UploadDataStart();
                 data = (Simple_UploadDataStart) message;
-                Constants.FPGAsession.write(data);
+                Constants.isUpload=0;//0表示开启
+                // Constants.FPGAsession.write(data);
+                //主线程才可显示
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext(), "开启上传功率谱和异常频点", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(data.getContent()));
             }
             /////////////////////////////////////////////////////
-
+            //异常频点功率谱上传关闭设置
             if (message instanceof Simple_UploadDataEnd) {
                 Simple_UploadDataEnd dataend = new Simple_UploadDataEnd();
                 dataend = (Simple_UploadDataEnd) message;
-                Constants.FPGAsession.write(dataend);
+
+                Constants.isUpload=1;//1表示关闭上传
+                //Constants.FPGAsession.write(dataend);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext(), "关闭功率谱和异常频点上传", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(dataend.getContent()));
             }
 
@@ -876,21 +898,26 @@ public class ToServerMinaService extends Service {
             }
 
             ////////////////////////////////////////////
-
+            //异常频点功率谱上传查询
             if (message instanceof Query_UploadDataStart) {
                 Query_UploadDataStart uploadData = new Query_UploadDataStart();
                 uploadData = (Query_UploadDataStart) message;
-                Constants.FPGAsession.write(uploadData);
+                //Constants.FPGAsession.write(uploadData);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(uploadData.getContent()));
+                ///////直接回给中心站
+                UploadData data = new UploadData();
+                Constants.SERVERsession.write(data);
             }
-            ////////////////////////////////////////////
-
-            if (message instanceof Query_UploadDataEnd) {
-                Query_UploadDataEnd query_uploadDataEnd = new Query_UploadDataEnd();
-                query_uploadDataEnd = (Query_UploadDataEnd) message;
-                Constants.FPGAsession.write(query_uploadDataEnd);
-                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_uploadDataEnd.getContent()));
-            }
+//            ////////////////////////////////////////////
+//            //异常频点功率谱上传关闭查询
+//            if (message instanceof Query_UploadDataEnd) {
+//                Query_UploadDataEnd query_uploadDataEnd = new Query_UploadDataEnd();
+//                query_uploadDataEnd = (Query_UploadDataEnd) message;
+//               // Constants.FPGAsession.write(query_uploadDataEnd);
+//                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_uploadDataEnd.getContent()));
+//                UploadData data = new UploadData();
+//                Constants.SERVERsession.write(data);
+//            }
 
             //======================================================================================================
         }
@@ -993,7 +1020,7 @@ public class ToServerMinaService extends Service {
     private void serviceConnect(DataHandler dataHandler) {
         while(true) {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(30);
                 connector.setConnectTimeoutMillis(30000); //设置连接超时
                 connector.getFilterChain().addLast(
                         "codec",
@@ -1012,17 +1039,20 @@ public class ToServerMinaService extends Service {
                 /****************************/
                 connector.setHandler(dataHandler);
                 // 这里是异步操作 连接后立即返回
-                ConnectFuture future = connector.connect(new InetSocketAddress(
-                        "27.17.8.142", 9000));
+//                ConnectFuture future = connector.connect(new InetSocketAddress(
+//                        "27.17.8.142", 9000));
 // ConnectFuture future = connector.connect(new InetSocketAddress(
 //                            "115.156.208.51",9123));
-//                    ConnectFuture future = connector.connect(new InetSocketAddress(
-//                            Constants.IPValue, Constants.PORTValue));
+                    ConnectFuture future = connector.connect(new InetSocketAddress(
+                            Constants.serverIP, Constants.serverPort));
                 future.awaitUninterruptibly();// 等待连接创建完成
 
                 session = future.getSession();
                 if(session.isConnected()) {
                     Constants.SERVERsession = session;
+                    Looper.prepare();
+                    Toast.makeText(getBaseContext(),"连接成功！",Toast.LENGTH_LONG).show();
+                    Looper.loop();//
                     break;
                 }
 //             session.getCloseFuture().awaitUninterruptibly();// 等待连接断开

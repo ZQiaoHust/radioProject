@@ -16,7 +16,9 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.hust.radiofeeler.Bean.RequestNetworkAgain;
 import com.hust.radiofeeler.Database.DatabaseHelper;
@@ -42,12 +44,11 @@ public class ToFileMinaService extends Service {
 
     private String IP = "27.17.8.142";
     private int PORT = 9988;
-    private  static IoSession session;
+    private static IoSession session;
     private String TAG = "ToFileMinaService";
-    private  static  IoConnector connector = new NioSocketConnector();
+    private static IoConnector connector = new NioSocketConnector();
     private SQLiteDatabase db = null;
     private DatabaseHelper dbHelper = null;
-
 
 
     @Override
@@ -65,7 +66,6 @@ public class ToFileMinaService extends Service {
             @Override
             public void run() {
                 try {
-
                     connector.getFilterChain().addLast(
                             "codec",
                             new ProtocolCodecFilter(new ToFileProtocolCodeFactory()));
@@ -73,11 +73,16 @@ public class ToFileMinaService extends Service {
                     connector.getSessionConfig().setReadBufferSize(1024);
                     connector.setHandler(new DataHandler());
                     // 这里是异步操作 连接后立即返回
-			ConnectFuture future = connector.connect(new InetSocketAddress(
-						"27.17.8.142",9988));
+                    ConnectFuture future = connector.connect(new InetSocketAddress(
+                            Constants.fileIP, Constants.filePort));
                     future.awaitUninterruptibly();// 等待连接创建完成
                     session = future.getSession();
-                    Constants.FILEsession=session;
+                    if (session.isConnected()) {
+                        Constants.FILEsession = session;
+                        Looper.prepare();
+                        Toast.makeText(getBaseContext(), "连接成功！", Toast.LENGTH_SHORT).show();
+                        Looper.loop();//
+                    }
 //                    session.getCloseFuture().awaitUninterruptibly();// 等待连接断开
 //                    connector.dispose();
                 } catch (Exception e) {
@@ -88,7 +93,6 @@ public class ToFileMinaService extends Service {
 
         super.onCreate();
     }
-
 
 
     private class DataHandler extends IoHandlerAdapter {
@@ -104,22 +108,22 @@ public class ToFileMinaService extends Service {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
-            while(true) {
+            while (true) {
                 try {
                     Thread.sleep(3000);
                     // 这里是异步操作 连接后立即返回
                     ConnectFuture future = connector.connect(new InetSocketAddress(
-                            "27.17.8.142", 9988));
+                            Constants.fileIP, Constants.filePort));
                     future.awaitUninterruptibly();// 等待连接创建完成
                     session = future.getSession();
-                    if(session.isConnected()) {
+                    if (session.isConnected()) {
                         Constants.FILEsession = session;
                         break;
                     }
                 } catch (Exception e) {
                 }
             }
-            if(Constants.requestNetcontent!=null) {
+            if (Constants.requestNetcontent != null) {
                 RequestNetworkAgain request = new RequestNetworkAgain();
                 request.setContent(Constants.requestNetcontent);
                 Constants.FILEsession.write(request);
@@ -141,24 +145,24 @@ public class ToFileMinaService extends Service {
         public void messageReceived(IoSession session, Object message)
                 throws Exception {
 
-                //======================================================================================================
-               if(message instanceof FileToServerReply){
-                   FileToServerReply reply= (FileToServerReply) message;
-                   String name=reply.getFileName();
-                   ContentValues cvUpload = new ContentValues();
-                   cvUpload.put("upload", 2);
+            //======================================================================================================
+            if (message instanceof FileToServerReply) {
+                FileToServerReply reply = (FileToServerReply) message;
+                String name = reply.getFileName();
+                ContentValues cvUpload = new ContentValues();
+                cvUpload.put("upload", 2);
                     /* 取得扩展名 */
-                   String end = name
-                           .substring(name.lastIndexOf(".") + 1, name.length())
-                           .toLowerCase();
-                   if(end.equals("pwr")) {
-                       db.update("localFile", cvUpload, "filename=?", new String[]{name});
-                       Log.d("file","上传成功"+name);
-                   } else  if(end.equals("iq")) {
-                       db.update("iqFile", cvUpload, "filename=?", new String[]{name});
-                       Log.d("file","上传成功"+name);
-                   }
-               }
+                String end = name
+                        .substring(name.lastIndexOf(".") + 1, name.length())
+                        .toLowerCase();
+                if (end.equals("pwr")) {
+                    db.update("localFile", cvUpload, "filename=?", new String[]{name});
+                    Log.d("file", "上传成功" + name);
+                } else if (end.equals("iq")) {
+                    db.update("iqFile", cvUpload, "filename=?", new String[]{name});
+                    Log.d("file", "上传成功" + name);
+                }
+            }
         }
 
         @Override

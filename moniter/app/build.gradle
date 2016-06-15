@@ -27,9 +27,9 @@ dependencies {
     compile project(':flashview')
     compile files('libs/mina-core-2.0.7.jar')
     compile files('libs/achartengine-1.1.0.jar')
-    compile files('libs/baidumapapi_base_v3_6_1.jar')
-    compile files('libs/baidumapapi_map_v3_6_1.jar')
     compile files('libs/hellocharts.jar')
     compile project(':pickerview')
     compile 'com.bigkoo:pickerview:2.0.8'
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile files('libs/BaiduLBS_Android.jar')
 }

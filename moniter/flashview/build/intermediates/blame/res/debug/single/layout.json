@@ -1,5 +1,13 @@
 [
     {
+        "merged": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
+        "source": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+    },
+    {
+        "merged": "E:\\Android project\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
+        "source": "E:\\Android project\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+    },
+    {
         "merged": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
         "source": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     },
@@ -12,7 +20,15 @@
         "source": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     },
     {
+        "merged": "E:\\project\\testSliding_0625_ing\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
+        "source": "E:\\project\\testSliding_0625_ing\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+    },
+    {
         "merged": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
         "source": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+    },
+    {
+        "merged": "E:\\project\\testSliding_0628_service\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
+        "source": "E:\\project\\testSliding_0628_service\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     }
 ]

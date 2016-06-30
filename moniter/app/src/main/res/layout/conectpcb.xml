@@ -48,6 +48,20 @@
         android:text="第二步： 开启后台连接硬件线程"
         android:textSize="20sp"/>
 
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FPGA设备ID号/WIFI的IP地址："
+        android:textSize="18sp"/>
+    <Spinner
+        android:id="@+id/spinner_WIFI"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp">
+
+    </Spinner>
+
     <Button
         android:id="@+id/ConnectPCB"
         android:layout_width="200dp"
@@ -56,7 +70,7 @@
         android:layout_marginTop="20dp"
         android:text="连接硬件" />
     <TextView
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/tv_remote_ip"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
@@ -66,7 +80,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="查询当前连接方式" />
 
 

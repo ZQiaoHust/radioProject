@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -121,6 +122,21 @@ public class MainActivity extends AppCompatActivity
                     REQUEST_EXTERNAL_STORAGE
             );
         }
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent stopIntent1 = new Intent(this, MinaClientService.class);
+        stopService(stopIntent1);
+        Intent stopIntent2 = new Intent(this, ToServerMinaService.class);
+        stopService(stopIntent2);
+        Intent stopIntent3 = new Intent(this, ToFileMinaService.class);
+        stopService(stopIntent3);
+
+        Log.d("Main","stopservice");
 
     }
 

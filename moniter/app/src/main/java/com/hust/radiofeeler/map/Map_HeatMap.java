@@ -26,6 +26,7 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.PolygonOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.R;
 import com.hust.radiofeeler.bean2server.MapRadioPointInfo;
 import com.hust.radiofeeler.bean2server.MapRadioResult;
@@ -179,7 +180,7 @@ public class Map_HeatMap extends Activity {
                     mMapView.getMap().clear();
                     poinList.clear();
                     //设置中心点
-                    centerLat = new LatLng(HeatMapPointList.get(msg.what).getLatitude(), HeatMapPointList.get(msg.what).getLongitude());
+                    centerLat = new LatLng(HeatMapPointList.get(msg.what).getLatitude()+Constants.LAT_OFFSET, HeatMapPointList.get(msg.what).getLongitude()+Constants.LON_OFFSET);
                     Log.d("pocess", "now is inside handler" + HeatMapPointList.get(msg.what).getLatitude() + "," + HeatMapPointList.get(msg.what).getLongitude());
                     Power = HeatMapPointList.get(msg.what).getEqualPower();
                     Ratio = HeatMapPointList.get(msg.what).getrPara();

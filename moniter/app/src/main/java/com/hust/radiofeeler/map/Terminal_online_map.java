@@ -16,6 +16,7 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.R;
 import com.hust.radiofeeler.bean2server.List_TerminalOnline;
 import com.hust.radiofeeler.tab1.Service_Terminal;
@@ -134,7 +135,7 @@ if(OnlineTerminal!=null) {
             .fromResource(R.drawable.profuserbig);
     BitmapDescriptor stationMarker2 = BitmapDescriptorFactory
             .fromResource(R.drawable.pofusersmall);
-    MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(OnlineTerminal.get(0).getLatitude(), OnlineTerminal.get(0).getLongitude()));
+    MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(OnlineTerminal.get(0).getLatitude()+ Constants.LAT_OFFSET, OnlineTerminal.get(0).getLongitude()+Constants.LON_OFFSET));
 
     mTerminal_BaiduMap.setMapStatus(u1);
     for (List_TerminalOnline terminal : OnlineTerminal) {
@@ -161,7 +162,7 @@ if(OnlineTerminal!=null) {
         }
         giflist.add(stationMarker1);
         giflist.add(stationMarker2);
-        Markerlist.add((Marker) mTerminal_BaiduMap.addOverlay(new MarkerOptions().position(new LatLng(terminal.getLatitude(), terminal.getLongitude())).icons(giflist)
+        Markerlist.add((Marker) mTerminal_BaiduMap.addOverlay(new MarkerOptions().position(new LatLng(terminal.getLatitude()+Constants.LAT_OFFSET, terminal.getLongitude()+Constants.LON_OFFSET)).icons(giflist)
                 .zIndex(0).period(10)));
         giflist.clear();
     }

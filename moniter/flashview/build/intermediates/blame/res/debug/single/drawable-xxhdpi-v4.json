@@ -4,6 +4,14 @@
         "source": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
     },
     {
+        "merged": "E:\\project\\testSliding_0625_ing\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\testSliding_0625_ing\\flashview\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "E:\\project\\testSliding_0628_service\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\testSliding_0628_service\\flashview\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
+    },
+    {
         "merged": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\ic_launcher.png",
         "source": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
     },
@@ -14,5 +22,13 @@
     {
         "merged": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\ic_launcher.png",
         "source": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "E:\\Android project\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\ic_launcher.png",
+        "source": "E:\\Android project\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\ic_launcher.png",
+        "source": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
     }
 ]

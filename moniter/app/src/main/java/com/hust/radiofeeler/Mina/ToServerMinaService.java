@@ -466,7 +466,30 @@ public class ToServerMinaService extends Service {
 
         dataHandler = new DataHandler();
         registerReceiver(sendMessage, filter);
+        connector.setConnectTimeoutMillis(30000); //设置连接超时
+        connector.getFilterChain().addLast(
+                "codec",
+                new ProtocolCodecFilter(new ToServerProtocolCodecFactory()));
+        connector.getSessionConfig().setReadBufferSize(1024);
+        connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, IDELTIMEOUT);
+        /** 主角登场 */
+        KeepAliveMessageFactory heartBeatFactory = new KeepAliveMessageFactoryImpl();
+        KeepAliveFilter heartBeat = new KeepAliveFilter(heartBeatFactory);
+        /** 是否回发 */
+        heartBeat.setForwardEvent(true);
+        /** 发送频率 */
+        heartBeat.setRequestInterval(HEARTBEATRATE);
+        //connector.getSessionConfig().setKeepAlive(true);
+        connector.getFilterChain().addLast("heartbeat", heartBeat);
+        /****************************/
+        connector.setHandler(dataHandler);
 
+        acquireWakeLock();//电源
+        super.onCreate();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         new Thread(new Runnable() {
 
             @Override
@@ -474,8 +497,7 @@ public class ToServerMinaService extends Service {
                 serviceConnect(dataHandler);
             }
         }).start();
-        acquireWakeLock();//电源
-        super.onCreate();
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -1021,23 +1043,7 @@ public class ToServerMinaService extends Service {
         while(true) {
             try {
                 Thread.sleep(30);
-                connector.setConnectTimeoutMillis(30000); //设置连接超时
-                connector.getFilterChain().addLast(
-                        "codec",
-                        new ProtocolCodecFilter(new ToServerProtocolCodecFactory()));
-                connector.getSessionConfig().setReadBufferSize(1024);
-                connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, IDELTIMEOUT);
-                /** 主角登场 */
-                KeepAliveMessageFactory heartBeatFactory = new KeepAliveMessageFactoryImpl();
-                KeepAliveFilter heartBeat = new KeepAliveFilter(heartBeatFactory);
-                /** 是否回发 */
-                heartBeat.setForwardEvent(true);
-                /** 发送频率 */
-                heartBeat.setRequestInterval(HEARTBEATRATE);
-                //connector.getSessionConfig().setKeepAlive(true);
-                connector.getFilterChain().addLast("heartbeat", heartBeat);
-                /****************************/
-                connector.setHandler(dataHandler);
+
                 // 这里是异步操作 连接后立即返回
 //                ConnectFuture future = connector.connect(new InetSocketAddress(
 //                        "27.17.8.142", 9000));
@@ -1046,7 +1052,6 @@ public class ToServerMinaService extends Service {
                     ConnectFuture future = connector.connect(new InetSocketAddress(
                             Constants.serverIP, Constants.serverPort));
                 future.awaitUninterruptibly();// 等待连接创建完成
-
                 session = future.getSession();
                 if(session.isConnected()) {
                     Constants.SERVERsession = session;
@@ -1058,6 +1063,9 @@ public class ToServerMinaService extends Service {
 //             session.getCloseFuture().awaitUninterruptibly();// 等待连接断开
 //             connector.dispose();
             } catch (Exception e) {
+                Looper.prepare();
+                Toast.makeText(getBaseContext(),"连接失败！",Toast.LENGTH_SHORT).show();
+                Looper.loop();//
             }
         }
 

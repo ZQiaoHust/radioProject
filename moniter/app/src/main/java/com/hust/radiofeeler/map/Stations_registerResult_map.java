@@ -20,6 +20,7 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.R;
 import com.hust.radiofeeler.bean2server.List_StationAll;
 import com.hust.radiofeeler.tab1.Stations_registerResult;
@@ -158,7 +159,7 @@ public class Stations_registerResult_map extends Activity {
     private void AddRegisterStationMarker(List<List_StationAll> RegisterStation) {
         Markerlist = new ArrayList<Marker>();
         LatLng OnlineTerminal_site;
-        MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(RegisterStation.get(0).getLatitude(), RegisterStation.get(0).getLongitude()));
+        MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(RegisterStation.get(0).getLatitude()+Constants.LAT_OFFSET, RegisterStation.get(0).getLongitude()+ Constants.LON_OFFSET));
 
         mStation_BaiduMap.setMapStatus(u1);
         for(List_StationAll station:RegisterStation)

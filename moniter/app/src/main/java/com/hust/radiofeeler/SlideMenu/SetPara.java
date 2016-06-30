@@ -90,7 +90,7 @@ public class SetPara extends Activity implements SeekBar.OnSeekBarChangeListener
                 }
                 int a = data.getIngain() - 3;
 
-                Toast toast = Toast.makeText(SetPara.this, "接受通道增益：" + String.valueOf(a) + "dB",
+                Toast toast = Toast.makeText(SetPara.this, "接收通道增益：" + String.valueOf(a) + "dB",
                         Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.TOP, 0, 400);
                 toast.show();

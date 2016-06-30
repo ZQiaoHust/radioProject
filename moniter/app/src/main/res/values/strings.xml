@@ -16,7 +16,7 @@
     <string name="recv_Gain">接收通道增益</string>
     <string name="send_Gain">发射通道衰减</string>
     <string name="test_Gate">检测门限系数</string>
-    <string name="text_recv">接受通道增益(-1dB~73dB)</string>
+    <string name="text_recv">接收通道增益(-1dB~73dB)</string>
     <string name="text_send">发射通道衰减(0dB~89dB)</string>
     <string name="text_gate1">固定门限(3dB~39dB)</string>
     <string name="text_gate2">自适应门限(dB)</string>

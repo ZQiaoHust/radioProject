@@ -23,6 +23,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.R;
 import com.hust.radiofeeler.tab1.Stations_currentResult;
 import com.hust.radiofeeler.bean2server.StationCurrentReply;
@@ -75,7 +76,7 @@ public class Stations_CurrentResult_map extends Activity {
 
         if (CurrentStationMapData != null) {
             // 将消息展现出来。
-            MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(CurrentStationMapData.getLatitude(),CurrentStationMapData.getLongitude()));
+            MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(CurrentStationMapData.getLatitude()+Constants.LAT_OFFSET,CurrentStationMapData.getLongitude()+Constants.LON_OFFSET));
 
             mStation_BaiduMap.setMapStatus(u1);
             Log.d("mapdataget", "size is " + String.valueOf(CurrentStationMapData.getaBand()));
@@ -137,8 +138,7 @@ public class Stations_CurrentResult_map extends Activity {
     private void  DrawCurrentRadioMap(StationCurrentReply CurrentReply) {
         double Power_cnt,Power_circle;
         double distance;
-        Marker marker;
-        MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(CurrentReply.getLatitude(), CurrentReply.getLongitude()));
+        MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(CurrentReply.getLatitude()+Constants.LAT_OFFSET, CurrentReply.getLongitude()+Constants.LON_OFFSET));
 
         mStation_BaiduMap.setMapStatus(u1);
         MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
@@ -149,15 +149,15 @@ public class Stations_CurrentResult_map extends Activity {
 
         BitmapDescriptor AbnormalMarker = BitmapDescriptorFactory
                 .fromResource(R.drawable.marker1);
-        MarkerOptions oo1 = new MarkerOptions().position(new LatLng(CurrentReply.getLatitude(),CurrentReply.getLongitude())).icon(AbnormalMarker)
+        MarkerOptions oo1 = new MarkerOptions().position(new LatLng(CurrentReply.getLatitude()+Constants.LAT_OFFSET,CurrentReply.getLongitude()+Constants.LON_OFFSET)).icon(AbnormalMarker)
                 .zIndex(0).period(10);
         oo1.animateType(MarkerOptions.MarkerAnimateType.grow);
-        marker = (Marker)mStation_BaiduMap.addOverlay(oo1);
+        mStation_BaiduMap.addOverlay(oo1);
 
         for(int i = 1;i<9;i++)
         {
 
-            LatLng llCircle = new LatLng(CurrentReply.getLatitude(), CurrentReply.getLongitude());
+            LatLng llCircle = new LatLng(CurrentReply.getLatitude()+ Constants.LAT_OFFSET, CurrentReply.getLongitude()+Constants.LON_OFFSET);
             Power_circle = Power_cnt-5*i;
             distance = Math.sqrt(Math.pow(10,(Power_cnt-Power_circle)/(5*CurrentReply.getrPara())));
             Log.e("distance",String.valueOf(distance));
@@ -167,7 +167,7 @@ public class Stations_CurrentResult_map extends Activity {
 
             mStation_BaiduMap.addOverlay(ooCircle);
 
-            LatLng llText = new LatLng((CurrentReply.getLatitude()+distance/111+0.001), CurrentReply.getLongitude());
+            LatLng llText = new LatLng((CurrentReply.getLatitude()+ Constants.LAT_OFFSET+distance/111+0.001), CurrentReply.getLongitude()+ Constants.LON_OFFSET);
             //构建文字Option对象，用于在地图上添加文字
             OverlayOptions textOption = new TextOptions()
                     .fontSize(30)

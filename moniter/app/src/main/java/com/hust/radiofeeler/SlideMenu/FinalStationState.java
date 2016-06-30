@@ -44,6 +44,7 @@ public class FinalStationState extends Activity {
     private TextView tv_ID,tv_style,tv_location;
     private EditText et_IP,et_PORT,et_fileIP,et_filePort;
     private LinearLayout mLinearLayout;
+    private Context mContext;
 
     private QueryFPGANetwork fpgaInfo=null;
     private  StationState data=null;
@@ -140,27 +141,28 @@ public class FinalStationState extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.station);
+        mContext = getBaseContext();
         IntentFilter filter=new IntentFilter();
         filter.addAction(ConstantValues.StationStateQuery);
         filter.addAction(ConstantValues.RREQUSTNETWORK);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(StationStateReceiver, filter);
         Initing();
-        initspinnerSetting();
+        //initspinnerSetting();
         InitEvent();
 
     }
     private void Initing(){
         btn_connectServer= (Button) findViewById(R.id.btn_connectSERVER);
         btn_connectFile= (Button) findViewById(R.id.btn_connectFILE);
-        btn_connect= (Button) findViewById(R.id.btn_connectPCB);
+       // btn_connect= (Button) findViewById(R.id.btn_connectPCB);
         btn_requestNet= (Button) findViewById(R.id.btn_requestNetwork);
         btn_getpcb= (Button) findViewById(R.id.btn_getpcbinfo);
         mLinearLayout= (LinearLayout) findViewById(R.id.pcbinfo);
         tv_ID= (TextView) findViewById(R.id.tv_ID);
         tv_style= (TextView) findViewById(R.id.tv_style);
         tv_location= (TextView) findViewById(R.id.tv_location);
-        spinner= (Spinner) findViewById(R.id.spinner_WIFI);
+        //spinner= (Spinner) findViewById(R.id.spinner_WIFI);
         et_IP= (EditText) findViewById(R.id.et_serveIP);
         et_PORT= (EditText) findViewById(R.id.et_port);
         et_fileIP= (EditText) findViewById(R.id.et_fileIP);
@@ -203,39 +205,7 @@ public class FinalStationState extends Activity {
                 FinalStationState.this.finish();
             }
         });
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-               switch (position){
-                   case 0:
-                       ID=11;
-                       IP="192.168.43.195";
-                       break;
-                   case 1:
-                       ID=12;
-                       IP="192.168.43.245";
-                       break;
-                   case 2:
-                       ID=13;
-                       IP="192.168.43.34";
-                       break;
-                   case 3:
-                       ID=14;
-                       IP="192.168.43.61";
-                       break;
-                   case 4:
-                       ID=15;
-                       IP="192.168.43.29";
-                       break;
-               }
-                Log.d("FPGA","ID:"+ ID+"     IP:"+ IP);
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         btn_connectServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,6 +220,8 @@ public class FinalStationState extends Activity {
                 if(ip!=null&&port!=0) {
                     Constants.serverIP=ip;
                     Constants.serverPort=port;
+
+
                     Intent intent = new Intent(FinalStationState.this, ToServerMinaService.class);
                     startService(intent);
                 }else{
@@ -278,17 +250,7 @@ public class FinalStationState extends Activity {
                 }
             }
         });
-        btn_connect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Constants.IP=IP;
-                Intent startServiceIntent=new Intent(FinalStationState.this, MinaClientService.class);
-                startService(startServiceIntent);
-                Constants.time=getTimeSec(0);
-//                FinalStationState.this.deleteDatabase("sendFileDatabase");//删除数据库
-            }
-        });
         btn_getpcb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -331,13 +293,6 @@ public class FinalStationState extends Activity {
         StationStateReceiver=null;
         super.onDestroy();
     }
-    private String getTimeSec(int m) {
-        //得到开始时刻
-        Date date =new Date();
-        long sec=date.getTime()/1000;
-        if(m>0)
-            sec=sec-m*60;
-        return String.valueOf(sec);
-    }
+
 
 }

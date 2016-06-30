@@ -66,6 +66,7 @@ public class Constants {
 	public  static  int  sevCount;
 	public static IQContext ctxIQ;//IQ波
 
+	public static int sendMode;//功率谱文件上传模式
 	public  static  int  judgePower;//功率谱变化判断门限
 	public  static  int  selectRate;//抽取倍率
 	public  static  boolean IsDrawWaterfall=false;//画瀑布图触发事件
@@ -86,6 +87,10 @@ public class Constants {
 
 	//扫频起止时间
 	public static String time;
+	public static int SELECT_COUNT;//抽取上传的计数器
+
+
+
 
 
 }

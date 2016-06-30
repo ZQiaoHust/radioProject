@@ -26,6 +26,7 @@ package com.hust.radiofeeler.map;
         import com.baidu.mapapi.map.OverlayOptions;
         import com.baidu.mapapi.model.LatLng;
         import com.baidu.mapapi.model.LatLngBounds;
+        import com.hust.radiofeeler.GlobalConstants.Constants;
         import com.hust.radiofeeler.R;
         import com.hust.radiofeeler.bean2server.MapInterpolationReply;
         import com.hust.radiofeeler.tab1.Map_interpolationResult;
@@ -84,6 +85,8 @@ public class InsertHeatMap extends Activity {
 
         //final ArrayList<String> fileName = GetFileName("/storage/sdcard/interpolationFile");
         final ArrayList<String> fileName = GetFileName(PSFILE_PATH);
+        if (fileName == null)
+            return;
         BubbleSortDateFile(fileName);
         Log.d("fileNaME", PSFILE_PATH + fileName.get(0));
          final Handler handler = new Handler() {
@@ -93,8 +96,8 @@ public class InsertHeatMap extends Activity {
                     Log.d("pocess", "now is inside handler");
                     mIn_MapView.getMap().clear();
                     //设置中心点
-                    leftdownLatlng = new LatLng(interpolationReply.getG1latitude(),interpolationReply.getG1longitude());
-                    rightuplatlng = new LatLng(interpolationReply.getG2latitude(),interpolationReply.getG2longitude());
+                    leftdownLatlng = new LatLng(interpolationReply.getG1latitude()+ Constants.LAT_OFFSET,interpolationReply.getG1longitude()+ Constants.LON_OFFSET);
+                    rightuplatlng = new LatLng(interpolationReply.getG2latitude()+ Constants.LAT_OFFSET,interpolationReply.getG2longitude()+ Constants.LON_OFFSET);
 
                     //LatLng southwest = new LatLng(30.51511, 114.42001);
                     //LatLng northeast = new LatLng(31.515, 115.420);
@@ -147,8 +150,11 @@ public class InsertHeatMap extends Activity {
         ArrayList<String> Filename = new ArrayList<>();
         File file = new File(fileAbsolutePath);
         File[] subFile = file.listFiles();
-
-        for (int iFileLength = 0; iFileLength < subFile.length; iFileLength++) {
+        if (subFile == null)
+            return null;
+        else
+        {
+            for (int iFileLength = 0; iFileLength < subFile.length; iFileLength++) {
             // 判断是否为文件夹
             if (!subFile[iFileLength].isDirectory()) {
                 String name = subFile[iFileLength].getName();
@@ -158,7 +164,8 @@ public class InsertHeatMap extends Activity {
                 }
             }
         }
-        return Filename;
+            return Filename;}
+
     }
 
     private ArrayList<String> BubbleSortDateFile(ArrayList<String> arrayList) {
@@ -180,7 +187,7 @@ public class InsertHeatMap extends Activity {
     @Override
     protected void onDestroy() {
         mIn_MapView.onDestroy();
-        thread.interrupt();
+        //thread.interrupt();
         super.onDestroy();
     }
 }

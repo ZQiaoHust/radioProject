@@ -7,18 +7,25 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hust.radiofeeler.Bean.Connect;
 import com.hust.radiofeeler.Bean.Query;
 import com.hust.radiofeeler.GlobalConstants.ConstantValues;
+import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.Mina.Broadcast;
 import com.hust.radiofeeler.Mina.MinaClientService;
 import com.hust.radiofeeler.R;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by H on 2015/10/24.
@@ -29,13 +36,29 @@ public class ConnectPCB extends Activity {
     ArrayList<String> connectedIP;
     private String PCBIP;
     private int connectStyle;
+    private Spinner spinner;
+    private List<String> list;
+    private ArrayAdapter<String> adapter;
+    private int ID=11;//硬件的设备ID号
+    private  String IP="192.168.43.195";//WIFI的IP
+    private Connect connect=null;
 
     private BroadcastReceiver ConnectPCBReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(ConstantValues.ConnectPCBQuery)) {
+                connect = intent.getParcelableExtra("data");
+                if (connect == null) {
+                    return;
+                }
 
+                if(connect.getConn()==1)
+                    Toast.makeText(ConnectPCB.this, "当前接入方式是：WIFI", Toast.LENGTH_SHORT).show();
+                else if(connect.getConn()==2)
+                    Toast.makeText(ConnectPCB.this, "当前接入方式是：蓝牙", Toast.LENGTH_SHORT).show();
+                else if(connect.getConn()==3)
+                    Toast.makeText(ConnectPCB.this, "当前接入方式是：USB", Toast.LENGTH_SHORT).show();
 
             }
         }
@@ -70,8 +93,9 @@ public class ConnectPCB extends Activity {
         filter.addAction(ConstantValues.ConnectPCBQuery);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(ConnectPCBReceiver, filter);
-
+        spinner= (Spinner) findViewById(R.id.spinner_WIFI);
        // mIp = (TextView) findViewById(R.id.et_ID);
+        initspinnerSetting();
         initEvent();
     }
 
@@ -109,12 +133,16 @@ public class ConnectPCB extends Activity {
 //                        PCBIP = getConnectIp();
 //                        Constants.PCBIP = PCBIP;
                         //启动后台service
+                        Constants.IP=IP;
                         Intent startServiceIntent = new Intent(ConnectPCB.this, MinaClientService.class);
                         startService(startServiceIntent);
+                        Constants.time=getTimeSec(0);
+                        Constants.ID=ID;
                     }
+
                     Connect connect=new Connect();
                     connect.setConn(connectStyle);
-                    Broadcast.sendBroadCast(ConnectPCB.this,ConstantValues.ConnectPCB,"connectPCB",connect);
+                   Broadcast.sendBroadCast(ConnectPCB.this,ConstantValues.ConnectPCB,"connectPCB",connect);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -129,14 +157,15 @@ public class ConnectPCB extends Activity {
             @Override
             public void onClick(View v) {
                 Query query = new Query();
-                query.setequipmentID(0);
+                query.setequipmentID(Constants.ID);
                 query.setFuncID((byte) 0x19);
 
                 if (query != null) {
                     Broadcast.sendBroadCast(ConnectPCB.this,
                             ConstantValues.ConnectPCBQuery, "ConnectPCBQuery", query);
                 }
-            }
+
+           }
         });
 
         findViewById(R.id.title_back).setOnClickListener(new View.OnClickListener() {
@@ -170,6 +199,42 @@ public class ConnectPCB extends Activity {
                 connectStyle=3;
             }
         });
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        ID=11;
+                        IP="192.168.43.195";
+                        break;
+                    case 1:
+                        ID=12;
+                        IP="192.168.43.245";
+                        break;
+                    case 2:
+                        ID=13;
+                        IP="192.168.43.34";
+                        break;
+                    case 3:
+                        ID=14;
+                        IP="192.168.43.61";
+                        break;
+                    case 4:
+                        ID=15;
+                        IP="192.168.43.29";
+                        break;
+                }
+                Log.d("FPGA","ID:"+ ID+"     IP:"+ IP);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
     }
 
     @Override
@@ -178,5 +243,29 @@ public class ConnectPCB extends Activity {
         ConnectPCBReceiver = null;
         super.onDestroy();
 
+    }
+    private  void initspinnerSetting(){
+        //1,设置数据源
+        list = new ArrayList<String>();
+        list.add("ID:11 /IP:192.168.43.195");
+        list.add("ID:12 /IP:192.168.43.245");
+        list.add("ID:13 /IP:192.168.43.34");
+        list.add("ID:14 /IP:192.168.43.61");
+        list.add("ID:15 /IP:192.168.43.29");
+
+        //2.新建数组适配器
+        adapter=new ArrayAdapter<String>(ConnectPCB.this,android.R.layout.simple_spinner_item,list);
+        //adapter设置一个下拉列表样式
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //spin加载适配器
+        spinner.setAdapter(adapter);
+    }
+    private String getTimeSec(int m) {
+        //得到开始时刻
+        Date date =new Date();
+        long sec=date.getTime()/1000;
+        if(m>0)
+            sec=sec-m*60;
+        return String.valueOf(sec);
     }
 }

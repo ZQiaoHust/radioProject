@@ -62,10 +62,12 @@ public class Simple_SweepRangeDecoder implements MessageDecoder {
     private void HandleSweepInfo(byte[] bytes){
         SweepRangeInfo sweepRangeInfo=new SweepRangeInfo();
         int sendMode=bytes[4]&0x03;//文件上传模式
+        Constants.sendMode=sendMode;
         int total=bytes[5]&0xff;
         int select=bytes[13]&0x3f;
-        double freq1=((bytes[7]&0xff)-1)*25+(((bytes[8]&0x03)<<8)+(bytes[9]&0xff))*25/1024.0;
-        double freq2=((bytes[10]&0xff)-1)*25+(((bytes[11]&0x03)<<8)+(bytes[12]&0xff))*25/1024.0;
+        Constants.selectRate=select;
+        double freq1=((bytes[7]&0xff)-1)*25+(((bytes[8]&0x03)<<8)+(bytes[9]&0xff))*25/1024.0+70;
+        double freq2=((bytes[10]&0xff)-1)*25+(((bytes[11]&0x03)<<8)+(bytes[12]&0xff))*25/1024.0+70;
 
         sweepRangeInfo.setSegStart(freq1);
         sweepRangeInfo.setSegEnd(freq2);

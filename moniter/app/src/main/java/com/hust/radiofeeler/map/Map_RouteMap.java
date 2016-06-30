@@ -23,6 +23,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.tab1.Map_Route_Result;
 import com.hust.radiofeeler.tab1.Map_Route_Setting;
 import com.hust.radiofeeler.R;
@@ -145,11 +146,11 @@ public class Map_RouteMap extends Activity {
 
 
         if (i == 0) {
-            MarkerOptions ooA = new MarkerOptions().position(new LatLng(infos.get(i).getLatitude(), infos.get(i).getLongitude())).icon(stationMarker);
+            MarkerOptions ooA = new MarkerOptions().position(new LatLng(infos.get(i).getLatitude()+ Constants.LAT_OFFSET, infos.get(i).getLongitude()+Constants.LON_OFFSET)).icon(stationMarker);
             mMarkerA = (Marker) (mRoute_BaiduMap.addOverlay(ooA));
         } else {
-            first_latLng = new LatLng(infos.get(i - 1).getLatitude(), infos.get(i - 1).getLongitude());
-            end_latlng = new LatLng(infos.get(i).getLatitude(), infos.get(i).getLongitude());
+            first_latLng = new LatLng(infos.get(i - 1).getLatitude()+ Constants.LAT_OFFSET, infos.get(i - 1).getLongitude()+Constants.LON_OFFSET);
+            end_latlng = new LatLng(infos.get(i).getLatitude()+ Constants.LAT_OFFSET, infos.get(i).getLongitude()+Constants.LON_OFFSET);
 
 
 

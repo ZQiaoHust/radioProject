@@ -137,10 +137,10 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
      */
 
 
-    private int uploadMode=0;//功率谱上传模式
+    private int uploadMode=1;//功率谱上传模式
     private int TotalOfBands;//多频段扫频模式的频段总数
-    private byte gate;//功率谱数据变化的判定门限
-    private int Select ;//文件上传的抽取倍率
+    private byte gate=3;//功率谱数据变化的判定门限
+    private int Select=63 ;//文件上传的抽取倍率
     private Boolean IsDUOSetting0K=false;
     private Boolean IsZHISetting0K=false;
     private Boolean IsQUANSetting0K=false;
@@ -221,11 +221,9 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                 switch (position) {
                     case 0:
                         gate = 3;
-                        Constants.judgePower=3;
                         break;
                     case 1:
                         gate = 2;
-                        Constants.judgePower=2;
                         break;
                     default:
                         break;
@@ -265,6 +263,9 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                     sweepRangeInfo.setEndNum((int) ((6000-70)/25+1));
                     Constants.SweepParaList.clear();
                     Constants.SweepParaList.add(sweepRangeInfo);
+                    Constants.sendMode=uploadMode;
+                    Constants.selectRate=Select;
+                    Constants.judgePower=gate;
 
                     if(sweepRange !=null)
                     {
@@ -286,6 +287,7 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                     sweepRange.setGate(gate);
                     sweepRange.setaSelect(Select);
 
+
                     //扫描起始偏移
                     sweepRangeInfo.setSegStart(zhidingStart);
                     sweepRangeInfo.setSegEnd(zhidingEnd);
@@ -293,7 +295,9 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                     sweepRangeInfo.setEndNum((int) ((zhidingEnd-70)/25+1));
                     Constants.SweepParaList.clear();
                     Constants.SweepParaList.add(sweepRangeInfo);
-
+                    Constants.sendMode=uploadMode;
+                    Constants.selectRate=Select;
+                    Constants.judgePower=gate;
                     if(sweepRange !=null)
                     {
                         Broadcast.sendBroadCast(getActivity(),
@@ -337,6 +341,9 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
 
                                         }
                                     }
+                                    Constants.sendMode=uploadMode;
+                                    Constants.selectRate=Select;
+                                    Constants.judgePower=gate;
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     Log.i(TAG, "run: 发送异常");
@@ -559,8 +566,6 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
 
         tv_select.setText("当前值：" + progress);
         Select = progress;
-        Constants.selectRate=progress;
-
     }
 
     @Override

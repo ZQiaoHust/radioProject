@@ -60,18 +60,25 @@ public class ToFileMinaService extends Service {
     public void onCreate() {
         dbHelper = DatabaseHelper.getInstance(this);
         db = dbHelper.getWritableDatabase();
+        connector.getFilterChain().addLast(
+                "codec",
+                new ProtocolCodecFilter(new ToFileProtocolCodeFactory()));
 
+        connector.getSessionConfig().setReadBufferSize(1024);
+        connector.setHandler(new DataHandler());
+
+        super.onCreate();
+    }
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    connector.getFilterChain().addLast(
-                            "codec",
-                            new ProtocolCodecFilter(new ToFileProtocolCodeFactory()));
 
-                    connector.getSessionConfig().setReadBufferSize(1024);
-                    connector.setHandler(new DataHandler());
                     // 这里是异步操作 连接后立即返回
                     ConnectFuture future = connector.connect(new InetSocketAddress(
                             Constants.fileIP, Constants.filePort));
@@ -86,14 +93,16 @@ public class ToFileMinaService extends Service {
 //                    session.getCloseFuture().awaitUninterruptibly();// 等待连接断开
 //                    connector.dispose();
                 } catch (Exception e) {
+                    Looper.prepare();
+                    Toast.makeText(getBaseContext(),"连接失败！",Toast.LENGTH_SHORT).show();
+                    Looper.loop();//
 
                 }
             }
         }).start();
 
-        super.onCreate();
+        return super.onStartCommand(intent, flags, startId);
     }
-
 
     private class DataHandler extends IoHandlerAdapter {
 

@@ -213,6 +213,7 @@ public class Chart_spectrum extends Activity {
                          end=Constants.SweepParaList.get(Constants.SweepParaList.size() - 1).getEndNum();
                     }
                     setChartSettings(renderer, "频率值", "功率值", startFrq, endFrq, -150, 10, Color.WHITE, Color.WHITE);
+                    Log.d("chart","起始频率："+startFrq+"；终止频率："+endFrq);
                     band=end-start+1;
 
                     task = new TimerTask() {

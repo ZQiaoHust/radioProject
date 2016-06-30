@@ -129,7 +129,11 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
                        Log.d("file", "当前帧总共段数：" + PSAP.getTotalBand());
                         Log.d("file", "当前帧所在序号：" + PSAP.getNumN());
 
-                        if(PSAP.getNumN()==1){
+                        //如果是抽取上传模式，则需要计数
+                        if(PSAP.getNumN()==1&&Constants.sendMode==3){
+                            if(Constants.SELECT_COUNT==Constants.selectRate)
+                                Constants.SELECT_COUNT=0;
+                            Constants.SELECT_COUNT++;
                           long a= System.currentTimeMillis();
                             Log.d("file","收到第一段时间："+a);
                         }

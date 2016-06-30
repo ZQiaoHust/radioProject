@@ -29,6 +29,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.R;
 import com.hust.radiofeeler.tab1.Service_locationResult;
 import com.hust.radiofeeler.bean2server.LocationAbnormalReply;
@@ -115,7 +116,7 @@ public class Service_abnormal_map extends Activity  {
                 ShowDialog();
             }
         };
-        LatLng ll = marker.getPosition();
+        LatLng ll =new LatLng(marker.getPosition().latitude+ Constants.LAT_OFFSET,marker.getPosition().longitude+Constants.LON_OFFSET) ;
         mInfoWindow = new InfoWindow(BitmapDescriptorFactory.fromView(button), ll, -47, listener);
         mAbnormal_BaiduMap.showInfoWindow(mInfoWindow);
 
@@ -128,7 +129,7 @@ public class Service_abnormal_map extends Activity  {
         double Power_cnt,Power_circle;
         double distance;
         Marker marker;
-        MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(AbnormalReply.getLatitude(), AbnormalReply.getLongitude()));
+        MapStatusUpdate u1 = MapStatusUpdateFactory.newLatLng(new LatLng(AbnormalReply.getLatitude()+ Constants.LAT_OFFSET, AbnormalReply.getLongitude()+Constants.LON_OFFSET));
 
         mAbnormal_BaiduMap.setMapStatus(u1);
         MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
@@ -144,7 +145,7 @@ public class Service_abnormal_map extends Activity  {
             return;
         BitmapDescriptor AbnormalMarker = BitmapDescriptorFactory
                 .fromResource(R.drawable.marker1);
-        MarkerOptions oo1 = new MarkerOptions().position(new LatLng(AbnormalReply.getLatitude(),AbnormalReply.getLongitude())).icon(AbnormalMarker)
+        MarkerOptions oo1 = new MarkerOptions().position(new LatLng(AbnormalReply.getLatitude()+Constants.LAT_OFFSET,AbnormalReply.getLongitude()+Constants.LON_OFFSET)).icon(AbnormalMarker)
                 .zIndex(0).period(10);
         oo1.animateType(MarkerOptions.MarkerAnimateType.grow);
         marker = (Marker)mAbnormal_BaiduMap.addOverlay(oo1);
@@ -152,7 +153,7 @@ public class Service_abnormal_map extends Activity  {
         for(int i = 1;i<9;i++)
         {
 
-            LatLng llCircle = new LatLng(AbnormalReply.getLatitude(), AbnormalReply.getLongitude());
+            LatLng llCircle = new LatLng(AbnormalReply.getLatitude()+Constants.LAT_OFFSET, AbnormalReply.getLongitude()+Constants.LON_OFFSET);
             Power_circle = Power_cnt-5*i;
             distance = Math.sqrt(Math.pow(10,(Power_cnt-Power_circle)/(5*Index)));
             Log.e("distance",String.valueOf(distance));
@@ -162,7 +163,7 @@ public class Service_abnormal_map extends Activity  {
 
             mAbnormal_BaiduMap.addOverlay(ooCircle);
 
-            LatLng llText = new LatLng((AbnormalReply.getLatitude()+distance/111+0.001), AbnormalReply.getLongitude());
+            LatLng llText = new LatLng((AbnormalReply.getLatitude()+Constants.LAT_OFFSET+distance/111+0.001), AbnormalReply.getLongitude()+Constants.LON_OFFSET);
             //构建文字Option对象，用于在地图上添加文字
             OverlayOptions textOption = new TextOptions()
                     .fontSize(30)

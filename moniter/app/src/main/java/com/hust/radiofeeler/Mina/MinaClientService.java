@@ -1,5 +1,6 @@
 package com.hust.radiofeeler.Mina;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Binder;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -34,6 +36,7 @@ import com.hust.radiofeeler.Bean.StationState;
 import com.hust.radiofeeler.Bean.SweepRange;
 import com.hust.radiofeeler.Bean.Threshold;
 import com.hust.radiofeeler.Bean.ToServerIQwaveFile;
+import com.hust.radiofeeler.Bean.ToServerPowerSpectrumAndAbnormalPoint;
 import com.hust.radiofeeler.Bean.UploadData;
 import com.hust.radiofeeler.Database.DatabaseHelper;
 import com.hust.radiofeeler.GlobalConstants.ConstantValues;
@@ -75,12 +78,15 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by jinaghao on 15/11/18.
  */
 public class MinaClientService extends Service {
+    public static final String TAG = "MinaClientService";
+    private final TowerBinder mBinder = new TowerBinder();
     private  static IoSession session=null;
     private static  IoConnector connector = new NioSocketConnector();
     private SQLiteDatabase db = null;
     private DatabaseHelper dbHelper = null;
     private MyApplication myApplication;
     ComputePara computePara = new ComputePara();
+    private int hasfile_count = 0;
 
     private Boolean Ispsfull = false;//queshao
     /*************Fpga的IP*************/
@@ -123,6 +129,8 @@ public class MinaClientService extends Service {
             if (msg.what == 1) {
                 //定时上传IQ文件，每5秒扫描一次
                 uploadIQFile();
+            }else if(msg.what==2){
+                uploadPowerSpectrumFile();
             }
         }
     };
@@ -558,14 +566,30 @@ public class MinaClientService extends Service {
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(ActivityReceiver, filter);
 
+        connector.setHandler(new MyClientHandler());
+        connector.getFilterChain().addLast("codec",
+                new ProtocolCodecFilter(new ToFPGAProtocolFactory()));
+        connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 1);
+        super.onCreate();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy() executed");
+        unregisterReceiver(ActivityReceiver);
+        ActivityReceiver = null;
+        db.close();
+        super.onDestroy();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand() executed");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    connector.setHandler(new MyClientHandler());
-                    connector.getFilterChain().addLast("codec",
-                            new ProtocolCodecFilter(new ToFPGAProtocolFactory()));
-                    connector.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 1);
+
 
 //                    ArrayList<String> ipList = getConnectIp();
 //                    FpgaIP = (String) ipList.get(1);
@@ -579,6 +603,7 @@ public class MinaClientService extends Service {
                                     Constants.IP, PORT));
                             future.awaitUninterruptibly();// 等待连接创建完成
                             session = future.getSession();
+
                             if(session.isConnected()) {
                                 Constants.FPGAsession = session;
                                 Looper.prepare();
@@ -586,13 +611,13 @@ public class MinaClientService extends Service {
                                 Constants.ID=getId(Constants.IP);
                                 Looper.loop();//
                                 break;
-                            }else{
-                                Looper.prepare();
-                                Toast.makeText(getBaseContext(),"连接失败！",Toast.LENGTH_SHORT).show();
-                                Looper.loop();//
                             }
                         } catch (Exception e) {
+                            Looper.prepare();
+                            Toast.makeText(getBaseContext(),"连接失败！",Toast.LENGTH_SHORT).show();
+                            Looper.loop();//
                             e.printStackTrace();
+
                         }
 
                     }
@@ -602,22 +627,22 @@ public class MinaClientService extends Service {
                 }
             }
         }).start();
-
-        super.onCreate();
-    }
-
-    @Override
-    public void onDestroy() {
-        unregisterReceiver(ActivityReceiver);
-        ActivityReceiver = null;
-        db.close();
-        super.onDestroy();
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
+    }
+    class TowerBinder extends Binder {
+        public MinaClientService getService() {
+            return MinaClientService.this;
+        }
+
+        public void doSomething() {
+            Log.d(TAG, "doSomething() executed");
+        }
     }
 
 
@@ -651,10 +676,7 @@ public class MinaClientService extends Service {
                                 temp_drawSpectrum = new ArrayList<float[]>();
                                // temp_drawWaterfall = new ArrayList<float[]>();
                                 map_abnormal = new HashMap<Float, Float>();
-                                //判断是否为有变化的文件
-                                if (PSAP.getIsChange() == 0x0f) {
-                                    fileIsChanged = 1;
-                                }
+
                                 //存数据
                                 byte[] byte1 = powerSpec2File(true, PSAP);//填入频段序号和功率谱值
                                 temp_powerSpectrum.add(byte1);
@@ -697,8 +719,19 @@ public class MinaClientService extends Service {
                                         Constants.FPGAsession.write(Constants.press);
                                     }
                                 }
+                                if(Constants.sendMode==1){
+                                    //手动上传
+                                    writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                }else if ((Constants.sendMode==2)&&(PSAP.getIsChange() == 0x0f)) {
+                                    fileIsChanged = 1;
+                                    //自动抽取上传模式，有变化就存文件
+                                    //判断是否为有变化的文件
+                                    writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                }else if(Constants.sendMode==3&&Constants.SELECT_COUNT==1){
+                                    //抽取上传
+                                    writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                }
 
-                                writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
                                 Lock lock = new ReentrantLock(); //锁对象
                                 lock.lock();
                                 try {
@@ -797,7 +830,18 @@ public class MinaClientService extends Service {
                                     if ((temp_powerSpectrum.size() == total) && (temp_abnormalPoint.size() == total)) {
                                         long t1= System.currentTimeMillis();
                                         Log.d("file","写文件开始时间："+t1);
-                                        writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                        if(Constants.sendMode==1){
+                                            //手动上传
+                                            writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                        }else if ((Constants.sendMode==2)&&(PSAP.getIsChange() == 0x0f)) {
+                                            fileIsChanged = 1;
+                                            //自动抽取上传模式，有变化就存文件
+                                            //判断是否为有变化的文件
+                                            writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                        }else if(Constants.sendMode==3&&Constants.SELECT_COUNT==1){
+                                            //抽取上传
+                                            writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                        }
                                         long t2= System.currentTimeMillis();
                                         Log.d("file","写文件结束时间："+t2);
                                         Log.d("file","写文件耗时："+(t2-t1));
@@ -846,7 +890,23 @@ public class MinaClientService extends Service {
                             //=============================异常频点=================================================
                         }
                     }).start();
+
+
+                    //开启文件上传，自动传输和抽取上传
+                    if(Constants.FILEsession!=null&&(Constants.sendMode==2||Constants.sendMode==3)){
+                        task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                Message message = new Message();
+                                message.what = 2;
+                                handler.sendMessage(message);
+                            }
+                        };
+                        timer.schedule(task, 1000, 5000);
+                    }
+
                 }
+
             }
             /**
              * 背景功率谱
@@ -1031,16 +1091,6 @@ public class MinaClientService extends Service {
                         System.arraycopy(iQwave.getIQwave(), 0, byte1, 14, 6001);
                         temp_IQwave.add(byte1);
                         writeIQFlie(iQwave, temp_IQwave);
-                        task = new TimerTask() {
-                            @Override
-                            public void run() {
-                                Message message = new Message();
-                                message.what = 1;
-                                handler.sendMessage(message);
-                            }
-                        };
-                        timer.schedule(task, 1000, 5000);
-
                     } else {
                         if (iQwave.getNowNum() == 1) {
                             temp_IQwave = new ArrayList<>();
@@ -1071,21 +1121,23 @@ public class MinaClientService extends Service {
                             //结束
                             if (temp_IQwave.size() == iQwave.getTotalBands()) {
                                 writeIQFlie(iQwave, temp_IQwave);
-                                task = new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        Message message = new Message();
-                                        message.what = 1;
-                                        handler.sendMessage(message);
-                                    }
-                                };
-                                timer.schedule(task, 1000, 5000);
+
                             }
                             Constants.IQCount = 0;
                         }
 
                     }
-
+                    if(Constants.FILEsession!=null){
+                        task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                Message message = new Message();
+                                message.what = 1;
+                                handler.sendMessage(message);
+                            }
+                        };
+                        timer.schedule(task, 1000, 5000);
+                    }
                 }
             }
             //==========================数据转发=======================
@@ -1158,42 +1210,6 @@ public class MinaClientService extends Service {
     }
 
 
-    private int getYear(byte[] bytes) {
-        int year;
-        year = ((bytes[9] & 0xff) << 4) + ((bytes[10] >> 4) & 0x0f);
-        return year;
-    }
-
-    private int getMonth(byte[] bytes) {
-        int month;
-        month = (bytes[10] & 0x0f);
-        return month;
-    }
-
-    private int getDay(byte[] bytes) {
-        int day;
-        day = ((bytes[11] >> 3) & 0x1f);
-        return day;
-    }
-
-    private int getHour(byte[] bytes) {
-        int hour;
-        hour = ((bytes[11] & 0x07) << 2) + (bytes[12] & 0x03);
-        return hour;
-    }
-
-    private int getMin(byte[] bytes) {
-        int min;
-        min = (bytes[12] >> 2) & 0xff;
-        return min;
-    }
-
-    private int getSecond(byte[] bytes) {
-        int second;
-        second = (bytes[13]) & 0xff;
-        return second;
-    }
-
     private String getFileName(String path) {
 
         int start = path.lastIndexOf("/");
@@ -1243,28 +1259,50 @@ public class MinaClientService extends Service {
         if(latitude!=0) {
             location+= df.format(latitude);//截小数点后6位，返回为String
         }
-//        int year = getYear(byte6);
-//        int month = getMonth(byte6);
-//        int day = getDay(byte6);
-//        int hour = getHour(byte6) + 8;
-//        int min = getMin(byte6);
-//        int sec = getSecond(byte6);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+
+        int year =  ((bytes[9] & 0xff) << 4) + ((bytes[10] >> 4) & 0x0f);
+        int month =(bytes[10] & 0x0f);
+        int day =((bytes[11] >> 3) & 0x1f);
+        int hour =((bytes[11] & 0x07) << 2) + (bytes[12] & 0x03)+8;//UTC转北京时间
+        int min = (bytes[12] >> 2) & 0x3f;
+        int sec = (bytes[13]) & 0xff;
+        String Syear = String.valueOf(year);
+        String smonth = String.valueOf(month< 10 ? "0" + month :month);
+        String Sday = String.valueOf(day< 10 ? "0" + day : day);
+
+        String Shour = String.valueOf(hour< 10 ? "0" + hour : hour);
+        String Smin = String.valueOf(min< 10 ? "0" + min : min);
+        String SEC = String.valueOf(sec< 10 ? "0" + sec : sec);
+
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         Date date=new Date();
-        String time = sdf.format(date);
+//        String time = sdf.format(date);
         long timeSec=date.getTime()/1000;//存储到秒
-        String fname = null;
-        //String name = null;
-        int count = 0;
+//        String fname = null;
+        String name = null;
+       // int count = 0;
+        String time=Syear + "-" + smonth + "-" + Sday + "-" + Shour + "-" + Smin+"-"+SEC ;
         //创建文件
         if (PASP.getStyle() == 0) {
-//        name = String.format("%d-%d-%d-%d-%d-%d-%d-%d-%s.%s", year, month, day, hour, min, sec,
-//                0, Constants.ID, "fine", "pwr");
 
-            fname = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "fine", "pwr");
+            name = time + "-" + String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "fine", "pwr");
 
             //判断是否是一秒内的文件，如果是，需要加上1s序号
+
+                String[] selectionArgs = {name};
+                Cursor cursor = db.rawQuery("SELECT * FROM localFile WHERE filename=?", selectionArgs);
+                if (cursor.getCount() < 1) {
+                    hasfile_count = 0;
+                    name = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "fine", "pwr");
+                } else {
+                    hasfile_count++;
+                    name = time + "-" + String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "fine", "pwr");
+                }
+            cursor.close();
+
+
+
 //            File[] PSFile = PSdir.listFiles();
 //            int fileNum=PSFile.length;
 //            if (fileNum> 0) {
@@ -1276,11 +1314,21 @@ public class MinaClientService extends Service {
 //                }
 //            }
 
-
         } else if (PASP.getStyle() == 1) {
 
-            fname = time + "-" +  String.format("%d-%d-%s.%s", 0, Constants.ID, "coarse", "pwr");
+            name = time + "-" +  String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "coarse", "pwr");
             //判断是否是一秒内的文件，如果是，需要加上1s序号
+            String[] selectionArgs = {name};
+            Cursor cursor = db.rawQuery("SELECT * FROM localFile WHERE filename=?", selectionArgs);
+            if (cursor.getCount() < 1) {
+                hasfile_count = 0;
+                name = time + "-" +  String.format("%d-%d-%s.%s",0, Constants.ID, "coarse", "pwr");
+
+            } else {
+                hasfile_count++;
+                name = time + "-" + String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "coarse", "pwr");
+            }
+            cursor.close();
 //            File[] PSFile = PSdir.listFiles();
 //            int fileNum=PSFile.length;
 //            if (fileNum > 0) {
@@ -1292,7 +1340,7 @@ public class MinaClientService extends Service {
 //                }
 //            }
         }
-        if(fname == null)
+        if(name == null)
             return ;
 
             if(Constants.isUpload!=0){
@@ -1304,7 +1352,7 @@ public class MinaClientService extends Service {
                 if (!PSdir.exists()) {
                     PSdir.mkdirs();//mkdir()不能创建多个目录
                 }
-                File file = new File(PSdir, fname);
+                File file = new File(PSdir, name);
                 //获取文件写入流
                 try {
                     dos = new DataOutputStream(new FileOutputStream(file));
@@ -1327,7 +1375,7 @@ public class MinaClientService extends Service {
             try {
                 //在此将文件的信息插入数据库===================
                 ContentValues cv = new ContentValues();
-                cv.put("filename", fname);
+                cv.put("filename", name);
                 cv.put("start", myApplication.getSweepStart());
                 cv.put("end", myApplication.getSweepEnd());
                 cv.put("location", location);
@@ -1416,26 +1464,30 @@ public class MinaClientService extends Service {
             PSdir.mkdirs();
         }
         //取出时间
-//        byte[] byte6 = iQwave.getTime();
-//        int year = getYear(byte6);
-//        int month = getMonth(byte6);
-//        int day = getDay(byte6);
-//        int hour = getHour(byte6)+8;//UTC转北京时间
-//        int min = getMin(byte6);
-//        int sec = getSecond(byte6);
+        byte[] bytes = iQwave.getTime();
+        int year =((bytes[0]&0xff)<<4)+((bytes[1]>>4)&0x0f);
+        int month =((bytes[1] >> 3) & 0x1f);
+        int day =((bytes[2] >> 3) & 0x1f);
+        int hour =((bytes[2] & 0x07) << 2) + (bytes[3] & 0x03)+8;//UTC转北京时间
+        int min = (bytes[3] >> 2) & 0x3f;
+        int sec = (bytes[4]) & 0xff;
+        String Syear = String.valueOf(year);
+        String smonth = String.valueOf(month< 10 ? "0" + month :month);
+        String Sday = String.valueOf(day< 10 ? "0" + day : day);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        String time = sdf.format(new Date());
-        String fname = null;
-//        String name = null;
-        int count = 0;
+        String Shour = String.valueOf(hour< 10 ? "0" + hour : hour);
+        String Smin = String.valueOf(min< 10 ? "0" + min : min);
+        String SEC = String.valueOf(sec< 10 ? "0" + sec : sec);
+        String name = null;
+
         //创建文件
-//        name = String.format("%d-%d-%d-%d-%d-%d-%d.%s", year, month, day, hour, min, sec,
-//                 Constants.ID, "Niq");
-        fname = time + "-" + String.format("%d-%d.%s", Constants.ID, Constants.sequenceID, "iq");
+        name =Syear + "-" + smonth + "-" + Sday + "-" + Shour + "-" + Smin+"-"+SEC + "-" +
+                String.format("%d-%d.%s", Constants.ID, Constants.sequenceID, "iq");
 
-        if (fname != null) {
-            File file = new File(PSdir, fname);
+//        fname = time + "-" + String.format("%d-%d.%s", Constants.ID, Constants.sequenceID, "iq");
+
+        if (name != null) {
+            File file = new File(PSdir, name);
             //获取文件写入流
             try {
                 dos = new DataOutputStream(new FileOutputStream(file));
@@ -1448,7 +1500,7 @@ public class MinaClientService extends Service {
 
                 //在此将文件的信息插入数据库===================
                 ContentValues cv = new ContentValues();
-                cv.put("filename", fname);
+                cv.put("filename", name);
                 cv.put("upload", 0);
                 cv.put("_times", 0);
                 db.insert("iqFile", null, cv);
@@ -1598,6 +1650,89 @@ public class MinaClientService extends Service {
       }
       return id;
   }
+
+    private void uploadPowerSpectrumFile(){
+
+        /*********************************************************************************/
+        Cursor cursor = db.rawQuery("SELECT * FROM localFile WHERE upload=1", null);
+        while (cursor.moveToNext()) {
+            int times = cursor.getInt(cursor.getColumnIndex("times"));
+            String name = cursor.getString(cursor.getColumnIndex("fileName"));
+            ContentValues cvUpload = new ContentValues();
+            if(times==3){
+                //如果轮询3次，依旧没有上传成功，则将是否上传成功标志位置为0；
+                cvUpload.put("upload", 0);
+                cvUpload.put("times", 0);
+                db.update("localFile", cvUpload, "filename=?", new String[]{name});
+            }else{
+                //在这里更新数据库，将没有确认上传成功的文件对应上传次数加1
+                times=times+1;
+                cvUpload.put("times", times);
+                db.update("localFile", cvUpload, "filename=?", new String[]{name});
+            }
+        }
+        if(cursor!=null)
+            cursor.close();
+        /*****************************************************************************/
+        Cursor c = db.rawQuery("SELECT filename from localFile  where  upload=0", null);
+        while (c.moveToNext()) {
+
+            //上传文件
+            String name = c.getString(c.getColumnIndex("fileName"));
+            File file = new File(PSFILE_PATH, name);
+            if(!file.exists()){
+                //如果文件不存在，从数据库删除记录
+                db.delete("localFile","filename=?", new String[]{name});
+            }else {
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(file);
+                    byte[] content = new byte[fis.available()];
+                    byte[] buffer = new byte[content.length];
+                    while ((fis.read(buffer)) != -1) {
+                        content = buffer;
+                    }
+                    //将文件里的内容转化为对象
+                    ToServerPowerSpectrumAndAbnormalPoint ToPS = new ToServerPowerSpectrumAndAbnormalPoint();
+                    ToPS.setContent(content);
+                    ToPS.setContentLength(content.length);
+                    ToPS.setFileName(name);
+                    ToPS.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
+                    //将功率谱对象用服务器的session发出去
+                    Constants.FILEsession.write(ToPS);
+                    Log.d("file", "上传：" + name);
+                    //在这里更新数据库，将文件是否上传的标志位置为1
+                    ContentValues cvUpload = new ContentValues();
+                    cvUpload.put("upload", 1);
+                    db.update("localFile", cvUpload, "filename=?", new String[]{name});
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getBaseContext(), "请连接服务器", Toast.LENGTH_SHORT).show();
+                    Looper.loop();// 进入loop中的循环，查看消息队列
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getBaseContext(), "请连接服务器", Toast.LENGTH_SHORT).show();
+                    Looper.loop();// 进入loop中的循环，查看消息队列
+                } finally {
+                    try {
+                        if (fis != null) {
+                            fis.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }
+        }
+        if (c != null) {
+            c.close();
+        }
+
+    }
 }
 
 

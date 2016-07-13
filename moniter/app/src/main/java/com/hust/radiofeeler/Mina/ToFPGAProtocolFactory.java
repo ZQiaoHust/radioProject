@@ -141,10 +141,10 @@ public class ToFPGAProtocolFactory extends DemuxingProtocolCodecFactory {
         super.addMessageDecoder(UploadDataDecoder.class);
         super.addMessageDecoder(StationStateDecoder.class);
         super.addMessageDecoder(ConnectDecoder.class);
-//        super.addMessageDecoder(PowerSpectrumDecoder.class);
 
 
-//        super.addMessageDecoder(AbnormalFreqDecoder.class);
+
+
 
 
         // ==============================数据转发=====================================================

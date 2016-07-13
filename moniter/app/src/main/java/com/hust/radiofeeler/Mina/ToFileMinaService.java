@@ -15,6 +15,7 @@ import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
@@ -33,6 +34,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 
 
@@ -49,7 +51,8 @@ public class ToFileMinaService extends Service {
     private static IoConnector connector = new NioSocketConnector();
     private SQLiteDatabase db = null;
     private DatabaseHelper dbHelper = null;
-
+    public static final String PSFILE_PATH = Environment.getExternalStorageDirectory().
+            getAbsolutePath() + "/com.hust.radiofeeler/PowerSpectrumFile/";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -167,6 +170,11 @@ public class ToFileMinaService extends Service {
                 if (end.equals("pwr")) {
                     db.update("localFile", cvUpload, "filename=?", new String[]{name});
                     Log.d("file", "上传成功" + name);
+                    //删除已上传的文件
+                    File file = new File(PSFILE_PATH, name);
+                    if(file.exists())
+                        deleteFile(file);
+                    Log.d("file", "删除文件" + name);
                 } else if (end.equals("iq")) {
                     db.update("iqFile", cvUpload, "filename=?", new String[]{name});
                     Log.d("file", "上传成功" + name);
@@ -181,5 +189,41 @@ public class ToFileMinaService extends Service {
         }
     }
 
+    /**
+     * 删除文件
+     * @param file
+     */
+    private void deleteFile(File file) {
+        if (file.isFile()) {
+            deleteFileSafely(file);
+            return;
+        }
+        if (file.isDirectory()) {
+            File[] childFiles = file.listFiles();
+            if (childFiles == null || childFiles.length == 0) {
+                deleteFileSafely(file);
+                return;
+            }
+            for (int i = 0; i < childFiles.length; i++) {
+                deleteFile(childFiles[i]);
+            }
+            deleteFileSafely(file);
+        }
+    }
 
+
+    /**
+     * 安全删除文件.
+     * @param file
+     * @return
+     */
+    public static boolean deleteFileSafely(File file) {
+        if (file != null) {
+            String tmpPath = file.getParent() + File.separator + System.currentTimeMillis();
+            File tmp = new File(tmpPath);
+            file.renameTo(tmp);
+            return tmp.delete();
+        }
+        return false;
+    }
 }

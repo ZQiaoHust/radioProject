@@ -127,77 +127,6 @@ public class Share_fragment extends Fragment {
                                     int pace=0;
                                     uploadPowerSpectrumFile(c,pace);
 
-                                } else if (myApplication.getFileUploadMode() == 2) {
-                                    //自动门限上传
-                                    c = db.rawQuery("SELECT filename from localFile  where isChanged=1 AND upload=0", null);
-                                   int pace=0;
-                                    uploadPowerSpectrumFile(c,pace);
-                                } else if (myApplication.getFileUploadMode() == 3) {
-                                    //抽取上传
-                                    int pace = myApplication.getUpRate();
-                                    Cursor c = db.rawQuery("SELECT filename from localFile  where  upload=0", null);
-                                    int i = 0;
-                                    int fileNum = c.getCount();
-                                    while (c.moveToNext()) {
-                                        if (i % pace == 0) {
-
-                                            String name = c.getString(c.getColumnIndex("fileName"));
-                                            //上传文件
-                                            File file = new File(PSFILE_PATH, name);
-                                            try {
-                                                fis = new FileInputStream(file);
-//                                        dis = new DataInputStream(fis);
-                                                byte[] content = new byte[fis.available()];
-                                                byte[] buffer = new byte[content.length];
-                                                while ((fis.read(buffer)) != -1) {
-                                                    content = buffer;
-                                                }
-                                                //将文件里的内容转化为对象
-                                                ToServerPowerSpectrumAndAbnormalPoint ToPS = new ToServerPowerSpectrumAndAbnormalPoint();
-                                                ToPS.setContent(content);
-                                                ToPS.setContentLength(content.length);
-                                                ToPS.setFileName(name);
-                                                ToPS.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
-                                                //将功率谱对象用服务器的session发出去
-                                                Constants.FILEsession.write(ToPS);
-                                                //在这里更新数据库，将文件是否上传的标志位置为1
-//                                                ContentValues cvUpload = new ContentValues();
-//                                                cvUpload.put("upload", 1);
-//                                                db.update("localFile", cvUpload, "filename=?", new String[]{name});
-                                            } catch (FileNotFoundException e) {
-                                                e.printStackTrace();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                                Toast.makeText(getActivity(), "请连接服务器", Toast.LENGTH_SHORT).show();
-                                                Looper.loop();// 进入loop中的循环，查看消息队列
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                                Toast.makeText(getActivity(), "请连接服务器", Toast.LENGTH_SHORT).show();
-                                                Looper.loop();// 进入loop中的循环，查看消息队列
-                                            } finally {
-                                                try {
-                                                    if (fis != null) {
-
-                                                        fis.close();
-                                                    }
-
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        }
-                                        i++;
-                                        //上传文件达到十分之一时候更新进度条
-                                        if (i % (fileNum / 10) == 0) {
-                                            uploadFileCountPercent++;
-                                            handler.obtainMessage(1, uploadFileCountPercent).sendToTarget();
-                                        }
-                                    }
-                                    if (c != null) {
-
-                                        c.close();
-                                    }
-
                                 }
                                 Toast.makeText(getActivity(), "上传成功", Toast.LENGTH_SHORT).show();
                                 Looper.loop();
@@ -206,7 +135,7 @@ public class Share_fragment extends Fragment {
                     }
                 };
                 Timer timer = new Timer();
-                timer.schedule(task,1000,60000);
+                timer.schedule(task,1000,120000);//两分钟传一次
 
 
             }
@@ -340,55 +269,6 @@ public class Share_fragment extends Fragment {
             c.close();
         }
     }
-//    private void uploadIQFile() {
-//        File file = new File(IQFILE_PATH);
-//        if (!file.exists()) {
-//            return;
-//        }
-//        String[] tempList = file.list();
-//        for (int i = 0; i < tempList.length; i++) {
-//            String name=tempList[i];
-//            File f = new File(IQFILE_PATH, name);
-//        /* 取得扩展名 */
-//            String end = name
-//                    .substring(name.lastIndexOf(".") + 1, name.length())
-//                    .toLowerCase();
-//            String befoe=name.substring(0,name.lastIndexOf(".") );
-//            if(end.equals("uniq")){
-//                FileInputStream fis = null;
-//                try {
-//                    fis = new FileInputStream(f);
-//                    byte[] content = new byte[fis.available()];
-//                    byte[] buffer = new byte[content.length];
-//                    while ((fis.read(buffer)) != -1) {
-//                        content = buffer;
-//                    }
-//                    //将文件里的内容转化为对象
-//                    ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
-//                    ToWave.setContent(content);
-//                    ToWave.setContentLength(content.length);
-//                     String upname= befoe  + ".iq";
-//                    ToWave.setFileName(upname);
-//                    ToWave.setFileNameLength((short) upname.getBytes(Charset.forName("UTF-8")).length);
-//                    try {
-//                        Constants.FILEsession.write(ToWave);
-//                        if(tempList.length>10) {
-//                            f.delete();//上传后删除
-//                        }else{
-//                            File f2=new File(IQFILE_PATH, upname);
-//                            f.renameTo(f2);
-//                        }
-//                    }catch(Exception e){
-//
-//                    }
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
 
     private void uploadPowerSpectrumFile(Cursor c,int pace){
         if(Constants.isUpload!=0)//上传关闭
@@ -461,7 +341,7 @@ public class Share_fragment extends Fragment {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(getActivity(), "请连接服务器", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "上传文件很多，请稍等", Toast.LENGTH_SHORT).show();
                     Looper.loop();// 进入loop中的循环，查看消息队列
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -148,21 +148,21 @@ public class FinalStationState extends Activity {
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(StationStateReceiver, filter);
         Initing();
-        //initspinnerSetting();
+        initspinnerSetting();
         InitEvent();
 
     }
     private void Initing(){
         btn_connectServer= (Button) findViewById(R.id.btn_connectSERVER);
         btn_connectFile= (Button) findViewById(R.id.btn_connectFILE);
-       // btn_connect= (Button) findViewById(R.id.btn_connectPCB);
+        btn_connect= (Button) findViewById(R.id.btn_connectPCB);
         btn_requestNet= (Button) findViewById(R.id.btn_requestNetwork);
         btn_getpcb= (Button) findViewById(R.id.btn_getpcbinfo);
         mLinearLayout= (LinearLayout) findViewById(R.id.pcbinfo);
         tv_ID= (TextView) findViewById(R.id.tv_ID);
         tv_style= (TextView) findViewById(R.id.tv_style);
         tv_location= (TextView) findViewById(R.id.tv_location);
-        //spinner= (Spinner) findViewById(R.id.spinner_WIFI);
+        spinner= (Spinner) findViewById(R.id.spinner_WIFI);
         et_IP= (EditText) findViewById(R.id.et_serveIP);
         et_PORT= (EditText) findViewById(R.id.et_port);
         et_fileIP= (EditText) findViewById(R.id.et_fileIP);
@@ -189,7 +189,7 @@ public class FinalStationState extends Activity {
         list.add("ID:12 /IP:192.168.43.245");
         list.add("ID:13 /IP:192.168.43.34");
         list.add("ID:14 /IP:192.168.43.61");
-        list.add("ID:15 /IP:192.168.43.29");
+        list.add("ID:15 /IP:192.168.43.233");
 
         //2.新建数组适配器
         adapter=new ArrayAdapter<String>(FinalStationState.this,android.R.layout.simple_spinner_item,list);
@@ -203,6 +203,39 @@ public class FinalStationState extends Activity {
             @Override
             public void onClick(View v) {
                 FinalStationState.this.finish();
+            }
+        });
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        ID=11;
+                        IP="192.168.43.195";
+                        break;
+                    case 1:
+                        ID=12;
+                        IP="192.168.43.245";
+                        break;
+                    case 2:
+                        ID=13;
+                        IP="192.168.43.34";
+                        break;
+                    case 3:
+                        ID=14;
+                        IP="192.168.43.61";
+                        break;
+                    case 4:
+                        ID=15;
+                        IP="192.168.43.233";
+                        break;
+                }
+                Log.d("FPGA","ID:"+ ID+"     IP:"+ IP);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -250,6 +283,17 @@ public class FinalStationState extends Activity {
                 }
             }
         });
+        btn_connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Constants.IP=IP;
+                Intent startServiceIntent=new Intent(FinalStationState.this, MinaClientService.class);
+                startService(startServiceIntent);
+                Constants.time=getTimeSec(0);
+//                FinalStationState.this.deleteDatabase("sendFileDatabase");//删除数据库
+            }
+        });
 
         btn_getpcb.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -292,6 +336,14 @@ public class FinalStationState extends Activity {
         unregisterReceiver(StationStateReceiver);
         StationStateReceiver=null;
         super.onDestroy();
+    }
+    private String getTimeSec(int m) {
+        //得到开始时刻
+        Date date =new Date();
+        long sec=date.getTime()/1000;
+        if(m>0)
+            sec=sec-m*60;
+        return String.valueOf(sec);
     }
 
 

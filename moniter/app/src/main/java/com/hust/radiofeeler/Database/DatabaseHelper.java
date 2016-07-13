@@ -19,19 +19,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * 文件名，扫频范围，经纬度，经纬度是否已显式标志，文件上传标志，文件重传次数
      */
     public static final String sql = "create table ["+TABLE_NAME+"](_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "fileName VARCHAR UNIQUE, " +
+            "fileName VARCHAR(50) UNIQUE, " +
             "start SMALLINT ," +
             "end SMALLINT ," +
             "fileTime INTEGER,"+
-            "location VARCHAR ," +
-            "isShow SMALLINT,"+
-            "isChanged SMALLINT ," +
-            "upload SMALLINT," +
-            "times SMALLINT);";
+            "location VARCHAR(25) ," +
+            "isShow TINYINT,"+
+            "isChanged TINYINT ," +
+            "upload TINYINT," +
+            "times TINYINT);";
     public static final  String iqFile = "create table ["+TABLE_NAME_IQ+"](_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "fileName VARCHAR," +
-            "upload SMALLINT," +
-            "_times SMALLINT);";
+            "fileName VARCHAR(50)," +
+            "upload TINYINT," +
+            "_times TINYINT);";
 
     private DatabaseHelper(Context context) {
         super(context, DB_NAME, null, version);
@@ -57,7 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 db.execSQL("alter table localFile add column location VARCHAR");
                 break;
             case 2:
-                db.execSQL("alter table localFile add column isShow SMALLINT");
+                db.execSQL("alter table localFile add column isShow TINYINT");
                 break;
             case 5:
 

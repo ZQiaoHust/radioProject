@@ -30,5 +30,9 @@
     {
         "merged": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-mdpi-v4\\ic_launcher.png",
         "source": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-mdpi-v4\\ic_launcher.png"
+    },
+    {
+        "merged": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-mdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-mdpi-v4\\ic_launcher.png"
     }
 ]

@@ -72,8 +72,8 @@ public class Chart_spectrum extends Activity {
     private int totalseries = 2;//画图线条总数
     private double startFrq = 0, endFrq = 0;
 
-    private List<float[]> listdata;
-    private List<float[]> backdata;
+    private List<float[]> listdata=null;
+    private List<float[]> backdata=null;
     private double[] xv = new double[1024];
     private double[] yv = new double[1024];
     private double[] xv_back = new double[1024];
@@ -84,10 +84,7 @@ public class Chart_spectrum extends Activity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-//            if (msg.obj instanceof Info) {
-//                Info info = (Info) msg.obj;
-//                InitView(info.start, info.end);
-//            }
+
             if (msg.what == 1) {
                 updateChart();
             }
@@ -237,27 +234,26 @@ public class Chart_spectrum extends Activity {
     }
 
     private void updateChart() {
-        listdata = new ArrayList<>();
-        backdata = new ArrayList<>();
+
         //背景频谱（整段画）
         Lock lock = new ReentrantLock(); //锁对象
         lock.lock();
         try {
             if (!Constants.Queue_BackgroundSpectrum.isEmpty()) {
-                int size=Constants.Queue_BackgroundSpectrum.size();
-                Log.d("chart","背景频谱的段数:"+size);
+                int size = Constants.Queue_BackgroundSpectrum.size();
+                Log.d("chart", "背景频谱的段数:" + size);
                 backdata = Constants.Queue_BackgroundSpectrum.poll();
-//                if(size>=10)
-//                    Constants.Queue_BackgroundSpectrum.clear();
             }
+
         } catch (Exception e) {
 
         } finally {
             lock.unlock();
         }
+
         //避免图形缺失,背景频谱没有重传
-        if(backdata.size()==band){
-            for (int mj = 0; mj < backdata.size(); mj++) {
+        if(backdata!=null&&backdata.size()==band){
+            for (int mj = 0; mj <band; mj++) {
                 float[] data = backdata.get(mj);
                 int total = (int) data[0];
                 int circle = 1024 / total;
@@ -301,9 +297,6 @@ public class Chart_spectrum extends Activity {
                 int size=Constants.Queue_DrawRealtimeSpectrum.size();
                 Log.d("chart","实时频谱的段数:"+size);
                 listdata = Constants.Queue_DrawRealtimeSpectrum.poll();
-//                if(size>=10)
-//                    Constants.Queue_DrawRealtimeSpectrum.clear();
-
             }
         } catch (Exception e) {
 
@@ -311,9 +304,12 @@ public class Chart_spectrum extends Activity {
             lock1.unlock();
         }
 
+        if(listdata==null)
+            return;
+
         if(listdata.size()==band){
 
-            for (int mj = 0; mj < listdata.size(); mj++) {
+            for (int mj = 0; mj < band; mj++) {
                 float[] data = listdata.get(mj);
                 int total = (int) data[0];
                 int circle = 1024 / total;
@@ -351,6 +347,7 @@ public class Chart_spectrum extends Activity {
             chart.invalidate();
 
         }
+
 
     }
 
@@ -484,11 +481,7 @@ public class Chart_spectrum extends Activity {
 
 }
 
-class Info {
-    public int start = 1;
-    public int end = 1;
-    public int total = 1;
-}
+
 
 
 

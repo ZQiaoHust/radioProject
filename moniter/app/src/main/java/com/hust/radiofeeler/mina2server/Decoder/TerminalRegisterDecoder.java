@@ -60,7 +60,7 @@ public class TerminalRegisterDecoder implements MessageDecoder {
             buffer.put(in);// 添加到保存数据的buffer中
         }
         if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
-            final byte[] b = new byte[(int) length];
+            byte[] b = new byte[(int) length];
             byte[] temp = new byte[(int) length];
             in.get(temp,0, (int) (length-buffer.position()));//最后一次in的数据可能有多的
             buffer.put(temp);
@@ -71,7 +71,6 @@ public class TerminalRegisterDecoder implements MessageDecoder {
             File_TerminalRegister file = new File_TerminalRegister();
             file.setFileContent(b);
             out.write(file);
-            System.out.println("解码完成.......");
 
             ctx.reset();
             return MessageDecoderResult.OK;

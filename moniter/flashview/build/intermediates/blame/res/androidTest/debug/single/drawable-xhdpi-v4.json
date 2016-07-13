@@ -28,6 +28,10 @@
         "source": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_launcher.png"
     },
     {
+        "merged": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_launcher.png"
+    },
+    {
         "merged": "E:\\project\\testSliding_0628_service\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\ic_launcher.png",
         "source": "E:\\project\\testSliding_0628_service\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_launcher.png"
     }

@@ -115,6 +115,7 @@ public class MinaClientService extends Service {
     private int fileIsChanged = 0;
     private Timer timer = new Timer();
     private TimerTask task;
+    private int sec_count = 0;
 
     public static final String PSFILE_PATH = Environment.getExternalStorageDirectory().
             getAbsolutePath() + "/com.hust.radiofeeler/PowerSpectrumFile/";
@@ -1281,8 +1282,14 @@ public class MinaClientService extends Service {
         long timeSec=date.getTime()/1000;//存储到秒
 //        String fname = null;
         String name = null;
-       // int count = 0;
+        // int count = 0;
         String time=Syear + "-" + smonth + "-" + Sday + "-" + Shour + "-" + Smin+"-"+SEC ;
+        if(sec!=sec_count){
+            sec_count=sec;
+            hasfile_count=0;
+        }else{
+            hasfile_count++;
+        }
         //创建文件
         if (PASP.getStyle() == 0) {
 
@@ -1290,16 +1297,16 @@ public class MinaClientService extends Service {
 
             //判断是否是一秒内的文件，如果是，需要加上1s序号
 
-                String[] selectionArgs = {name};
-                Cursor cursor = db.rawQuery("SELECT * FROM localFile WHERE filename=?", selectionArgs);
-                if (cursor.getCount() < 1) {
-                    hasfile_count = 0;
-                    name = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "fine", "pwr");
-                } else {
-                    hasfile_count++;
-                    name = time + "-" + String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "fine", "pwr");
-                }
-            cursor.close();
+//                String[] selectionArgs = {name};
+//                Cursor cursor = db.rawQuery("SELECT * FROM localFile WHERE filename=?", selectionArgs);
+//                if (cursor.getCount() < 1) {
+//                    hasfile_count = 0;
+//                    name = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "fine", "pwr");
+//                } else {
+//                    hasfile_count++;
+//                    name = time + "-" + String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "fine", "pwr");
+//                }
+//            cursor.close();
 
 
 
@@ -1317,85 +1324,63 @@ public class MinaClientService extends Service {
         } else if (PASP.getStyle() == 1) {
 
             name = time + "-" +  String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "coarse", "pwr");
-            //判断是否是一秒内的文件，如果是，需要加上1s序号
-            String[] selectionArgs = {name};
-            Cursor cursor = db.rawQuery("SELECT * FROM localFile WHERE filename=?", selectionArgs);
-            if (cursor.getCount() < 1) {
-                hasfile_count = 0;
-                name = time + "-" +  String.format("%d-%d-%s.%s",0, Constants.ID, "coarse", "pwr");
 
-            } else {
-                hasfile_count++;
-                name = time + "-" + String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "coarse", "pwr");
-            }
-            cursor.close();
-//            File[] PSFile = PSdir.listFiles();
-//            int fileNum=PSFile.length;
-//            if (fileNum > 0) {
-//                for (int j = 0; j < fileNum; j++) {
-//                    if (fname.equals(PSFile[j].getName())) {
-//                        count++;
-//                        fname = time + "-" + String.format("%d-%d-%s.%s", count, Constants.ID, "coarse", "pwr");
-//                    }
-//                }
-//            }
         }
         if(name == null)
             return ;
 
-            if(Constants.isUpload!=0){
-                //上传关闭
-                //本地路径入库，不生成文件
-                times=2;
-            }else {
-                File PSdir = new File(PSFILE_PATH);
-                if (!PSdir.exists()) {
-                    PSdir.mkdirs();//mkdir()不能创建多个目录
-                }
-                File file = new File(PSdir, name);
-                //获取文件写入流
-                try {
-                    dos = new DataOutputStream(new FileOutputStream(file));
-                    dos.write((byte) 0x00);
-                    for (int j = 0; j < mlist.size(); j++) {
-                        dos.write(mlist.get(j));
-                    }
-                    dos.write(0xff);
-                    for (int k = 0; k < ablist.size(); k++) {
-                        dos.write(ablist.get(k));
-                    }
-                    dos.write(0x00);
-                    dos.close();
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        if(Constants.isUpload!=0){
+            //上传关闭
+            //本地路径入库，不生成文件
+            times=2;
+        }else {
+            File PSdir = new File(PSFILE_PATH);
+            if (!PSdir.exists()) {
+                PSdir.mkdirs();//mkdir()不能创建多个目录
             }
+            File file = new File(PSdir, name);
+            //获取文件写入流
             try {
-                //在此将文件的信息插入数据库===================
-                ContentValues cv = new ContentValues();
-                cv.put("filename", name);
-                cv.put("start", myApplication.getSweepStart());
-                cv.put("end", myApplication.getSweepEnd());
-                cv.put("location", location);
-                cv.put("isShow", 0);
-                if (PASP.getIsChange() == 0x0f)
-                    fileIsChanged = 1;
-                else
-                    fileIsChanged = 0;
+                dos = new DataOutputStream(new FileOutputStream(file));
+                dos.write((byte) 0x00);
+                for (int j = 0; j < mlist.size(); j++) {
+                    dos.write(mlist.get(j));
+                }
+                dos.write(0xff);
+                for (int k = 0; k < ablist.size(); k++) {
+                    dos.write(ablist.get(k));
+                }
+                dos.write(0x00);
+                dos.close();
 
-                cv.put("isChanged", fileIsChanged);
-                cv.put("upload", 0);
-                cv.put("times", times);
-                cv.put("fileTime",timeSec);
-                db.insert("localFile", null, cv);
-            }catch(Exception e){
 
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
+        try {
+            //在此将文件的信息插入数据库===================
+            ContentValues cv = new ContentValues();
+            cv.put("filename", name);
+            cv.put("start", myApplication.getSweepStart());
+            cv.put("end", myApplication.getSweepEnd());
+            cv.put("location", location);
+            cv.put("isShow", 0);
+            if (PASP.getIsChange() == 0x0f)
+                fileIsChanged = 1;
+            else
+                fileIsChanged = 0;
+
+            cv.put("isChanged", fileIsChanged);
+            cv.put("upload", 0);
+            cv.put("times", times);
+            cv.put("fileTime",timeSec);
+            db.insert("localFile", null, cv);
+        }catch(Exception e){
+
+        }
 
     }
-
     /**
      * 解析供写功率谱文件的数据帧
      *
@@ -1466,7 +1451,7 @@ public class MinaClientService extends Service {
         //取出时间
         byte[] bytes = iQwave.getTime();
         int year =((bytes[0]&0xff)<<4)+((bytes[1]>>4)&0x0f);
-        int month =((bytes[1] >> 3) & 0x1f);
+        int month =(bytes[1]& 0x0f);
         int day =((bytes[2] >> 3) & 0x1f);
         int hour =((bytes[2] & 0x07) << 2) + (bytes[3] & 0x03)+8;//UTC转北京时间
         int min = (bytes[3] >> 2) & 0x3f;
@@ -1642,7 +1627,7 @@ public class MinaClientService extends Service {
           case "192.168.43.61":
               id=14;
               break;
-          case "192.168.43.29":
+          case "192.168.43.233":
               id=15;
               break;
           default:

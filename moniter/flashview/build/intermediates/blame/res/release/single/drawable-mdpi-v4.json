@@ -1,5 +1,9 @@
 [
     {
+        "merged": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\src\\main\\res\\drawable-mdpi\\ic_launcher.png"
+    },
+    {
         "merged": "E:\\project\\testSliding_0625_ing\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-mdpi-v4\\ic_launcher.png",
         "source": "E:\\project\\testSliding_0625_ing\\flashview\\src\\main\\res\\drawable-mdpi\\ic_launcher.png"
     },

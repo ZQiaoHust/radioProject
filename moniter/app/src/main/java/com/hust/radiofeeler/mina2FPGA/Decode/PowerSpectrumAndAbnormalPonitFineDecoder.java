@@ -31,7 +31,7 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
 
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
-        if(Constants.flag ) {
+        if (Constants.flag) {
             Constants.buffer.flip();
             Constants.buffer.limit(Constants.positionValue);
             byte headtail = Constants.buffer.get();
@@ -45,18 +45,18 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
 //            }
             byte functionCode = Constants.buffer.get();
             if (functionCode == 0x51 || functionCode == 0x53) {
-                Constants.Isstop=false;
+                Constants.Isstop = false;
                 return MessageDecoderResult.OK;
 
             } else {
-                Constants.Isstop=true;
+                Constants.Isstop = true;
                 return MessageDecoderResult.NOT_OK;
             }
-        }else {
+        } else {
             if (in.remaining() < 2) {
                 return MessageDecoderResult.NEED_DATA;
             } else {
-                byte head=in.get();
+                byte head = in.get();
 //                while (head != (byte) 0x55) {
 //                    i++;
 //                    head=in.get();
@@ -67,10 +67,10 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
 //                }
                 byte functionCode = in.get();
                 if (functionCode == 0x51 || functionCode == 0x53) {
-                    Constants.Isstop=false;
+                    Constants.Isstop = false;
                     return MessageDecoderResult.OK;
                 } else {
-                    Constants.Isstop=true;
+                    Constants.Isstop = true;
                     return MessageDecoderResult.NOT_OK;
                 }
             }
@@ -89,10 +89,10 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
             Constants.buffer.flip();
             Constants.buffer.limit(Constants.positionValue);
             buffer.put(Constants.buffer);
-            matchCount=Constants.positionValue;
+            matchCount = Constants.positionValue;
             Constants.buffer.clear();
-            Constants.flag=false;
-            Constants.positionValue=0;
+            Constants.flag = false;
+            Constants.positionValue = 0;
         }
 
 ///////////////////////////////////////////////////
@@ -101,13 +101,13 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
         Constants.ctx.setMatchLength(matchCount);
 
         if (in.hasRemaining()) {// 如果in中还有数据
-            if(matchCount< length) {
+            if (matchCount < length) {
                 buffer.put(in);// 添加到保存数据的buffer中
             }
             if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
-                final byte[] b = new byte[1614];
+                byte[] b = new byte[1614];
                 byte[] temp = new byte[1614];
-                in.get(temp,0, (int) (length-buffer.position()));//最后一次in的数据可能有多的
+                in.get(temp, 0, (int) (length - buffer.position()));//最后一次in的数据可能有多的
                 buffer.put(temp);
                 // 一定要添加以下这一段，否则不会有任何数据,因为，在执行in.put(buffer)时buffer的起始位置已经移动到最后，所有需要将buffer的起始位置移动到最开始
                 buffer.flip();
@@ -126,20 +126,20 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
                         Timer timer = new Timer();
                         timer.schedule(task, 20);
                         out.write(PSAP);
-                       Log.d("file", "当前帧总共段数：" + PSAP.getTotalBand());
+                        Log.d("file", "当前帧总共段数：" + PSAP.getTotalBand());
                         Log.d("file", "当前帧所在序号：" + PSAP.getNumN());
 
                         //如果是抽取上传模式，则需要计数
-                        if(PSAP.getNumN()==1&&Constants.sendMode==3){
-                            if(Constants.SELECT_COUNT==Constants.selectRate)
-                                Constants.SELECT_COUNT=0;
+                        if (PSAP.getNumN() == 1 && Constants.sendMode == 3) {
+                            if (Constants.SELECT_COUNT == Constants.selectRate)
+                                Constants.SELECT_COUNT = 0;
                             Constants.SELECT_COUNT++;
-                          long a= System.currentTimeMillis();
-                            Log.d("file","收到第一段时间："+a);
+                            long a = System.currentTimeMillis();
+                            Log.d("file", "收到第一段时间：" + a);
                         }
-                        if(PSAP.getTotalBand()==PSAP.getNumN()){
-                            long t1= System.currentTimeMillis();
-                            Log.d("file","收齐数据段的时刻："+t1);
+                        if (PSAP.getTotalBand() == PSAP.getNumN()) {
+                            long t1 = System.currentTimeMillis();
+                            Log.d("file", "收齐数据段的时刻：" + t1);
 
                         }
                         Constants.NotFill = false;//收成功，NotFill表示没满的变量
@@ -148,7 +148,7 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
                     }
                 } else {
                     Constants.failCount++;
-                    Log.d("fail", "重传次数：" +  Constants.failCount);
+                    Log.d("fail", "重传次数：" + Constants.failCount);
                     Constants.FPGAsession.write(mReceiveWrong);
                 }
                 Constants.ctx.reset();
@@ -207,58 +207,5 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
         }
         return ctx;
     }
-
-    /**
-     * 定义一个内部类，用来封转当前解码器中的一些公共数据，主要是用于大数据解析
-     //     */
-//    private class Context {
-//        public IoBuffer buffer;
-//        public long length = 1613 ;
-//        public long matchLength = 0;
-//        public long startTime=0;
-//
-//        public Context() {
-//            buffer = IoBuffer.allocate(1024).setAutoExpand(true);
-//        }
-//
-//        public void setBuffer(IoBuffer buffer) {
-//            this.buffer = buffer;
-//        }
-//
-//        public void setLength(long length) {
-//            this.length = length;
-//        }
-//
-//        public void setMatchLength(long matchLength) {
-//            this.matchLength = matchLength;
-//        }
-//
-//        public IoBuffer getBuffer() {
-//
-//            return buffer;
-//        }
-//
-//        public long getLength() {
-//            return length;
-//        }
-//
-//        public long getMatchLength() {
-//            return matchLength;
-//        }
-//        public long getStartTime() {
-//            return startTime;
-//        }
-//
-//        public void setStartTime(long startTime) {
-//
-//            this.startTime = startTime;
-//        }
-
-//        public void reset() {
-//            this.buffer.clear();
-//            this.length = 1613;
-//            this.matchLength = 0;
-//            this.startTime=0;
-//        }
-//    }
 }
+

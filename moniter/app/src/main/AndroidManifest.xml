@@ -14,6 +14,7 @@
     <application
         android:name="com.hust.radiofeeler.GlobalConstants.MyApplication"
         android:allowBackup="true"
+        android:largeHeap="true"
         android:icon="@drawable/app"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -138,7 +139,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="S0XuYDoj5auXu6tkp3ENBUpuSpZHeu6G"/><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+            android:value="TvPT0k2k5lF4S0ruQxDiNabVohpwzs83"/><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"

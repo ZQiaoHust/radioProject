@@ -70,7 +70,7 @@ public class Constants {
 	public  static  int  judgePower;//功率谱变化判断门限
 	public  static  int  selectRate;//抽取倍率
 	public  static  boolean IsDrawWaterfall=false;//画瀑布图触发事件
-	public  static  boolean IsshowAbnormalList=false;//显示异常频点触发事件
+	//public  static  boolean IsshowAbnormalList=false;//显示异常频点触发事件
 	public  static  int serverSweepCount=0;//中心站设置扫频范围，多频段段数
 
 	public static int  failCount;//实时频谱重传次数

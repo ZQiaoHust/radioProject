@@ -34,14 +34,13 @@ public class IQwaveDecoder implements MessageDecoder {
             return MessageDecoderResult.NEED_DATA;
         } else {
             byte frameHead = in.get();
-            if (frameHead == (byte) 0x55) {
-                byte functionCode = in.get();
-                if (functionCode == 0x54) {
+            byte functionCode = in.get();
+            if ((frameHead == (byte) 0x55)&&(functionCode == 0x54)) {
+
                     return MessageDecoderResult.OK;
                 } else
                     return MessageDecoderResult.NOT_OK;
-            } else
-                return MessageDecoderResult.NOT_OK;
+
         }
     }
 
@@ -62,7 +61,7 @@ public class IQwaveDecoder implements MessageDecoder {
                 buffer.put(in);// 添加到保存数据的buffer中
             }
             if (matchCount >= length) {// 如果已经发送的数据的长度>=目标数据的长度,则进行解码
-                final byte[] b = new byte[(int) length];
+               byte[] b = new byte[(int) length];
                 byte[] temp = new byte[(int) length];
                 in.get(temp, 0, (int) (length - buffer.position()));//最后一次in的数据可能有多的
                 buffer.put(temp);
@@ -80,7 +79,7 @@ public class IQwaveDecoder implements MessageDecoder {
                             }
                         };
                         Timer timer = new Timer();
-                        timer.schedule(task, 200);
+                        timer.schedule(task, 20);
                         out.write(iQwave);
                         Log.d("IQtrans", "当前帧总共段数：" + iQwave.getTotalBands());
                         Log.d("IQtrans", "当前帧所在序号：" + iQwave.getNowNum());

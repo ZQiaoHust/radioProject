@@ -551,6 +551,7 @@ public class ToServerMinaService extends Service {
         @Override
         public void sessionIdle(IoSession session, IdleStatus status)
                 throws Exception {
+            Log.d("session","sessionIdle");
         }
 
         @Override
@@ -973,6 +974,7 @@ public class ToServerMinaService extends Service {
 //					e.printStackTrace();
 //				}
 //			}
+            Log.d("session","getRequest");
             return heartbeatrequest;
         }
 

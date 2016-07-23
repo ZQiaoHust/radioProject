@@ -32,5 +32,6 @@ public class ToServerPowerSpectrumAndAbnormalPointEncoder implements MessageEnco
         buffer.put(message.getContent());
         buffer.flip();
         out.write(buffer);
+
     }
 }

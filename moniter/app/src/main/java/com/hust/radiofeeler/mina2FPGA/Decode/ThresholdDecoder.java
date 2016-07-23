@@ -48,7 +48,7 @@ public class ThresholdDecoder implements MessageDecoder {
                 threshold.setPacketHead(accept[0]);
                 threshold.setThresholdModel(accept[4]);
                 threshold.setAutoThreshold(accept[5]);
-                threshold.setFixThreshold(getFixTheshold(accept));
+                threshold.setFixThreshold(((accept[6]&0xff)<<8)+(accept[7]&0xff));
                 threshold.setContent(accept);
                 out.write(threshold);
                 return  MessageDecoderResult.OK;
@@ -65,7 +65,7 @@ public class ThresholdDecoder implements MessageDecoder {
     private int getFixTheshold(byte[] bytes){
 
         int fixThreshold;
-        fixThreshold=(bytes[6]<<24)+(bytes[7]<<16)+(bytes[8]<<8)+bytes[9];
+        fixThreshold=(bytes[6]<<8)+bytes[7];
         return fixThreshold;
     }
 }

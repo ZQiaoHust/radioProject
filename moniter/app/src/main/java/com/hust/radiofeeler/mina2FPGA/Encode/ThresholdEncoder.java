@@ -37,7 +37,8 @@ public class ThresholdEncoder implements MessageEncoder<Threshold> {
         data[5]= FixThresholdChangeToCode(message.getAutoThreshold());//门限类型和自适应门限
 
         //固定门限转换（固定门限的值不会有16bit）
-        data[6] = (byte) ((message.getFixThreshold()>> 8) & 0xff);//固定门限高八位，最高位符号位为0
+
+        data[6] = (byte) ((message.getFixThreshold()>> 8) & 0xff);//固定门限高八位，最高位符号位
         data[7]=(byte) (message.getFixThreshold()& 0xff);
         data[16]= (byte) 0xAA;
         return data;

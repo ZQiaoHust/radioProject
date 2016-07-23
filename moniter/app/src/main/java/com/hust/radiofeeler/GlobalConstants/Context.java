@@ -8,11 +8,11 @@ import org.apache.mina.core.buffer.IoBuffer;
  */
 public class Context {
     public IoBuffer buffer;
-    public long length = 1614 ;
+    public long length = 0 ;
     public long matchLength = 0;
 
     public Context() {
-        buffer = IoBuffer.allocate(1024).setAutoExpand(true);
+        buffer = IoBuffer.allocate(2048).setAutoExpand(true);
     }
 
     public void setBuffer(IoBuffer buffer) {
@@ -42,8 +42,8 @@ public class Context {
 
 
     public void reset() {
-        this.buffer.clear();
-        this.length = 1614;
+        this.buffer.sweep();
+        this.length = 0;
         this.matchLength = 0;
 
     }

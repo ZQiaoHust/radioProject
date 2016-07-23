@@ -4,6 +4,10 @@
         "source": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_launcher.png"
     },
     {
+        "merged": "E:\\project\\radiofeeler_0721\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\radiofeeler_0721\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_launcher.png"
+    },
+    {
         "merged": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\ic_launcher.png",
         "source": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_launcher.png"
     },
@@ -26,10 +30,6 @@
     {
         "merged": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\ic_launcher.png",
         "source": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_launcher.png"
-    },
-    {
-        "merged": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\ic_launcher.png",
-        "source": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\ic_launcher.png"
     },
     {
         "merged": "E:\\project\\testSliding_0628_service\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\ic_launcher.png",

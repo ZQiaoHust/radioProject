@@ -16,16 +16,16 @@
         "source": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     },
     {
+        "merged": "E:\\project\\radiofeeler_0721\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
+        "source": "E:\\project\\radiofeeler_0721\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+    },
+    {
         "merged": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
         "source": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     },
     {
         "merged": "E:\\project\\testSliding_0625_ing\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
         "source": "E:\\project\\testSliding_0625_ing\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
-    },
-    {
-        "merged": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",
-        "source": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     },
     {
         "merged": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\debug\\layout\\layout_slideshow.xml",

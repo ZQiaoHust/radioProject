@@ -38,7 +38,7 @@ public class Map_Route_local_Result extends Activity {
     private MapRoute route_setting_data;
     private ArrayList<Map<String, Object>> RouteInfoList = new ArrayList<>();
     private ArrayList<Map<String, Object>> RouteInfoList_update = new ArrayList<>();
-    private MapRouteResult map =new MapRouteResult();
+    private MapRouteResult map = new MapRouteResult();
     private byte[] startTime, endTime;
     private int default_height = 100, default_rPara = 2, default_Power = -20;
 
@@ -50,14 +50,15 @@ public class Map_Route_local_Result extends Activity {
     private static final String TABLE_NAME = "localFile";
 
     private Timer mTimer = new Timer();
-    private Cursor c=null;
+    private Cursor c = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_route_local_infolist);
         MyTopBar topBar = (MyTopBar) findViewById(R.id.topbar_RouteMapInfo_local);
 
-        String testStr ="E115.1536N30.896547";
+        String testStr = "E115.1536N30.896547";
         InitSetting();
         route_setting_data = getIntent().getParcelableExtra(Map_Route_Setting.LOCAL_ROUTE_KEY);
         topBar.setOnTopBarClickListener(new MyTopBar.TopBarClickListener() {
@@ -85,11 +86,11 @@ public class Map_Route_local_Result extends Activity {
         getLocalRouteData(route_setting_data.getCentralFreq(), route_setting_data.getBand(), route_setting_data.getStartTime());
 
         // init timer
-       // mTimer = new Timer();
+        // mTimer = new Timer();
         // start timer task
         //setTimerTask();
         if (RouteInfoList != null) {
-             simpleAdapter = new SimpleAdapter(Map_Route_local_Result.this, RouteInfoList,
+            simpleAdapter = new SimpleAdapter(Map_Route_local_Result.this, RouteInfoList,
                     R.layout.abnormal_frequency_item_local, new String[]{"item_time", "item_location"},
                     new int[]{R.id.seq_num_local, R.id.freq_local});
             mlistView.setAdapter(simpleAdapter);
@@ -117,7 +118,7 @@ public class Map_Route_local_Result extends Activity {
             int msgId = msg.what;
             switch (msgId) {
                 case 1:
-                     getLocalRouteData(route_setting_data.getCentralFreq(),
+                    getLocalRouteData(route_setting_data.getCentralFreq(),
                             route_setting_data.getBand(), route_setting_data.getStartTime());
                     //RouteInfoList.add(RouteInfoList_update);
                     simpleAdapter.notifyDataSetChanged();
@@ -128,48 +129,49 @@ public class Map_Route_local_Result extends Activity {
             }
         }
     };
+
     @Override
     public void onPause() {
         //RouteInfoList.clear();
-        Log.d("map","onPause()");
+        Log.d("map", "onPause()");
         super.onPause();
     }
 
     @Override
     public void onStart() {
         setTimerTask();
-        Log.d("map","setTimerTask()");
+        Log.d("map", "setTimerTask()");
         super.onStart();
     }
 
     @Override
     protected void onDestroy() {
-        Log.d("map","timer.cancel()");
+        Log.d("map", "timer.cancel()");
         mTimer.cancel();
 
 
-        if(c!=null)
+        if (c != null)
             c.close();
         super.onDestroy();
     }
 
     private void getLocalRouteData(int CenterFreq, int band, byte[] StartTime) {
         String[] TimeValue;
-        int month,year,day,hour,minute;
-        String longitudeStyle,latitudeStyle;
-        String having = "isShow=0" ;
-        float longitude,latitude;
+        int month, year, day, hour, minute;
+        String longitudeStyle, latitudeStyle;
+        String having = "isShow=0";
+        float longitude, latitude;
         ArrayList<Map<String, Object>> listItems = new ArrayList<>();
         ArrayList<MapRadioPointInfo> mapRadioPointInfoList = new ArrayList<MapRadioPointInfo>();
 
         //�õ���ʼʱ���ַ�������ʼƵ�ʣ���ֹƵ��
-        String selectionStartTime = String.valueOf(StartTime[0]-48) +String.valueOf(StartTime[1]-48)+String.valueOf(StartTime[2]-48)
-                +String.valueOf(StartTime[3]-48)+ '-' + String.valueOf(StartTime[7]-48) + String.valueOf(StartTime[8]-48)+'-' +String.valueOf(StartTime[12]-48)+String.valueOf(StartTime[13]-48)
-                +'-' +String.valueOf(StartTime[18]-48)+String.valueOf(StartTime[19]-48)+'-'+String.valueOf(StartTime[21]-48)+String.valueOf(StartTime[22]-48);
+        String selectionStartTime = String.valueOf(StartTime[0] - 48) + String.valueOf(StartTime[1] - 48) + String.valueOf(StartTime[2] - 48)
+                + String.valueOf(StartTime[3] - 48) + '-' + String.valueOf(StartTime[7] - 48) + String.valueOf(StartTime[8] - 48) + '-' + String.valueOf(StartTime[12] - 48) + String.valueOf(StartTime[13] - 48)
+                + '-' + String.valueOf(StartTime[18] - 48) + String.valueOf(StartTime[19] - 48) + '-' + String.valueOf(StartTime[21] - 48) + String.valueOf(StartTime[22] - 48);
         String selectionStartFreq = String.valueOf(CenterFreq - band);
         String selectionEndFreq = String.valueOf(CenterFreq + band);
         //���ò�ѯ����
-        String[] SelecctArgs = {selectionStartTime,"0"};//
+        String[] SelecctArgs = {selectionStartTime, "0"};//
         String[] columns = new String[]{"fileName", "location"};
         SQLiteDatabase db = openOrCreateDatabase(DB_NAME, MODE_PRIVATE, null);
 
@@ -237,91 +239,70 @@ public class Map_Route_local_Result extends Activity {
 //        db.insert(TABLE_NAME, null, cv);
         //String query = "select * from POWERSPECTRUM3 where TERMINALID= ? AND DATETIME BETWEEN ? AND ? AND STARTFREQ<=? AND ENDFREQ>=? ORDER BY DATETIME ASC";
         //Cursor c = db.query(TABLE_NAME, columns, "fileName>? and start=? and end=? ", SelecctArgs, null, null, "fileName" + " ASC",null);
-         c = db.query(TABLE_NAME,columns, "fileName>?  and isShow = ?",SelecctArgs,null,null,"fileName" + " ASC",null);
+        c = db.query(TABLE_NAME, columns, "fileName>?  and isShow = ?", SelecctArgs, null, null, "fileName" + " ASC", null);
         //�ж�cursor��Ϊ�� �������Ҫ
 
         if (c != null) {
             // ѭ������cursor
             if (c.moveToFirst() == false) { //Ϊ�յ�Cursor
-                return ;
+                return;
             }
             //String[] columnStr = c.getColumnNames();
             int i = 0;
 
-             do{
+            do {
                 Map<String, Object> data = new HashMap<>();
                 String Time = c.getString(c.getColumnIndex("fileName"));
                 String location = c.getString(c.getColumnIndex("location"));
-                TimeValue=Time.split("-");
-                month =Integer.parseInt(TimeValue[1]);
+                TimeValue = Time.split("-");
+                month = Integer.parseInt(TimeValue[1]);
                 year = Integer.parseInt(TimeValue[0]);
-                day =Integer.parseInt(TimeValue[2]);
-                hour =Integer.parseInt(TimeValue[3]);
-                minute =Integer.parseInt(TimeValue[4]);
-                 //经纬度
-                 String[] locationValue=location.split(",");
+                day = Integer.parseInt(TimeValue[2]);
+                hour = Integer.parseInt(TimeValue[3]);
+                minute = Integer.parseInt(TimeValue[4]);
+                //经纬度
+                String[] locationValue = location.split(",");
                 longitudeStyle = locationValue[0].substring(0, 1);
-                 int len=locationValue[0].length();
-                 if(len==1)
-                     longitude=0;
-                 else
-                      longitude =Float.parseFloat(locationValue[0].substring(1, len));
+                int len = locationValue[0].length();
+                if (len == 1)
+                    longitude = 0;
+                else
+                    longitude = Float.parseFloat(locationValue[0].substring(1, len));
                 latitudeStyle = locationValue[1].substring(0, 1);
-                 int len2=locationValue[1].length();
-                 if(len2==1)
-                     latitude=0;
-                 else
-                     latitude =Float.parseFloat(locationValue[1].substring(1, len2));
+                int len2 = locationValue[1].length();
+                if (len2 == 1)
+                    latitude = 0;
+                else
+                    latitude = Float.parseFloat(locationValue[1].substring(1, len2));
 
                 //Log.v("info", "�ļ��� " + name + "��γ��Ϊ " + hp);
-                MapRadioPointInfo mMapRadioPointInfo = new MapRadioPointInfo(month,year,day, hour,
-                        longitudeStyle,minute ,longitude , latitudeStyle,latitude, default_height, default_Power, default_rPara);
+                MapRadioPointInfo mMapRadioPointInfo = new MapRadioPointInfo(month, year, day, hour,
+                        longitudeStyle, minute, longitude, latitudeStyle, latitude, default_height, default_Power, default_rPara);
                 mapRadioPointInfoList.add(i, mMapRadioPointInfo);
                 i++;
-                data.put("item_time", TimeValue[0]+'-'+TimeValue[1]+'-'+TimeValue[2]+' '+TimeValue[3]+':'+TimeValue[4]+':'+TimeValue[5]);
+                data.put("item_time", TimeValue[0] + '-' + TimeValue[1] + '-' + TimeValue[2] + ' ' + TimeValue[3] + ':' + TimeValue[4] + ':' + TimeValue[5]);
                 data.put("item_location", location);
                 RouteInfoList.add(data);
                 ContentValues cvv = new ContentValues();//ʵ����ContentValues
-                cvv.put("isShow",1);//���Ҫ���ĵ��ֶμ�����
+                cvv.put("isShow", 1);//���Ҫ���ĵ��ֶμ�����
                 String whereClause = "fileName=?";//�޸�����
                 String[] whereArgs = {Time};//�޸������Ĳ���
                 db.update(TABLE_NAME, cvv, whereClause, whereArgs);//ִ���޸�
-            }while (c.moveToNext());
+            } while (c.moveToNext());
             map.setMapRadioPointInfoList(mapRadioPointInfoList);
         }
-            c.close();
+        c.close();
+
+    }
+
+
+    private void InitSetting() {
+        tv_data = (TextView) findViewById(R.id.tv_datafrom_local);
+        tv_freq = (TextView) findViewById(R.id.tv_centralFreq_local);
+        tv_band = (TextView) findViewById(R.id.tv_band_local);
+        mlistView = (ListView) findViewById(R.id.listview_mapRoute_local);
+        RouteInfoList = new ArrayList<>();
+    }
 
 }
-
-
-
-    private void InitSetting(){
-        tv_data= (TextView)findViewById(R.id.tv_datafrom_local);
-        tv_freq= (TextView) findViewById(R.id.tv_centralFreq_local);
-        tv_band= (TextView) findViewById(R.id.tv_band_local);
-        mlistView= (ListView) findViewById(R.id.listview_mapRoute_local);
-        RouteInfoList=new ArrayList<>();
-    }
-
-//        private ArrayList<Map<String, Object>> Object2List(MapRouteResult map){
-//            ArrayList<Map<String, Object>> listItems=new ArrayList<>();
-//            ArrayList<MapRadioPointInfo> pointlist=map.getMapRadioPointInfoList();
-//            for(MapRadioPointInfo point:pointlist){
-//                Map<String,Object> data=new HashMap<>();
-//                String time=point.getYear()+"-"+point.getMonth()+"-"+point.getDate()+""
-//                        +point.getHour()+":"+point.getMin();
-//                TimeShow timeShow=new TimeShow(point.getYear(),point.getMonth(),point.getDate(),
-//                        point.getHour(),point.getMin());
-//                String location=point.getLongtitudeStyle()+point.getLongitude()+" ,"+
-//                        point.getLatitudeStyle()+point.getLatitude()+" ,"+point.getHeight();
-////            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-////            String time=sdf.format(timeShow);
-//                data.put("item_time",time);
-//                data.put("item_location",location);
-//                data.put("item_power",point.getEqualPower());
-//                listItems.add(data);
-//            }
-//            return listItems;
-//        }
-    }
 

@@ -31,6 +31,7 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
 
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
+        Log.d("abcd", "尝试PowerSpectrumAndAbnormalPonitFineDecoder谱解码器");
         if (Constants.flag) {
             Constants.buffer.flip();
             Constants.buffer.limit(Constants.positionValue);
@@ -96,8 +97,13 @@ public class PowerSpectrumAndAbnormalPonitFineDecoder implements MessageDecoder 
         }
 
 ///////////////////////////////////////////////////
-        matchCount += in.remaining();
-        Log.d("abcd", "共收到字节：" + String.valueOf(matchCount));
+        if(length==0){
+            length=1614;
+            Constants.ctx.setLength(length);
+            matchCount = in.remaining();
+        }else {
+            matchCount += in.remaining();
+        }
         Constants.ctx.setMatchLength(matchCount);
 
         if (in.hasRemaining()) {// 如果in中还有数据

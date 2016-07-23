@@ -12,6 +12,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME="sendFileDatabase.db";//数据库名称
     private static final String TABLE_NAME="localFile";//表名称
     private static final String TABLE_NAME_IQ="iqFile";//表名称
+    private static final String TABLE_NAME_POA="poaFile";//表名称
+    private static final String TABLE_NAME_TDOA="tdoaFile";//表名称
     private static final int  version=6;
     private static DatabaseHelper mInstance;
 
@@ -32,7 +34,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "fileName VARCHAR(50)," +
             "upload TINYINT," +
             "_times TINYINT);";
-
+    public static final  String poaFile = "create table ["+TABLE_NAME_POA+"](_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "fileName VARCHAR(50)," +
+            "upload TINYINT," +
+            "_times TINYINT);";
+    public static final  String tdoaFile = "create table ["+TABLE_NAME_TDOA+"](_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "fileName VARCHAR(50)," +
+            "upload TINYINT," +
+            "_times TINYINT);";
     private DatabaseHelper(Context context) {
         super(context, DB_NAME, null, version);
     }
@@ -47,6 +56,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(sql);
         db.execSQL(iqFile);
+        db.execSQL(poaFile);
+        db.execSQL(tdoaFile);
 
     }
 

@@ -26,6 +26,7 @@ import com.hust.radiofeeler.Bean.FixSetting;
 import com.hust.radiofeeler.Bean.IQwave;
 import com.hust.radiofeeler.Bean.InGain;
 import com.hust.radiofeeler.Bean.OutGain;
+import com.hust.radiofeeler.Bean.POAdata;
 import com.hust.radiofeeler.Bean.PowerSpectrumAndAbnormalPonit;
 import com.hust.radiofeeler.Bean.Press;
 import com.hust.radiofeeler.Bean.PressSetting;
@@ -34,9 +35,12 @@ import com.hust.radiofeeler.Bean.ReceiveRight;
 import com.hust.radiofeeler.Bean.ReceiveWrong;
 import com.hust.radiofeeler.Bean.StationState;
 import com.hust.radiofeeler.Bean.SweepRange;
+import com.hust.radiofeeler.Bean.TDOAdata;
 import com.hust.radiofeeler.Bean.Threshold;
 import com.hust.radiofeeler.Bean.ToServerIQwaveFile;
+import com.hust.radiofeeler.Bean.ToServerPOAFile;
 import com.hust.radiofeeler.Bean.ToServerPowerSpectrumAndAbnormalPoint;
+import com.hust.radiofeeler.Bean.ToServerTDOAFile;
 import com.hust.radiofeeler.Bean.UploadData;
 import com.hust.radiofeeler.Database.DatabaseHelper;
 import com.hust.radiofeeler.GlobalConstants.ConstantValues;
@@ -121,21 +125,37 @@ public class MinaClientService extends Service {
             getAbsolutePath() + "/com.hust.radiofeeler/PowerSpectrumFile/";
     public static final String IQFILE_PATH = Environment.getExternalStorageDirectory().
             getAbsolutePath() + "/com.hust.radiofeeler/IQwaveFile/";
-
+    public static final String POA_PATH = Environment.getExternalStorageDirectory().
+            getAbsolutePath() + "/com.hust.radiofeeler/POA/";
+    public static final String TDOA_PATH = Environment.getExternalStorageDirectory().
+            getAbsolutePath() + "/com.hust.radiofeeler/TDOA/";
     private DataOutputStream dos;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == 1) {
+            if(msg.what==2){
                 //定时上传IQ文件，每5秒扫描一次
                 uploadIQFile();
-            }else if(msg.what==2){
-                uploadPowerSpectrumFile();
+            }else if(msg.what==4){
+                //定时上传TDOA文件，每5秒扫描一次
+                uploadTDOAFile();
             }
         }
     };
 
+    private Handler hand= new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if (msg.what == 1) {
+                        uploadPowerSpectrumFile();
+                    }else if(msg.what==3){
+                        //定时上传POA文件，每5秒扫描一次
+                        uploadPOAFile();
+                    }
+                }
+            };
 
     private BroadcastReceiver ActivityReceiver = new BroadcastReceiver() {
         @Override
@@ -899,11 +919,11 @@ public class MinaClientService extends Service {
                             @Override
                             public void run() {
                                 Message message = new Message();
-                                message.what = 2;
-                                handler.sendMessage(message);
+                                message.what = 1;
+                                hand.sendMessage(message);
                             }
                         };
-                        timer.schedule(task, 1000, 5000);
+                        timer.schedule(task, 1000, 30000);
                     }
 
                 }
@@ -1133,7 +1153,7 @@ public class MinaClientService extends Service {
                             @Override
                             public void run() {
                                 Message message = new Message();
-                                message.what = 1;
+                                message.what = 2;
                                 handler.sendMessage(message);
                             }
                         };
@@ -1141,7 +1161,140 @@ public class MinaClientService extends Service {
                     }
                 }
             }
-            //==========================数据转发=======================
+            //辐射源数据帧,数据解析类似于扫频，因此部分变量公用
+            if (message instanceof POAdata) {
+                final POAdata poa= (POAdata) message;
+                if (poa != null) {
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            total = poa.getTotalBand();
+                            num = poa.getNumN();
+                            /**
+                             * 扫频范围只跨越一个25MHz
+                             */
+                            if (total == 1) {
+                                temp_abnormalPoint = new ArrayList<>();
+                                if(poa.getAbnormalInfo()==null||poa.getAbnormalInfo().length==0) {
+                                    //没有异常频点
+                                    return;
+                                }
+                                temp_abnormalPoint.add(poa.getAbnormalInfo());
+                                writePOAfile(poa,temp_abnormalPoint);
+                            } else {
+                                /**
+                                 * 扫频跨越多个25MHz
+                                 */
+                                if (num == 1) {
+                                    //判断起始段
+                                    temp_abnormalPoint = new ArrayList<>();
+                                    if(poa.getAbnormalInfo()!=null){
+                                        //有异常频点
+                                        temp_abnormalPoint.add(poa.getAbnormalInfo());
+                                    }
+                                    Constants.spectrumCount++;
+
+                                } else {
+                                    if (num == (Constants.spectrumCount + 1)) {
+                                        if(poa.getAbnormalInfo()!=null) {
+                                            //有异常频点
+                                            temp_abnormalPoint.add(poa.getAbnormalInfo());
+                                        }
+                                        Constants.spectrumCount++;
+                                    } else {
+                                        if (temp_abnormalPoint != null) {
+                                            temp_abnormalPoint.clear();
+                                        }
+                                        Constants.spectrumCount = 0;
+                                    }
+                                }
+                                if ((num == total) && (Constants.spectrumCount == total)) {
+                                    //结束
+                                    if (temp_abnormalPoint.size() != 0) {
+                                        writePOAfile(poa,temp_abnormalPoint);
+                                    }
+                                    Constants.spectrumCount = 0;
+                                }
+                            }
+                        }
+                    }).start();
+
+                    if(Constants.FILEsession!=null){
+                        task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                Message message = new Message();
+                                message.what = 3;
+                                hand.sendMessage(message);
+                            }
+                        };
+                        timer.schedule(task, 1000, 30000);
+                    }
+                }
+            }
+
+            //TDOA数据帧，与IQ数据帧一样
+            if (message instanceof TDOAdata) {
+                TDOAdata td = (TDOAdata) message;
+                if (td != null) {
+                    if (td.getTotalBands() == 1) {
+                        //只有一个数据块
+                        temp_IQwave = new ArrayList<>();
+                        byte[] byte1 = new byte[6015];
+                        System.arraycopy(td.getLocation(), 0, byte1, 0, 9);
+                        System.arraycopy(td.getIQpara(), 0, byte1, 9, 5);
+                        System.arraycopy(td.getIQwave(), 0, byte1, 14, 6001);
+                        temp_IQwave.add(byte1);
+                        writeTDOAFlie(td, temp_IQwave);
+                    } else {
+                        if (td.getNowNum() == 1) {
+                            temp_IQwave = new ArrayList<>();
+                            Constants.IQCount = 0;
+                            Constants.IQCount++;
+                            byte[] byte1 = new byte[6015];
+                            System.arraycopy(td.getLocation(), 0, byte1, 0, 9);
+                            System.arraycopy(td.getIQpara(), 0, byte1, 9, 5);
+                            System.arraycopy(td.getIQwave(), 0, byte1, 14, 6001);
+                            temp_IQwave.add(byte1);
+                        } else {
+
+                            if (td.getNowNum() == (Constants.IQCount + 1)) {
+                                //从第二块开始
+                                Constants.IQCount++;
+                                byte[] byte1 = new byte[6001];
+                                System.arraycopy(td.getIQwave(), 0, byte1, 0, 6001);
+                                temp_IQwave.add(byte1);
+                            } else {
+                                if (temp_IQwave != null) {
+                                    temp_IQwave.clear();
+                                }
+                                Constants.IQCount = 0;
+                            }
+
+                        }
+                        if ((td.getNowNum() == td.getTotalBands()) && (Constants.IQCount == td.getTotalBands())) {
+                            //结束
+                            if (temp_IQwave.size() == td.getTotalBands()) {
+                                writeTDOAFlie(td, temp_IQwave);
+                            }
+                            Constants.IQCount = 0;
+                        }
+                    }
+                    if(Constants.FILEsession!=null){
+                        task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                Message message = new Message();
+                                message.what = 4;
+                                handler.sendMessage(message);
+                            }
+                        };
+                        timer.schedule(task, 1000, 5000);
+                    }
+                }
+            }
 
         }
 
@@ -1195,7 +1348,7 @@ public class MinaClientService extends Service {
                 Constants.FPGAsession.write(mReceiveWrong);
                 Constants.Backfail = false;
                 Constants.IsJump = true;
-                Constants.ctxBack.reset();
+                Constants.ctx.reset();
             }
             if (Constants.Isstop) {
                 Constants.FPGAsession.write(mReceiveWrong);
@@ -1209,6 +1362,8 @@ public class MinaClientService extends Service {
 
         }
     }
+
+
 
 
     private String getFileName(String path) {
@@ -1294,32 +1449,6 @@ public class MinaClientService extends Service {
         if (PASP.getStyle() == 0) {
 
             name = time + "-" + String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "fine", "pwr");
-
-            //判断是否是一秒内的文件，如果是，需要加上1s序号
-
-//                String[] selectionArgs = {name};
-//                Cursor cursor = db.rawQuery("SELECT * FROM localFile WHERE filename=?", selectionArgs);
-//                if (cursor.getCount() < 1) {
-//                    hasfile_count = 0;
-//                    name = time + "-" + String.format("%d-%d-%s.%s", 0, Constants.ID, "fine", "pwr");
-//                } else {
-//                    hasfile_count++;
-//                    name = time + "-" + String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "fine", "pwr");
-//                }
-//            cursor.close();
-
-
-
-//            File[] PSFile = PSdir.listFiles();
-//            int fileNum=PSFile.length;
-//            if (fileNum> 0) {
-//                for (int j = 0; j < fileNum; j++) {
-//                    if (fname.equals(PSFile[j].getName())) {
-//                        count++;
-//                        fname = time + "-" + String.format("%d-%d-%s.%s", count, Constants.ID, "fine", "pwr");
-//                    }
-//                }
-//            }
 
         } else if (PASP.getStyle() == 1) {
 
@@ -1694,7 +1823,7 @@ public class MinaClientService extends Service {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接服务器", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "文件上传较多，请稍等", Toast.LENGTH_SHORT).show();
                     Looper.loop();// 进入loop中的循环，查看消息队列
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1717,6 +1846,259 @@ public class MinaClientService extends Service {
             c.close();
         }
 
+    }
+
+    private void writePOAfile(POAdata poa, List<byte[]> mlist) {
+        if(mlist==null||mlist.size()==0)
+            return;
+        ToServerIQwaveFile ToWave = new ToServerIQwaveFile();
+        File PSdir = new File(POA_PATH);
+        if (!PSdir.exists()) {
+            PSdir.mkdirs();
+        }
+        //取出时间
+        byte[] bytes = poa.getTime();
+        int year =((bytes[0]&0xff)<<4)+((bytes[1]>>4)&0x0f);
+        int month =(bytes[1]& 0x0f);
+        int day =((bytes[2] >> 3) & 0x1f);
+        int hour =((bytes[2] & 0x07) << 2) + (bytes[3] & 0x03)+8;//UTC转北京时间
+        int min = (bytes[3] >> 2) & 0x3f;
+        int sec = (bytes[4]) & 0xff;
+        int count=((bytes[5]&0xff)<<24)+((bytes[6]&0xff)<<16)+((bytes[7]&0xff)<<8)+(bytes[8]&0xff);
+        String Syear = String.valueOf(year);
+        String smonth = String.valueOf(month< 10 ? "0" + month :month);
+        String Sday = String.valueOf(day< 10 ? "0" + day : day);
+
+        String Shour = String.valueOf(hour< 10 ? "0" + hour : hour);
+        String Smin = String.valueOf(min< 10 ? "0" + min : min);
+        String SEC = String.valueOf(sec< 10 ? "0" + sec : sec);
+        String Scount = String.valueOf(count< 10 ? "0" + count : count);
+
+
+        //创建文件
+        String name =Syear + "-" + smonth + "-" + Sday + "-" + Shour + "-" + Smin+"-"+SEC + "-" +Scount + "-" +
+                String.format("%d.%s", Constants.ID, "poa");
+
+        if (name != null) {
+            File file = new File(PSdir, name);
+            //获取文件写入流
+            try {
+                dos = new DataOutputStream(new FileOutputStream(file));
+                dos.write((byte) 0x00);
+                dos.write(poa.getLocation());
+                dos.write((byte) 0x00);//异常信号的总个数，暂时忽略
+                for (int j = 0; j < mlist.size(); j++) {
+                    dos.write(mlist.get(j));
+                }
+                dos.write(0x00);
+                dos.close();
+
+                //在此将文件的信息插入数据库===================
+                ContentValues cv = new ContentValues();
+                cv.put("filename", name);
+                cv.put("upload", 0);
+                cv.put("_times", 0);
+                db.insert("poaFile", null, cv);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+    /**
+     * TDOA存文件
+     *
+     * @param td
+     * @param mlist
+     */
+    private void writeTDOAFlie(TDOAdata td, List<byte[]> mlist) {
+
+        File PSdir = new File(TDOA_PATH);
+        if (!PSdir.exists()) {
+            PSdir.mkdirs();
+        }
+        //取出时间
+        byte[] bytes = td.getTime();
+        int year =((bytes[0]&0xff)<<4)+((bytes[1]>>4)&0x0f);
+        int month =(bytes[1]& 0x0f);
+        int day =((bytes[2] >> 3) & 0x1f);
+        int hour =((bytes[2] & 0x07) << 2) + (bytes[3] & 0x03)+8;//UTC转北京时间
+        int min = (bytes[3] >> 2) & 0x3f;
+        int sec = (bytes[4]) & 0xff;
+        int count=((bytes[5]&0xff)<<24)+((bytes[6]&0xff)<<16)+((bytes[7]&0xff)<<8)+(bytes[8]&0xff);
+        String Syear = String.valueOf(year);
+        String smonth = String.valueOf(month< 10 ? "0" + month :month);
+        String Sday = String.valueOf(day< 10 ? "0" + day : day);
+        String Shour = String.valueOf(hour< 10 ? "0" + hour : hour);
+        String Smin = String.valueOf(min< 10 ? "0" + min : min);
+        String SEC = String.valueOf(sec< 10 ? "0" + sec : sec);
+        String Scount = String.valueOf(count< 10 ? "0" + count : count);
+        String name = null;
+
+        //创建文件
+        name =Syear + "-" + smonth + "-" + Sday + "-" + Shour + "-" + Smin+"-"+SEC + "-" +Scount + "-" +
+                String.format("%d.%s", Constants.ID, "tdoa");
+
+
+        if (name != null) {
+            File file = new File(PSdir, name);
+            //获取文件写入流
+            try {
+                dos = new DataOutputStream(new FileOutputStream(file));
+                dos.write((byte) 0x00);
+                for (int j = 0; j < mlist.size(); j++) {
+                    dos.write(mlist.get(j));
+                }
+                dos.write(0x00);
+                dos.close();
+
+                //在此将文件的信息插入数据库===================
+                ContentValues cv = new ContentValues();
+                cv.put("filename", name);
+                cv.put("upload", 0);
+                cv.put("_times", 0);
+                db.insert("tdoaFile", null, cv);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+//poa\上传
+    private void uploadPOAFile() {
+        /*********************************************************************************/
+        Cursor cursor = db.rawQuery("SELECT * FROM poaFile WHERE upload=1", null);
+        while (cursor.moveToNext()) {
+            int times = cursor.getInt(cursor.getColumnIndex("_times"));
+            String name = cursor.getString(cursor.getColumnIndex("fileName"));
+            ContentValues cvUpload = new ContentValues();
+            if(times==3){
+                //如果轮询3次，依旧没有上传成功，则将是否上传成功标志位置为0；
+                cvUpload.put("upload", 0);
+                db.update("poaFile", cvUpload, "filename=?", new String[]{name});
+            }else{
+                //在这里更新数据库，将没有确认上传成功的文件对应上传次数加1
+                times=times+1;
+                cvUpload.put("_times", times);
+                db.update("poaFile", cvUpload, "filename=?", new String[]{name});
+            }
+        }
+        if(cursor!=null)
+            cursor.close();
+        /******************************************************************************/
+        Cursor c = db.rawQuery("SELECT filename from poaFile  where  upload=0", null);
+        while (c.moveToNext()) {
+            //上传文件
+            String name = c.getString(c.getColumnIndex("fileName"));
+            File file = new File(POA_PATH, name);
+            if(!file.exists()){
+                //如果文件不存在，从数据库删除记录
+                db.delete("poaFile","filename=?", new String[]{name});
+            }else {
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(file);
+                    byte[] content = new byte[fis.available()];
+                    byte[] buffer = new byte[content.length];
+                    while ((fis.read(buffer)) != -1) {
+                        content = buffer;
+                    }
+                    //将文件里的内容转化为对象
+                    ToServerPOAFile ToWave = new ToServerPOAFile();
+                    ToWave.setContent(content);
+                    ToWave.setContentLength(content.length);
+                    ToWave.setFileName(name);
+                    ToWave.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
+                    try {
+                        Constants.FILEsession.write(ToWave);
+                        ContentValues cv = new ContentValues();
+                        cv.put("upload", 1);
+                        db.update("poaFile", cv, "filename=?", new String[]{name});
+                        Log.d("file", "上传POA" + name);
+                    } catch (Exception e) {
+
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally {
+
+                }
+            }
+        }
+        if (c != null) {
+            c.close();
+        }
+    }
+    //TDOA\上传
+    private void uploadTDOAFile() {
+        /*********************************************************************************/
+        Cursor cursor = db.rawQuery("SELECT * FROM tdoaFile WHERE upload=1", null);
+        while (cursor.moveToNext()) {
+            int times = cursor.getInt(cursor.getColumnIndex("_times"));
+            String name = cursor.getString(cursor.getColumnIndex("fileName"));
+            ContentValues cvUpload = new ContentValues();
+            if(times==3){
+                //如果轮询3次，依旧没有上传成功，则将是否上传成功标志位置为0；
+                cvUpload.put("upload", 0);
+                db.update("tdoaFile", cvUpload, "filename=?", new String[]{name});
+            }else{
+                //在这里更新数据库，将没有确认上传成功的文件对应上传次数加1
+                times=times+1;
+                cvUpload.put("_times", times);
+                db.update("tdoaFile", cvUpload, "filename=?", new String[]{name});
+            }
+        }
+        if(cursor!=null)
+            cursor.close();
+        /******************************************************************************/
+        Cursor c = db.rawQuery("SELECT filename from tdoaFile  where  upload=0", null);
+        while (c.moveToNext()) {
+            //上传文件
+            String name = c.getString(c.getColumnIndex("fileName"));
+            File file = new File(TDOA_PATH, name);
+            if(!file.exists()){
+                //如果文件不存在，从数据库删除记录
+                db.delete("tdoaFile","filename=?", new String[]{name});
+            }else {
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(file);
+                    byte[] content = new byte[fis.available()];
+                    byte[] buffer = new byte[content.length];
+                    while ((fis.read(buffer)) != -1) {
+                        content = buffer;
+                    }
+                    //将文件里的内容转化为对象
+                    ToServerTDOAFile ToWave = new ToServerTDOAFile();
+                    ToWave.setContent(content);
+                    ToWave.setContentLength(content.length);
+                    ToWave.setFileName(name);
+                    ToWave.setFileNameLength((short) name.getBytes(Charset.forName("UTF-8")).length);
+                    try {
+                        Constants.FILEsession.write(ToWave);
+                        ContentValues cv = new ContentValues();
+                        cv.put("upload", 1);
+                        db.update("tdoaFile", cv, "filename=?", new String[]{name});
+                        Log.d("file", "上传TDOA" + name);
+                    } catch (Exception e) {
+
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally {
+
+                }
+            }
+        }
+        if (c != null) {
+            c.close();
+        }
     }
 }
 

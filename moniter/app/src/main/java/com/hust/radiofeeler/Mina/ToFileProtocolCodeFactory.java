@@ -1,10 +1,14 @@
 package com.hust.radiofeeler.Mina;
 
 import com.hust.radiofeeler.Bean.ToServerIQwaveFile;
+import com.hust.radiofeeler.Bean.ToServerPOAFile;
 import com.hust.radiofeeler.Bean.ToServerPowerSpectrumAndAbnormalPoint;
+import com.hust.radiofeeler.Bean.ToServerTDOAFile;
 import com.hust.radiofeeler.bean2server.RequstNetwork;
 import com.hust.radiofeeler.mina2FPGA.Encode.ToServerIQwaveEncoder;
+import com.hust.radiofeeler.mina2FPGA.Encode.ToServerPOAFileEncoder;
 import com.hust.radiofeeler.mina2FPGA.Encode.ToServerPowerSpectrumAndAbnormalPointEncoder;
+import com.hust.radiofeeler.mina2FPGA.Encode.ToServerTDOAFileEncoder;
 import com.hust.radiofeeler.mina2server.Decoder.FileToServerReplyDecoder;
 import com.hust.radiofeeler.mina2server.Encoder.RequstNetworkEncoder;
 
@@ -22,5 +26,10 @@ public class ToFileProtocolCodeFactory  extends DemuxingProtocolCodecFactory {
         //文件上传
         super.addMessageEncoder(ToServerIQwaveFile.class, ToServerIQwaveEncoder.class);
         super.addMessageEncoder(ToServerPowerSpectrumAndAbnormalPoint.class, ToServerPowerSpectrumAndAbnormalPointEncoder.class);
+
+        //POA
+        super.addMessageEncoder(ToServerPOAFile.class,ToServerPOAFileEncoder.class);
+        //TDOA
+        super.addMessageEncoder(ToServerTDOAFile.class,ToServerTDOAFileEncoder.class);
     }
 }

@@ -135,7 +135,7 @@ public class Share_fragment extends Fragment {
                     }
                 };
                 Timer timer = new Timer();
-                timer.schedule(task,1000,120000);//两分钟传一次
+                timer.schedule(task,1000,30000);//
 
 
             }
@@ -277,7 +277,7 @@ public class Share_fragment extends Fragment {
        if(c==null)
            return ;
         /*********************************************************************************/
-        Cursor cursor = db.rawQuery("SELECT * FROM localFile WHERE upload=1", null);
+        Cursor cursor = db.rawQuery("SELECT fileName,times FROM localFile WHERE upload=1", null);
         while (cursor.moveToNext()) {
             int times = cursor.getInt(cursor.getColumnIndex("times"));
             String name = cursor.getString(cursor.getColumnIndex("fileName"));

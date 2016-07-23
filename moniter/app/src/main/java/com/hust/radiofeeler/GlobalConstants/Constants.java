@@ -61,10 +61,8 @@ public class Constants {
 	public static boolean flag=false;
 	public static boolean Isstop=false;//判断是否有解码器
 	public static IoBuffer buffer=IoBuffer.allocate(1024).setAutoExpand(true);
-	public static Context ctx;//频谱数据
-	public static ContextBackground ctxBack;//背景频谱数据
+	public static Context ctx;//频谱数据,背景频谱数据,IQ波
 	public  static  int  sevCount;
-	public static IQContext ctxIQ;//IQ波
 
 	public static int sendMode;//功率谱文件上传模式
 	public  static  int  judgePower;//功率谱变化判断门限

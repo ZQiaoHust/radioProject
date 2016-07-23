@@ -6,7 +6,7 @@ import com.hust.radiofeeler.Bean.BackgroundPowerSpectrum;
 import com.hust.radiofeeler.Bean.ReceiveRight;
 import com.hust.radiofeeler.Bean.ReceiveWrong;
 import com.hust.radiofeeler.GlobalConstants.Constants;
-import com.hust.radiofeeler.GlobalConstants.ContextBackground;
+import com.hust.radiofeeler.GlobalConstants.Context;
 import com.hust.radiofeeler.compute.ComputePara;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -33,7 +33,7 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
 
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
-
+        Log.d("abcd", "尝试BackgroundPowerSpectrumCoarseDecoder谱解码器");
         if(Constants.flag ){
             Constants.buffer.flip();
             Constants.buffer.limit(Constants.positionValue);
@@ -89,15 +89,21 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
             Log.d("back", "jump");
             return MessageDecoderResult.OK;
         }
-        Constants.ctxBack = getContext(session);//获取session  的context
-        long matchCount =  Constants.ctxBack .getMatchLength();//目前已获取的数据
-        long length =  Constants.ctxBack .getLength();//数据总长度
-        IoBuffer buffer =  Constants.ctxBack .getBuffer();//数据存入buffer
+        Constants.ctx= getContext(session);//获取session  的context
+        long matchCount =  Constants.ctx .getMatchLength();//目前已获取的数据
+        long length =  Constants.ctx .getLength();//数据总长度
+        IoBuffer buffer =  Constants.ctx.getBuffer();//数据存入buffer
 
 ///////////////////////////////////////////////////
-        matchCount += in.remaining();
+        if(length==0){
+            length=1561;
+            matchCount = in.remaining();
+            Constants.ctx.setLength(length);
+        }else{
+            matchCount += in.remaining();
+        }
         Log.d("back", "共收到字节：" + String.valueOf(matchCount));
-        Constants.ctxBack .setMatchLength(matchCount);
+        Constants.ctx.setMatchLength(matchCount);
 
         if (in.hasRemaining()) {// 如果in中还有数据
             if(matchCount< length) {
@@ -130,10 +136,10 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
                 }else {
                     Constants.FPGAsession.write(mReceiveWrong);
                 }
-                Constants.ctxBack .reset();
+                Constants.ctx .reset();
                 return MessageDecoderResult.OK;
             } else {
-                Constants.ctxBack .setBuffer(buffer);
+                Constants.ctx.setBuffer(buffer);
                 Constants.Backfail=true;
                 return MessageDecoderResult.NEED_DATA;
             }
@@ -159,10 +165,10 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
     }
 
     //获取session的context
-    public ContextBackground getContext(IoSession session) {
-        ContextBackground ctx = (ContextBackground) session.getAttribute(CONTEXT);
+    public Context getContext(IoSession session) {
+        Context ctx = (Context) session.getAttribute(CONTEXT);
         if (ctx == null) {
-            ctx = new ContextBackground();
+            ctx = new Context();
             session.setAttribute(CONTEXT, ctx);
         }
         return ctx;

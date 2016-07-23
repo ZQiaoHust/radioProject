@@ -16,10 +16,10 @@
     <string name="recv_Gain">接收通道增益</string>
     <string name="send_Gain">发射通道衰减</string>
     <string name="test_Gate">检测门限系数</string>
-    <string name="text_recv">接收通道增益(-1dB~73dB)</string>
-    <string name="text_send">发射通道衰减(0dB~89dB)</string>
-    <string name="text_gate1">固定门限(3dB~39dB)</string>
-    <string name="text_gate2">自适应门限(dB)</string>
+    <string name="text_recv">接收通道增益(-1dBm~73dBm)</string>
+    <string name="text_send">发射通道衰减(0dBm~89dBm)</string>
+    <string name="text_gate1">固定门限(0dBm~100dBm)</string>
+    <string name="text_gate2">自适应门限(dBm)</string>
     <string name="save">保存</string>
     <string name="check">查询</string>
 
@@ -94,7 +94,7 @@
     <string name="FPGAID">终端硬件型号</string>
     <string name="workFreq">接收通道工作频率(MHz)</string>
     <string name="segFreq">频段范围(MHz)</string>
-    <string name="ModifyInGainValue">接收通道增益值(dB)</string>
+    <string name="ModifyInGainValue">接收通道增益值(dBm)</string>
     <string name="AntennaID">接收天线型号</string>
     <string name="AntennaFreq">接收天线工作频率(MHz)</string>
     <string name="AntennaValue">接收天线增益值(MHz)</string>

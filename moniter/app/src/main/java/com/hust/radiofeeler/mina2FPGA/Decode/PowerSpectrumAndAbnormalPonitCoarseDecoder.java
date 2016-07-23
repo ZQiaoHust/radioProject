@@ -34,7 +34,7 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
 
-        Log.d("abcd", "尝试实时功率谱解码器");
+        Log.d("abcd", "尝试PowerSpectrumAndAbnormalPonitCoarseDecoder谱解码器");
 
         if(Constants.flag ) {
             Constants.buffer.limit(Constants.positionValue);
@@ -99,7 +99,13 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
         }
         ///////////////////////////////////////////
 ///////////////////////////////////////////////////
-        matchCount += in.remaining();
+        if(length==0){
+            length=1614;
+            Constants.ctx.setLength(length);
+            matchCount = in.remaining();
+        }else {
+            matchCount += in.remaining();
+        }
         Log.d("abcd", "共收到字节：" + String.valueOf(matchCount));
         Constants.ctx.setMatchLength(matchCount);
 

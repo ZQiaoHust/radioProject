@@ -41,6 +41,9 @@ import com.hust.radiofeeler.bean2Transmit.server2FPGASetting.Simple_UploadDataEn
 import com.hust.radiofeeler.bean2Transmit.server2FPGASetting.Simple_UploadDataStart;
 import com.hust.radiofeeler.bean2server.File_ModifyAntenna;
 import com.hust.radiofeeler.bean2server.File_ModifyIngain;
+import com.hust.radiofeeler.bean2server.POA;
+import com.hust.radiofeeler.bean2server.StopPOAandTDOA;
+import com.hust.radiofeeler.bean2server.TDOA;
 import com.hust.radiofeeler.mina2FPGA.Decode.BackgroundPowerSpectrumCoarseDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.BackgroundPowerSpectrumFineDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.CllearDecoder;
@@ -50,12 +53,14 @@ import com.hust.radiofeeler.mina2FPGA.Decode.FixSettingDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.IQwaveDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.InGainDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.OutGainDecoder;
+import com.hust.radiofeeler.mina2FPGA.Decode.POAdataDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.PowerSpectrumAndAbnormalPonitCoarseDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.PowerSpectrumAndAbnormalPonitFineDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.PressDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.PressSettingDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.StationStateDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.SweepRangeDecoder;
+import com.hust.radiofeeler.mina2FPGA.Decode.TDOAdataDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.ThresholdDecoder;
 import com.hust.radiofeeler.mina2FPGA.Decode.UploadDataDecoder;
 import com.hust.radiofeeler.mina2FPGA.Encode.ConnectPCBEncoder;
@@ -74,6 +79,7 @@ import com.hust.radiofeeler.mina2FPGA.Encode.SweepRangeEncoder;
 import com.hust.radiofeeler.mina2FPGA.Encode.ThresholdEncoder;
 import com.hust.radiofeeler.mina2FPGA.Encode.ToServerPowerSpectrumAndAbnormalPointEncoder;
 import com.hust.radiofeeler.mina2FPGA.Encode.UploadDataEncoder;
+import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.POAsettingEncoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.Query_ConnectEncoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.Query_FixCentralFreqEncoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.Query_FixSettingEncoder;
@@ -99,6 +105,8 @@ import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.Simple_SweepRangeEn
 import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.Simple_ThresholdEncoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.Simple_UploadDataEndEncoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.Simple_UploadDataStartEncoder;
+import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.StopPOAandTDOAEncoder;
+import com.hust.radiofeeler.mina_transmit.server2FPGAEncoder.TDOAsettingEncoder;
 
 
 import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
@@ -175,6 +183,9 @@ public class ToFPGAProtocolFactory extends DemuxingProtocolCodecFactory {
         super.addMessageEncoder(Simple_Threshold.class, Simple_ThresholdEncoder.class);
         super.addMessageEncoder(Simple_UploadDataStart.class, Simple_UploadDataStartEncoder.class);
         super.addMessageEncoder(Simple_UploadDataEnd.class, Simple_UploadDataEndEncoder.class);
+        super.addMessageEncoder( POA.class,POAsettingEncoder.class);
+        super.addMessageEncoder( TDOA.class,TDOAsettingEncoder.class);
+        super.addMessageEncoder( StopPOAandTDOA.class,StopPOAandTDOAEncoder.class);
 
 //以下解码器与非转发部分合并解码
 //        super.addMessageDecoder(Reply_ConnectDecoder.class);
@@ -192,6 +203,10 @@ public class ToFPGAProtocolFactory extends DemuxingProtocolCodecFactory {
         //最优先
         super.addMessageDecoder(IQwaveDecoder.class);
         // super.addMessageDecoder(PowerSpectrumAndAbnormalPonitDecoder.class);//功率谱异常频点
+        //POA
+        super.addMessageDecoder(POAdataDecoder.class);
+        //TDOA
+        super.addMessageDecoder(TDOAdataDecoder.class);
 
         super.addMessageDecoder(BackgroundPowerSpectrumFineDecoder.class);//功率谱异常频点
         super.addMessageDecoder(PowerSpectrumAndAbnormalPonitFineDecoder.class);//功率谱异常频点

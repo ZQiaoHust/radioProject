@@ -161,13 +161,12 @@ public class Map_HeatMap extends Activity {
 
         if (map != null) {
             // 将消息展现出来。
-            Log.d("mapdataget","size is "+String.valueOf(map.getMapRadioPointInfoList().size()));
             HeatMapPointList = map.getMapRadioPointInfoList();
             Nx = map.getNx();
             Ny = map.getNy();
             Ratio = map.getDieta();
         }
-        Log.d("mapdataget", "size is " + String.valueOf(HeatMapPointList.size()));
+
         //Log.e("mapdataget", "EqualPower is " + String.valueOf(map.getMapRadioPointInfoList().get(0).getEqualPower()));
 
 
@@ -205,19 +204,14 @@ public class Map_HeatMap extends Activity {
                 try {
                         for ( int i = 0; i < HeatMapPointList.size(); i++) {
                             Message message = new Message();
-                            Log.e("pocess","now is here 11");
                             message.what =i ;
-                            Log.e("pocess","size "+String.valueOf(HeatMapPointList.size()));
-                            Log.e("pocess ","now is "+String.valueOf(i)+"message");
                             handler.sendMessage(message);//发送消息
-                            Log.e("pocess", "now is here 12");
                             Thread.sleep(3000);//线程暂停3秒，单位毫
 
                              }
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    System.out.println("refreshthread error...");
                 }
             }
         };
@@ -253,13 +247,10 @@ public class Map_HeatMap extends Activity {
         int responceColor;
         for(int  i = 7;i>0;i--) {
 
-
-            Log.e("power is:", String.valueOf(Power));
             // LatLng llCircle = new LatLng(AbnormalReply.getLatitude(), AbnormalReply.getLongitude());
             Power_circle = Power - 10 *i;
             responceColor = getResponseColor(Power_circle);
             current_distance = Math.sqrt(Math.pow(10, (Power - Power_circle) / (5 * mRatio)));
-            Log.e("distance", String.valueOf(current_distance));
             OverlayOptions ooCircle = new CircleOptions().fillColor(responceColor)
                     .center(centerLatlng).radius((int) ((current_distance)));
 

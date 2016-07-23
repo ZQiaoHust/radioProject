@@ -6,7 +6,7 @@ import com.hust.radiofeeler.Bean.IQwave;
 import com.hust.radiofeeler.Bean.ReceiveRight;
 import com.hust.radiofeeler.Bean.ReceiveWrong;
 import com.hust.radiofeeler.GlobalConstants.Constants;
-import com.hust.radiofeeler.GlobalConstants.IQContext;
+import com.hust.radiofeeler.GlobalConstants.Context;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.AttributeKey;
@@ -47,14 +47,21 @@ public class IQwaveDecoder implements MessageDecoder {
     @Override
     public MessageDecoderResult decode(IoSession session, IoBuffer in,
                                        ProtocolDecoderOutput out) throws Exception {
-        Constants.ctxIQ  = getContext(session);//获取session  的context
-        long matchCount = Constants.ctxIQ.getMatchLength();//目前已获取的数据
-        long length =  Constants.ctxIQ.getLength();//数据总长度
-        IoBuffer buffer =  Constants.ctxIQ.getBuffer();//数据存入buffer
-
-        matchCount += in.remaining();
+        Constants.ctx = getContext(session);//获取session  的context
+        long matchCount = Constants.ctx.getMatchLength();//目前已获取的数据
+        long length =  Constants.ctx.getLength();//数据总长度
+        IoBuffer buffer =  Constants.ctx.getBuffer();//数据存入buffer
+        //第一次取数据
+        if (length == 0) {
+            length =6027;
+            //保存第一次获取的长度
+            Constants.ctx.setLength(length);
+            matchCount = in.remaining();
+        } else {
+            matchCount += in.remaining();
+        }
         Log.d("IQtrans", "共收到字节：" + String.valueOf(matchCount));
-        Constants.ctxIQ.setMatchLength(matchCount);
+        Constants.ctx.setMatchLength(matchCount);
 
         if (in.hasRemaining()) {// 如果in中还有数据
             if (matchCount < length) {
@@ -92,10 +99,10 @@ public class IQwaveDecoder implements MessageDecoder {
                     Constants.FPGAsession.write(mReceiveWrong);
                     Constants.failCount++;
                 }
-                    Constants.ctxIQ.reset();
+                    Constants.ctx.reset();
                     return MessageDecoderResult.OK;
                 } else {
-                    Constants.ctxIQ.setBuffer(buffer);
+                    Constants.ctx.setBuffer(buffer);
                     Constants.NotFill = true;
                     return MessageDecoderResult.NEED_DATA;
                 }
@@ -111,10 +118,10 @@ public class IQwaveDecoder implements MessageDecoder {
 
 
     //获取session的context
-    public IQContext getContext(IoSession session) {
-        IQContext ctx = (IQContext) session.getAttribute(CONTEXT);
+    public Context getContext(IoSession session) {
+        Context ctx = (Context) session.getAttribute(CONTEXT);
         if (ctx == null) {
-            ctx = new IQContext();
+            ctx = new Context();
             session.setAttribute(CONTEXT, ctx);
         }
         return ctx;

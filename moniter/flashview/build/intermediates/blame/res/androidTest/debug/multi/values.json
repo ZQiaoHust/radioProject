@@ -86,7 +86,7 @@
         ]
     },
     {
-        "outputFile": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
+        "outputFile": "E:\\project\\radiofeeler_0721\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
         "map": [
             {
                 "to": {
@@ -97,7 +97,7 @@
                     "endOffset": 447
                 },
                 "from": {
-                    "file": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "E:\\project\\radiofeeler_0721\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 3,
                         "startColumn": 4,
@@ -116,7 +116,7 @@
                     "endOffset": 500
                 },
                 "from": {
-                    "file": "E:\\project\\project_over\\radiofeeler_0712_deleteFile_Log\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "E:\\project\\radiofeeler_0721\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 4,
                         "startColumn": 4,

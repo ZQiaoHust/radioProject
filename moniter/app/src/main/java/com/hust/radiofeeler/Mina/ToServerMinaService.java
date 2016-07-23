@@ -84,12 +84,15 @@ import com.hust.radiofeeler.bean2server.MapRouteResult;
 import com.hust.radiofeeler.bean2server.ModifyAntenna;
 import com.hust.radiofeeler.bean2server.ModifyInGain;
 import com.hust.radiofeeler.bean2server.ModifyIngainView;
+import com.hust.radiofeeler.bean2server.POA;
 import com.hust.radiofeeler.bean2server.RequstNetwork;
 import com.hust.radiofeeler.bean2server.RequstNetworkReply;
 import com.hust.radiofeeler.bean2server.Send_ServiceRadio;
 import com.hust.radiofeeler.bean2server.StationCurrentReply;
 import com.hust.radiofeeler.bean2server.Station_CurrentRequst;
 import com.hust.radiofeeler.bean2server.Station_RegisterRequst;
+import com.hust.radiofeeler.bean2server.StopPOAandTDOA;
+import com.hust.radiofeeler.bean2server.TDOA;
 import com.hust.radiofeeler.bean2server.TerminalAttributes_All;
 import com.hust.radiofeeler.bean2server.Terminal_Online;
 import com.hust.radiofeeler.bean2server.Terminal_Register;
@@ -732,7 +735,13 @@ public class ToServerMinaService extends Service {
                 Simple_FixCentralFreq fixCentral = new Simple_FixCentralFreq();
                 fixCentral = (Simple_FixCentralFreq) message;
                 Constants.FPGAsession.write(fixCentral);
-                Toast.makeText(getBaseContext(), "定频模式已设定", Toast.LENGTH_SHORT).show();
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext(), "定频模式已设定", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(fixCentral.getContent()));
             }
             /////////////////////////////////
@@ -932,15 +941,42 @@ public class ToServerMinaService extends Service {
                 Constants.SERVERsession.write(data);
             }
 //            ////////////////////////////////////////////
-//            //异常频点功率谱上传关闭查询
-//            if (message instanceof Query_UploadDataEnd) {
-//                Query_UploadDataEnd query_uploadDataEnd = new Query_UploadDataEnd();
-//                query_uploadDataEnd = (Query_UploadDataEnd) message;
-//               // Constants.FPGAsession.write(query_uploadDataEnd);
-//                Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_uploadDataEnd.getContent()));
-//                UploadData data = new UploadData();
-//                Constants.SERVERsession.write(data);
-//            }
+            //POA定位设置帧
+            if (message instanceof POA) {
+                POA poa= (POA) message;
+                Constants.FPGAsession.write(poa);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext(), "POA定位已设定", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            //TDOA定位设置帧
+            if (message instanceof TDOA) {
+                TDOA td= (TDOA) message;
+                Constants.FPGAsession.write(td);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext(), "TDOA定位已设定", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            //结束异常辐射源定位
+            if (message instanceof StopPOAandTDOA) {
+                StopPOAandTDOA td= (StopPOAandTDOA) message;
+                Constants.FPGAsession.write(td);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext(), "异常辐射源定位已结束", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
             //======================================================================================================
         }

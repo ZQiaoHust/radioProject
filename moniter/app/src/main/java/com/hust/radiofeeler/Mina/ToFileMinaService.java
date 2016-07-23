@@ -53,6 +53,8 @@ public class ToFileMinaService extends Service {
     private DatabaseHelper dbHelper = null;
     public static final String PSFILE_PATH = Environment.getExternalStorageDirectory().
             getAbsolutePath() + "/com.hust.radiofeeler/PowerSpectrumFile/";
+    public static final String P0AFILE_PATH = Environment.getExternalStorageDirectory().
+            getAbsolutePath() + "/com.hust.radiofeeler/POA/";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -178,6 +180,15 @@ public class ToFileMinaService extends Service {
                 } else if (end.equals("iq")) {
                     db.update("iqFile", cvUpload, "filename=?", new String[]{name});
                     Log.d("file", "上传成功" + name);
+                }else if (end.equals("poa")) {
+                    db.update("poaFile", cvUpload, "filename=?", new String[]{name});
+                    Log.d("file", "上传成功" + name);
+
+                    //删除已上传的文件
+                    File file = new File(P0AFILE_PATH, name);
+                    if(file.exists())
+                        deleteFile(file);
+                    Log.d("file", "删除文件" + name);
                 }
             }
         }

@@ -30,6 +30,8 @@ import com.hust.radiofeeler.bean2server.RequstNetwork;
 import com.hust.radiofeeler.bean2server.Send_ServiceRadio;
 import com.hust.radiofeeler.bean2server.Station_CurrentRequst;
 import com.hust.radiofeeler.bean2server.Station_RegisterRequst;
+import com.hust.radiofeeler.bean2server.StopPOAandTDOA;
+import com.hust.radiofeeler.bean2server.TDOA;
 import com.hust.radiofeeler.bean2server.TerminalAttributes_All;
 import com.hust.radiofeeler.bean2server.Terminal_Online;
 import com.hust.radiofeeler.bean2server.Terminal_Register;
@@ -77,6 +79,7 @@ import com.hust.radiofeeler.mina_transmit.FPGA2serverEncoder.Reply_ThresholdEnco
 import com.hust.radiofeeler.mina_transmit.FPGA2serverEncoder.Reply_UploadDataStartEncoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.FileSettingFixCentralDecoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.FileSettingFixDecoder;
+import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.POAsettingDecoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.Query_ConnectDecoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.Query_FixCentralFreqDecoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.Query_FixSettingDecoder;
@@ -100,6 +103,8 @@ import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.Simple_SweepRangeDe
 import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.Simple_ThresholdDecoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.Simple_UploadDataEndDecoder;
 import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.Simple_UploadDataStartDecoder;
+import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.TDOAsettingDecoder;
+import com.hust.radiofeeler.mina_transmit.server2FPGADecoder.stopPOAandTDOADecoder;
 
 import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 
@@ -124,6 +129,9 @@ public class ToServerProtocolCodecFactory extends DemuxingProtocolCodecFactory {
         super.addMessageDecoder(Simple_UploadDataStartDecoder.class);
         super.addMessageDecoder(FileSettingFixCentralDecoder.class);
         super.addMessageDecoder(FileSettingFixDecoder.class);
+        super.addMessageDecoder(POAsettingDecoder.class);
+        super.addMessageDecoder(TDOAsettingDecoder.class);
+        super.addMessageDecoder(stopPOAandTDOADecoder.class);
         //查询
         super.addMessageDecoder(Query_ConnectDecoder.class);
         super.addMessageDecoder(Query_FixCentralFreqDecoder.class);

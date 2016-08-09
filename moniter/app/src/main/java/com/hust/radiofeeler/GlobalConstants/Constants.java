@@ -47,12 +47,14 @@ public class Constants {
 
 	public static Queue<Map<Float,Float>> Queue_Abnormal=new LinkedList<>();//IQ波形文件
 
+	public static boolean isWriteFile=false;//存功率谱文件
 
 	//存储扫频范围参数及对应的起始点
 	public static List<SweepRangeInfo> SweepParaList=new ArrayList<>();
 	public static int spectrumCount=0;//段数计数器
 	public static int IQCount=0;//段数计数器
 	public static int BackgroundCount=0;//背景pinpu段数计数器
+	public static int drawSpectrumBands;//上传的功率谱的总段数
 
 	public static boolean NotFill=false;//频谱数据没有收满
 	public static boolean Backfail=false;//背景频谱数据接收失败
@@ -62,7 +64,6 @@ public class Constants {
 	public static boolean Isstop=false;//判断是否有解码器
 	public static IoBuffer buffer=IoBuffer.allocate(1024).setAutoExpand(true);
 	public static Context ctx;//频谱数据,背景频谱数据,IQ波
-	public  static  int  sevCount;
 
 	public static int sendMode;//功率谱文件上传模式
 	public  static  int  judgePower;//功率谱变化判断门限
@@ -87,7 +88,8 @@ public class Constants {
 	public static String time;
 	public static int SELECT_COUNT;//抽取上传的计数器
 
-
+    //POA异常频点的总数
+	public static int POAabNum;
 
 
 

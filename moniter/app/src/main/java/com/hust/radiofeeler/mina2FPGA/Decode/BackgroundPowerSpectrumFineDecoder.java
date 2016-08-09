@@ -36,6 +36,7 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
         Log.d("abcd", "尝试BackgroundPowerSpectrumFineDecoder谱解码器");
         if(Constants.flag ){
+            Constants.flag=false;
             Constants.buffer.limit(Constants.positionValue);
             Constants.buffer.flip();
             byte headtail=Constants.buffer.get();
@@ -51,6 +52,7 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
           //  Log.d("abcd", "Constants.buffer背景功率谱解码器functionCode"+functionCode);
             if (functionCode == 0x52) {
                 Constants.Isstop=false;
+                Constants.flag=false;
                 return MessageDecoderResult.OK;
             } else {
                 Constants.Isstop=true;
@@ -92,7 +94,7 @@ public class BackgroundPowerSpectrumFineDecoder implements MessageDecoder {
             Constants.IsJump=false;
             Constants.flag = true;
             Constants.positionValue=in.limit();
-            Constants.buffer.clear();
+            Constants.buffer.sweep();
             Constants.buffer.put(in);
             Log.d("back", "jump");
             return MessageDecoderResult.OK;

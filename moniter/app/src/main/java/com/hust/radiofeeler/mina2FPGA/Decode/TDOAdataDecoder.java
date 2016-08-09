@@ -76,7 +76,7 @@ public class TDOAdataDecoder implements MessageDecoder {
                 buffer.flip();
                 buffer.get(b);
 
-                if (b[1] == (byte) 0x42 && b[6026] == (byte) 0xaa) {
+                if (b[1] == (byte) 0x42 && b[6030] == (byte) 0xaa) {
                     TDOAdata td = byte2Object(b);
                     if (td != null) {
                         TimerTask task = new TimerTask() {

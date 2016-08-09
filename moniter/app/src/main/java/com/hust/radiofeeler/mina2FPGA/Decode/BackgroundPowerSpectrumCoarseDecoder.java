@@ -48,6 +48,7 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
             byte functionCode = Constants.buffer.get();
             if (functionCode == 0x57) {
                 Constants.Isstop=false;
+                Constants.flag=false;
                 return MessageDecoderResult.OK;
             } else {
                 Constants.Isstop=true;
@@ -84,7 +85,7 @@ public class BackgroundPowerSpectrumCoarseDecoder implements MessageDecoder {
             Constants.IsJump=false;
             Constants.flag = true;
             Constants.positionValue=in.limit();
-            Constants.buffer.clear();
+            Constants.buffer.sweep();
             Constants.buffer.put(in);
             Log.d("back", "jump");
             return MessageDecoderResult.OK;

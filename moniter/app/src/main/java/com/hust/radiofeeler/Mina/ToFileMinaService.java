@@ -184,11 +184,15 @@ public class ToFileMinaService extends Service {
                     db.update("poaFile", cvUpload, "filename=?", new String[]{name});
                     Log.d("file", "上传成功" + name);
 
-                    //删除已上传的文件
-                    File file = new File(P0AFILE_PATH, name);
-                    if(file.exists())
-                        deleteFile(file);
-                    Log.d("file", "删除文件" + name);
+//                    //删除已上传的文件
+//                    File file = new File(P0AFILE_PATH, name);
+//                    if(file.exists())
+//                        deleteFile(file);
+//                    Log.d("file", "删除文件" + name);
+                }else if (end.equals("tdoa")) {
+                    db.update("tdoaFile", cvUpload, "filename=?", new String[]{name});
+                    Log.d("file", "上传成功" + name);
+
                 }
             }
         }

@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -30,6 +32,7 @@ import com.hust.radiofeeler.GlobalConstants.Constants;
 import com.hust.radiofeeler.GlobalConstants.SweepRangeInfo;
 import com.hust.radiofeeler.Mina.Broadcast;
 import com.hust.radiofeeler.R;
+
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,9 +63,11 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
 
     private double zhidingStart;
     private double zhidingEnd;
+    private CheckBox cb_file;
 
     String s2 = null;
-
+    String[] Value;
+    String[] freqValue_start,freqValue_end;
     private BroadcastReceiver WorkModelReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -139,6 +144,7 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
     private Boolean IsDUOSetting0K = false;
     private Boolean IsZHISetting0K = false;
     private Boolean IsQUANSetting0K = false;
+    private Boolean IsBIAOSetting0K=false;
 
     private final static String TAG = "socket";
 
@@ -178,6 +184,7 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
         tv_select = (TextView) getActivity().findViewById(R.id.tv_selectSend);
         mSetButton = (Button) getActivity().findViewById(R.id.bt_setoutgain);
         mGetButton = (Button) getActivity().findViewById(R.id.bt_getoutgain);
+        cb_file= (CheckBox) getActivity().findViewById(R.id.cb_writeFile);
     }
 
     /**
@@ -248,13 +255,12 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                     sweepRange.setaTotalOfBands(1);
                     sweepRange.setaBandNumber(1);
                     sweepRange.setStartFrequence(70);
-                    sweepRange.setEndFrequence(6000);
+                    sweepRange.setEndFrequence(5995);
                     sweepRange.setGate(gate);
                     sweepRange.setaSelect(Select);
                     sweepRangeInfo.setSegStart(70);
-                    sweepRangeInfo.setSegEnd(6000);
-                    sweepRangeInfo.setStartNum(1);
-                    sweepRangeInfo.setEndNum((int) ((6000 - 70) / 25 + 1));
+                    sweepRangeInfo.setSegEnd(5995);
+
                     Constants.SweepParaList.clear();
                     Constants.SweepParaList.add(sweepRangeInfo);
                     Constants.sendMode = uploadMode;
@@ -284,8 +290,7 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                     //扫描起始偏移
                     sweepRangeInfo.setSegStart(zhidingStart);
                     sweepRangeInfo.setSegEnd(zhidingEnd);
-                    sweepRangeInfo.setStartNum((int) ((zhidingStart - 70) / 25 + 1));
-                    sweepRangeInfo.setEndNum((int) ((zhidingEnd - 70) / 25 + 1));
+
                     Constants.SweepParaList.clear();
                     Constants.SweepParaList.add(sweepRangeInfo);
                     Constants.sendMode = uploadMode;
@@ -297,51 +302,79 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
 
 
                     }
-                } else if (IsDUOSetting0K) {
-                    IsDUOSetting0K = false;
-                    for (int i = 0; i < 5; i++) {
-                        if ((v1[i]) != 0) {
-                            ++TotalOfBands;
-                        }
+               }
+// else if (IsDUOSetting0K) {
+//                    IsDUOSetting0K = false;
+//                    for (int i = 0; i < 5; i++) {
+//                        if ((v1[i]) != 0) {
+//                            ++TotalOfBands;
+//                        }
+//                    }
+//                    new Thread() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                for (int i = 0; i < TotalOfBands; i++) {
+//                                    sweepRange.setEquipmentId(Constants.ID);
+//                                    sweepRange.setaSweepMode(3);
+//                                    sweepRange.setaSendMode(uploadMode);
+//                                    sweepRange.setaTotalOfBands(TotalOfBands);
+//                                    sweepRange.setaBandNumber(i + 1);
+//                                    sweepRange.setStartFrequence(v1[i]);
+//                                    sweepRange.setEndFrequence(v2[i]);
+//                                    sweepRange.setGate(gate);
+//                                    sweepRange.setaSelect(Select);
+//
+//                                    sweepRangeInfo.setSegStart(v1[i]);
+//                                    sweepRangeInfo.setSegEnd(v2[i]);
+//
+//                                    Constants.SweepParaList.clear();
+//                                    Constants.SweepParaList.add(sweepRangeInfo);
+//
+//                                    if (sweepRange != null) {
+//                                        Broadcast.sendBroadCast(getActivity(),
+//                                                ConstantValues.SweepRangeSet, "SweepRangeSet", sweepRange);
+//
+//                                    }
+//                                }
+//                                Constants.sendMode = uploadMode;
+//                                Constants.selectRate = Select;
+//                                Constants.judgePower = gate;
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }.start();
+//                }
+                else if(IsBIAOSetting0K)
+                {
+                    IsZHISetting0K = false;
+                    sweepRange.setEquipmentId(Constants.ID);
+                    sweepRange.setaSweepMode(2);
+                    sweepRange.setaSendMode(uploadMode);
+                    sweepRange.setaTotalOfBands(1);
+                    sweepRange.setaBandNumber(1);
+                    sweepRange.setStartFrequence(zhidingStart);
+                    sweepRange.setEndFrequence(zhidingEnd);
+                    sweepRange.setGate(gate);
+                    sweepRange.setaSelect(Select);
+
+
+                    //扫描起始偏移
+                    sweepRangeInfo.setSegStart(zhidingStart);
+                    sweepRangeInfo.setSegEnd(zhidingEnd);
+                    Constants.SweepParaList.clear();
+                    Constants.SweepParaList.add(sweepRangeInfo);
+                    Constants.sendMode = uploadMode;
+                    Constants.selectRate = Select;
+                    Constants.judgePower = gate;
+                    if (sweepRange != null) {
+                        Broadcast.sendBroadCast(getActivity(),
+                                ConstantValues.SweepRangeSet, "SweepRangeSet", sweepRange);
+
+
                     }
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                for (int i = 0; i < TotalOfBands; i++) {
-                                    sweepRange.setEquipmentId(Constants.ID);
-                                    sweepRange.setaSweepMode(3);
-                                    sweepRange.setaSendMode(uploadMode);
-                                    sweepRange.setaTotalOfBands(TotalOfBands);
-                                    sweepRange.setaBandNumber(i + 1);
-                                    sweepRange.setStartFrequence(v1[i]);
-                                    sweepRange.setEndFrequence(v2[i]);
-                                    sweepRange.setGate(gate);
-                                    sweepRange.setaSelect(Select);
-
-                                    sweepRangeInfo.setSegStart(v1[i]);
-                                    sweepRangeInfo.setSegEnd(v2[i]);
-                                    sweepRangeInfo.setStartNum((int) ((v1[i] - 70) / 25 + 1));
-                                    sweepRangeInfo.setEndNum((int) ((v2[i] - 70) / 25 + 1));
-                                    Constants.SweepParaList.clear();
-                                    Constants.SweepParaList.add(sweepRangeInfo);
-
-                                    if (sweepRange != null) {
-                                        Broadcast.sendBroadCast(getActivity(),
-                                                ConstantValues.SweepRangeSet, "SweepRangeSet", sweepRange);
-
-                                    }
-                                }
-                                Constants.sendMode = uploadMode;
-                                Constants.selectRate = Select;
-                                Constants.judgePower = gate;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Log.i(TAG, "run: 发送异常");
-                            }
-                        }
-                    }.start();
-                } else
+                }else
                     Toast.makeText(getActivity(), "请输入扫频范围", Toast.LENGTH_SHORT).show();
             }
 
@@ -357,6 +390,14 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
                 if (query != null) {
                     Broadcast.sendBroadCast(getActivity(),
                             ConstantValues.SweepRangeQuery, "SweepRangeQuery", query);
+                }
+            }
+        });
+        cb_file.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    Constants.isWriteFile=true;
                 }
             }
         });
@@ -438,80 +479,80 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
         dialog.show();
     }
 
-    private void showDialog_Save3() {
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        View view = inflater.inflate(R.layout.mydialogduopinduan, null);
-
-        EditText StartEditText1 = (EditText) view.findViewById(R.id.tvStart1_sweepModel3);
-        EditText StartEditText2 = (EditText) view.findViewById(R.id.tvStart2_sweepModel3);
-        EditText StartEditText3 = (EditText) view.findViewById(R.id.tvStart3_sweepModel3);
-        EditText StartEditText4 = (EditText) view.findViewById(R.id.tvStart4_sweepModel3);
-        EditText StartEditText5 = (EditText) view.findViewById(R.id.tvStart5_sweepModel3);
-
-        EditText EndEditText1 = (EditText) view.findViewById(R.id.tvEnd1_sweepModel3);
-        EditText EndEditText2 = (EditText) view.findViewById(R.id.tvEnd2_sweepModel3);
-        EditText EndEditText3 = (EditText) view.findViewById(R.id.tvEnd3_sweepModel3);
-        EditText EndEditText4 = (EditText) view.findViewById(R.id.tvEnd4_sweepModel3);
-        EditText EndEditText5 = (EditText) view.findViewById(R.id.tvEnd5_sweepModel3);
-
-
-        final ArrayList<EditText> StartEditTextArrayList = new ArrayList<>();
-        final ArrayList<EditText> EndEditTextArrayList = new ArrayList<>();
-
-        StartEditTextArrayList.add(StartEditText1);
-        StartEditTextArrayList.add(StartEditText2);
-        StartEditTextArrayList.add(StartEditText3);
-        StartEditTextArrayList.add(StartEditText4);
-        StartEditTextArrayList.add(StartEditText5);
-
-
-        EndEditTextArrayList.add(EndEditText1);
-        EndEditTextArrayList.add(EndEditText2);
-        EndEditTextArrayList.add(EndEditText3);
-        EndEditTextArrayList.add(EndEditText4);
-        EndEditTextArrayList.add(EndEditText5);
-
-
-        AlertDialog.Builder bulider = new AlertDialog.Builder(getActivity());
-        bulider.setTitle("请输入所选频段70MHz-6GHz");
-        bulider.setIcon(R.drawable.wo2);
-
-        bulider.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                IsDUOSetting0K = true;
-                v1 = new double[5];
-                v2 = new double[5];
-                //mVector=new Vector();
-                for (int i = 0; i < StartEditTextArrayList.size(); i++) {
-                    if (!StartEditTextArrayList.get(i).getText().toString().equals("")) {
-                        double mm = Double.
-                                parseDouble(StartEditTextArrayList.get(i).getText().toString());
-                        v1[i] = mm;
-                    }
-                }
-                for (int i = 0; i < EndEditTextArrayList.size(); i++) {
-                    if (!EndEditTextArrayList.get(i).getText().toString().equals("")) {
-                        double cc = Double.
-                                parseDouble(EndEditTextArrayList.get(i).getText().toString());
-                        v2[i] = cc;
-                    }
-                }
-
-                Toast.makeText(getActivity(), "保存成功", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        bulider.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getActivity(), "保存失败", Toast.LENGTH_SHORT).show();
-            }
-        });
-        bulider.setView(view);
-        AlertDialog dialog = bulider.create();
-        dialog.show();
-    }
+//    private void showDialog_Save3() {
+//        LayoutInflater inflater = LayoutInflater.from(getActivity());
+//        View view = inflater.inflate(R.layout.mydialogduopinduan, null);
+//
+//        EditText StartEditText1 = (EditText) view.findViewById(R.id.tvStart1_sweepModel3);
+//        EditText StartEditText2 = (EditText) view.findViewById(R.id.tvStart2_sweepModel3);
+//        EditText StartEditText3 = (EditText) view.findViewById(R.id.tvStart3_sweepModel3);
+//        EditText StartEditText4 = (EditText) view.findViewById(R.id.tvStart4_sweepModel3);
+//        EditText StartEditText5 = (EditText) view.findViewById(R.id.tvStart5_sweepModel3);
+//
+//        EditText EndEditText1 = (EditText) view.findViewById(R.id.tvEnd1_sweepModel3);
+//        EditText EndEditText2 = (EditText) view.findViewById(R.id.tvEnd2_sweepModel3);
+//        EditText EndEditText3 = (EditText) view.findViewById(R.id.tvEnd3_sweepModel3);
+//        EditText EndEditText4 = (EditText) view.findViewById(R.id.tvEnd4_sweepModel3);
+//        EditText EndEditText5 = (EditText) view.findViewById(R.id.tvEnd5_sweepModel3);
+//
+//
+//        final ArrayList<EditText> StartEditTextArrayList = new ArrayList<>();
+//        final ArrayList<EditText> EndEditTextArrayList = new ArrayList<>();
+//
+//        StartEditTextArrayList.add(StartEditText1);
+//        StartEditTextArrayList.add(StartEditText2);
+//        StartEditTextArrayList.add(StartEditText3);
+//        StartEditTextArrayList.add(StartEditText4);
+//        StartEditTextArrayList.add(StartEditText5);
+//
+//
+//        EndEditTextArrayList.add(EndEditText1);
+//        EndEditTextArrayList.add(EndEditText2);
+//        EndEditTextArrayList.add(EndEditText3);
+//        EndEditTextArrayList.add(EndEditText4);
+//        EndEditTextArrayList.add(EndEditText5);
+//
+//
+//        AlertDialog.Builder bulider = new AlertDialog.Builder(getActivity());
+//        bulider.setTitle("请输入所选频段70MHz-6GHz");
+//        bulider.setIcon(R.drawable.wo2);
+//
+//        bulider.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                IsDUOSetting0K = true;
+//                v1 = new double[5];
+//                v2 = new double[5];
+//                //mVector=new Vector();
+//                for (int i = 0; i < StartEditTextArrayList.size(); i++) {
+//                    if (!StartEditTextArrayList.get(i).getText().toString().equals("")) {
+//                        double mm = Double.
+//                                parseDouble(StartEditTextArrayList.get(i).getText().toString());
+//                        v1[i] = mm;
+//                    }
+//                }
+//                for (int i = 0; i < EndEditTextArrayList.size(); i++) {
+//                    if (!EndEditTextArrayList.get(i).getText().toString().equals("")) {
+//                        double cc = Double.
+//                                parseDouble(EndEditTextArrayList.get(i).getText().toString());
+//                        v2[i] = cc;
+//                    }
+//                }
+//
+//                Toast.makeText(getActivity(), "保存成功", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        bulider.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                Toast.makeText(getActivity(), "保存失败", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        bulider.setView(view);
+//        AlertDialog dialog = bulider.create();
+//        dialog.show();
+//    }
 
 
     @Override
@@ -543,15 +584,35 @@ public class Fragment_work_model1 extends Fragment implements RadioGroup.OnCheck
             case R.id.rbtn_specify:
                 showDialog_Save2();
                 break;
-            case R.id.rbtn_many:
-                showDialog_Save3();
+//            case R.id.rbtn_many:
+//                showDialog_Save3();
+//                break;
+            case R.id.rbtn_someone:
+                Intent intent = new Intent(getActivity(), freq_chart.class);
+                startActivityForResult(intent, 1000);
                 break;
             default:
                 break;
 
         }
     }
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1000 && resultCode == 1001)
+        {
+            String result_value = data.getStringExtra("result");
+            if(result_value != null)
+                Toast.makeText(getActivity(), "选择标准频段："+result_value, Toast.LENGTH_SHORT).show();
+            Value=result_value.split("；");
+            freqValue_start = Value[1].split(":");
+            zhidingStart = Float.parseFloat(freqValue_start[1]);
+            freqValue_end = Value[2].split(":");
+            zhidingEnd = Float.parseFloat(freqValue_end[1]);
+            IsBIAOSetting0K =true;
 
+        }
+    }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

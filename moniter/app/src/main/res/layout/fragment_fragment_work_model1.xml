@@ -11,6 +11,12 @@
         android:text="文件上传模式:"
         android:textSize="20sp"/>
 
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/cb_writeFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="存储功率谱文件"
+        android:textSize="18sp"/>
     <RadioGroup
         android:id="@+id/rg_sendMode"
         android:layout_width="match_parent"
@@ -112,10 +118,10 @@
             android:text="指定扫描"
             android:textSize="18sp"/>
         <RadioButton
-            android:id="@+id/rbtn_many"
+            android:id="@+id/rbtn_someone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="多频段扫描"
+            android:text="标准业务频段扫描"
             android:textSize="18sp"/>
     </RadioGroup>
     <LinearLayout

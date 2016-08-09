@@ -17,11 +17,7 @@ import com.hust.radiofeeler.R;
 
 
 public class LoginActivity extends Activity  {
-	protected static final String TAG = "LoginActivity";
 
-	private EditText mIdEditText; // Id编辑框
-	private EditText mPwdEditText; // 密码编辑
-	private ImageView mMoreUser; // 下拉图标
 	private Animation mTranslate; // 位移动画
 	private LinearLayout mLoginLinearLayout; // 登陆内容的容器
 	private Button mLoginButton; // 登录
@@ -45,8 +41,6 @@ public class LoginActivity extends Activity  {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(LoginActivity.this, MainActivity.class);
-
-
 				startActivity(i);
 				finish();
 			}

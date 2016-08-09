@@ -154,7 +154,7 @@ public class FlashView extends FrameLayout{
 //		 }
 //		 }
 	  }
-	  System.out.println("测试bug111：：：imageUris.size()"+imageUris.size());
+
 	  LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
 	  lp.setMargins(5, 0, 0, 0);
 	  for (int i = 0; i < imageUris.size(); i++)
@@ -270,7 +270,7 @@ public class FlashView extends FrameLayout{
 	    position = position + imageViewsList.size();
 
 	   }
-	   System.out.println("position111:::"+position);
+
 	   if(isTwo)
 	   {
 		    pos=position%2;
@@ -304,9 +304,9 @@ public class FlashView extends FrameLayout{
 	   if (vp != null )
 	   {
 	   
-	    System.out.println("JJJJJ"+pos);
+
 	    ViewPager pager = (ViewPager) vp;
-	    System.out.println("pager.getChildCount()::"+pager.getChildCount());
+
 
 	    pager.removeView(view);
 	   }

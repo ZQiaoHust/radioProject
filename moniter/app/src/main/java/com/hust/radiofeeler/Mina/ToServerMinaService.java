@@ -601,11 +601,8 @@ public class ToServerMinaService extends Service {
 
             }
             if (message instanceof File_ServiceRadio) {
-                ArrayList<ListMap> listItems = new ArrayList<>();
-                File_ServiceRadio radio = new File_ServiceRadio();
-                radio = (File_ServiceRadio) message;
-                listItems.clear();
-                listItems = compute.Radio2ListItem(radio);
+                File_ServiceRadio radio = (File_ServiceRadio) message;
+                ArrayList<ListMap> listItems = compute.Radio2ListItem(radio);
                 Thread.sleep(1000);
                 Broadcast.sendBroadCastRadioList(getBaseContext(),
                         ConstantValues.RWIRLESSPLAN, "wirlessplan", listItems);
@@ -613,11 +610,8 @@ public class ToServerMinaService extends Service {
             }
 
             if (message instanceof File_StationAll) {
-                File_StationAll all = new File_StationAll();
-                ArrayList<List_StationAll> list_stationAlls = new ArrayList<>();
-                all = (File_StationAll) message;
-                list_stationAlls.clear();
-                list_stationAlls = compute.StationALL2ListItem(all);
+                File_StationAll all =(File_StationAll) message;
+                ArrayList<List_StationAll> list_stationAlls = compute.StationALL2ListItem(all);
                 Thread.sleep(1000);
                 if (list_stationAlls != null) {
                     Broadcast.sendBroadCastTerminalAllList(getBaseContext(),
@@ -629,11 +623,8 @@ public class ToServerMinaService extends Service {
 
 
             if (message instanceof File_TerminalOnline) {
-                File_TerminalOnline online = new File_TerminalOnline();
-                ArrayList<List_TerminalOnline> list_terminalOnlines = new ArrayList<>();
-                online = (File_TerminalOnline) message;
-                list_terminalOnlines.clear();
-                list_terminalOnlines = compute.TerminalOnline2ListItem(online);
+                File_TerminalOnline online = (File_TerminalOnline) message;
+                ArrayList<List_TerminalOnline> list_terminalOnlines = compute.TerminalOnline2ListItem(online);
                 Thread.sleep(1000);
                 if (list_terminalOnlines != null) {
                     Broadcast.sendBroadCastTerminalOnlineList(getBaseContext(),
@@ -645,12 +636,9 @@ public class ToServerMinaService extends Service {
 
 
             if (message instanceof File_TerminalRegister) {
-                File_TerminalRegister register = new File_TerminalRegister();
+                File_TerminalRegister register =(File_TerminalRegister) message;
                 //与在线终端的表一样
-                ArrayList<List_TerminalOnline> list_terminalRegister = new ArrayList<>();
-                register = (File_TerminalRegister) message;
-                list_terminalRegister.clear();
-                list_terminalRegister = compute.TerminalRegister2ListItem(register);
+                ArrayList<List_TerminalOnline> list_terminalRegister = compute.TerminalRegister2ListItem(register);
                 Thread.sleep(1000);
                 if (list_terminalRegister != null) {
                     Broadcast.sendBroadCastTerminalOnlineList(getBaseContext(),
@@ -663,12 +651,9 @@ public class ToServerMinaService extends Service {
             //==============================================================================
 
             if (message instanceof File_StationRegister) {
-                File_StationRegister register1 = new File_StationRegister();
+                File_StationRegister register1 = (File_StationRegister) message;
                 //与全部台站属性的列表一样
-                ArrayList<List_StationAll> list_StayionRegister = new ArrayList<>();
-                register1 = (File_StationRegister) message;
-                list_StayionRegister.clear();
-                list_StayionRegister = compute.TerminalALL2ListItem(register1);
+                ArrayList<List_StationAll> list_StayionRegister = compute.TerminalALL2ListItem(register1);
                 Thread.sleep(1000);
                 if (list_StayionRegister != null) {
                     Broadcast.sendBroadCastTerminalAllList(getBaseContext(),
@@ -682,8 +667,7 @@ public class ToServerMinaService extends Service {
             //=======================================================================
 
             if (message instanceof StationCurrentReply) {
-                StationCurrentReply reply = new StationCurrentReply();
-                reply = (StationCurrentReply) message;
+                StationCurrentReply reply = (StationCurrentReply) message;
                 Thread.sleep(1000);
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RSTATION_CURRENT, "station_current", reply);
@@ -692,8 +676,7 @@ public class ToServerMinaService extends Service {
             //=======================================================================
 
             if (message instanceof LocationAbnormalReply) {
-                LocationAbnormalReply abnormal = new LocationAbnormalReply();
-                abnormal = (LocationAbnormalReply) message;
+                LocationAbnormalReply abnormal = (LocationAbnormalReply) message;
                 Broadcast.sendBroadCast(getBaseContext(),
                         ConstantValues.RABNORMAL_LOCATION, "abnormal_location", abnormal);
             }
@@ -723,17 +706,14 @@ public class ToServerMinaService extends Service {
 //=============================================数据转发(设置指令)=============================================
 
             if (message instanceof Simple_Connect) {
-                Simple_Connect connect = new Simple_Connect();
-                connect = (Simple_Connect) message;
+                Simple_Connect connect =(Simple_Connect) message;
                 Constants.FPGAsession.write(connect);
-                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(connect.getContent()));
             }
 
             //================================================
 
             if (message instanceof Simple_FixCentralFreq) {
-                Simple_FixCentralFreq fixCentral = new Simple_FixCentralFreq();
-                fixCentral = (Simple_FixCentralFreq) message;
+                Simple_FixCentralFreq fixCentral = (Simple_FixCentralFreq) message;
                 Constants.FPGAsession.write(fixCentral);
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(new Runnable() {
@@ -742,67 +722,58 @@ public class ToServerMinaService extends Service {
                         Toast.makeText(getBaseContext(), "定频模式已设定", Toast.LENGTH_SHORT).show();
                     }
                 });
-                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(fixCentral.getContent()));
+
             }
             /////////////////////////////////
             if (message instanceof Simple_FixSetting) {
-                Simple_FixSetting fixSetting = new Simple_FixSetting();
-                fixSetting = (Simple_FixSetting) message;
+                Simple_FixSetting fixSetting = (Simple_FixSetting) message;
                 Constants.FPGAsession.write(fixSetting);
-                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(fixSetting.getContent()));
             }
 
             ///////////////////////////////////////////////////
 
             if (message instanceof Simple_InGain) {
-                Simple_InGain inGain = new Simple_InGain();
-                inGain = (Simple_InGain) message;
+                Simple_InGain inGain = (Simple_InGain) message;
                 Constants.FPGAsession.write(inGain);
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(inGain.getContent()));
             }
             /////////////////////////////////////////////////////
             if (message instanceof Simple_OutGain) {
-                Simple_OutGain outGain = new Simple_OutGain();
-                outGain = (Simple_OutGain) message;
+                Simple_OutGain outGain = (Simple_OutGain) message;
                 Constants.FPGAsession.write(outGain);
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(outGain.getContent()));
             }
             //////////////////////////////////////
             if (message instanceof Simple_Press) {
-                Simple_Press press = new Simple_Press();
-                press = (Simple_Press) message;
+                Simple_Press press = (Simple_Press) message;
                 Constants.FPGAsession.write(press);
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(press.getContent()));
             }
             ///////////////////////////////////////////
 
             if (message instanceof Simple_PressSetting) {
-                Simple_PressSetting pressSetting = new Simple_PressSetting();
-                pressSetting = (Simple_PressSetting) message;
+                Simple_PressSetting pressSetting = (Simple_PressSetting) message;
                 Constants.FPGAsession.write(pressSetting);
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(pressSetting.getContent()));
             }
             ////////////////////////////////////////////////
 
             if (message instanceof Simple_StationState) {
-                Simple_StationState simple_stationState = new Simple_StationState();
-                simple_stationState = (Simple_StationState) message;
+                Simple_StationState simple_stationState = (Simple_StationState) message;
                 Constants.FPGAsession.write(simple_stationState);
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(simple_stationState.getContent()));
             }
             ///////////////////////////////////////////////////
 
             if (message instanceof Simple_SweepRange) {
-                Simple_SweepRange sweep = new Simple_SweepRange();
-                sweep = (Simple_SweepRange) message;
+                Simple_SweepRange sweep = (Simple_SweepRange) message;
                 Constants.FPGAsession.write(sweep);
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(sweep.getContent()));
             }
             ////////////////////////////////////////////////
 
             if (message instanceof Simple_Threshold) {
-                Simple_Threshold threshold = new Simple_Threshold();
-                threshold = (Simple_Threshold) message;
+                Simple_Threshold threshold = (Simple_Threshold) message;
                 Constants.FPGAsession.write(threshold);
                 Log.d("trans", "SeverSession 转发设置" + Arrays.toString(threshold.getContent()));
             }
@@ -810,8 +781,7 @@ public class ToServerMinaService extends Service {
             ////////////////////////////////////////////////
             //异常频点功率谱上传开启设置
             if (message instanceof Simple_UploadDataStart) {
-                Simple_UploadDataStart data = new Simple_UploadDataStart();
-                data = (Simple_UploadDataStart) message;
+                Simple_UploadDataStart data = (Simple_UploadDataStart) message;
                 Constants.isUpload=0;//0表示开启
                 // Constants.FPGAsession.write(data);
                 //主线程才可显示
@@ -822,13 +792,12 @@ public class ToServerMinaService extends Service {
                         Toast.makeText(getBaseContext(), "开启上传功率谱和异常频点", Toast.LENGTH_SHORT).show();
                     }
                 });
-                Log.d("trans", "SeverSession 转发设置" + Arrays.toString(data.getContent()));
+
             }
             /////////////////////////////////////////////////////
             //异常频点功率谱上传关闭设置
             if (message instanceof Simple_UploadDataEnd) {
-                Simple_UploadDataEnd dataend = new Simple_UploadDataEnd();
-                dataend = (Simple_UploadDataEnd) message;
+                Simple_UploadDataEnd dataend =(Simple_UploadDataEnd) message;
 
                 Constants.isUpload=1;//1表示关闭上传
                 //Constants.FPGAsession.write(dataend);
@@ -845,8 +814,7 @@ public class ToServerMinaService extends Service {
             //======================================数据转发（查询）===================
 
             if (message instanceof Query_Connect) {
-                Query_Connect query_connect = new Query_Connect();
-                query_connect = (Query_Connect) message;
+                Query_Connect query_connect = (Query_Connect) message;
                 Constants.FPGAsession.write(query_connect);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_connect.getContent()));
             }
@@ -862,8 +830,7 @@ public class ToServerMinaService extends Service {
             //////////////////////////
 
             if (message instanceof Query_FixSetting) {
-                Query_FixSetting query_fixSetting = new Query_FixSetting();
-                query_fixSetting = (Query_FixSetting) message;
+                Query_FixSetting query_fixSetting = (Query_FixSetting) message;
                 Constants.FPGAsession.write(query_fixSetting);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_fixSetting.getContent()));
             }
@@ -871,8 +838,7 @@ public class ToServerMinaService extends Service {
             ///////////////////
 
             if (message instanceof Query_InGain) {
-                Query_InGain query_inGain = new Query_InGain();
-                query_inGain = (Query_InGain) message;
+                Query_InGain query_inGain = (Query_InGain) message;
                 Constants.FPGAsession.write(query_inGain);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_inGain.getContent()));
             }
@@ -880,8 +846,7 @@ public class ToServerMinaService extends Service {
             ///////////////////////////////////
 
             if (message instanceof Query_OutGain) {
-                Query_OutGain query_outGain = new Query_OutGain();
-                query_outGain = (Query_OutGain) message;
+                Query_OutGain query_outGain = (Query_OutGain) message;
                 Constants.FPGAsession.write(query_outGain);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_outGain.getContent()));
             }
@@ -889,24 +854,21 @@ public class ToServerMinaService extends Service {
             ///////////////////////////////////////
 
             if (message instanceof Query_IsTerminalOnline) {
-                Query_IsTerminalOnline query_isTerminalOnline = new Query_IsTerminalOnline();
-                query_isTerminalOnline = (Query_IsTerminalOnline) message;
+                Query_IsTerminalOnline query_isTerminalOnline = (Query_IsTerminalOnline) message;
                 Constants.FPGAsession.write(query_isTerminalOnline);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_isTerminalOnline.getContent()));
             }
             //////////////////////////////////////////
 
             if (message instanceof Query_Press) {
-                Query_Press query_press = new Query_Press();
-                query_press = (Query_Press) message;
+                Query_Press query_press = (Query_Press) message;
                 Constants.FPGAsession.write(query_press);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_press.getContent()));
             }
             /////////////////////////////////////////////////////
 
             if (message instanceof Query_PressSetting) {
-                Query_PressSetting query_pressSetting = new Query_PressSetting();
-                query_pressSetting = (Query_PressSetting) message;
+                Query_PressSetting query_pressSetting = (Query_PressSetting) message;
                 Constants.FPGAsession.write(query_pressSetting);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_pressSetting.getContent()));
             }
@@ -914,8 +876,7 @@ public class ToServerMinaService extends Service {
             //////////////////////////////////////////
 
             if (message instanceof Query_SweepRange) {
-                Query_SweepRange query_sweepRange = new Query_SweepRange();
-                query_sweepRange = (Query_SweepRange) message;
+                Query_SweepRange query_sweepRange = (Query_SweepRange) message;
                 Constants.FPGAsession.write(query_sweepRange);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_sweepRange.getContent()));
             }
@@ -923,8 +884,7 @@ public class ToServerMinaService extends Service {
             /////////////////////////////////////////
 
             if (message instanceof Query_Threshold) {
-                Query_Threshold query_threshold = new Query_Threshold();
-                query_threshold = (Query_Threshold) message;
+                Query_Threshold query_threshold = (Query_Threshold) message;
                 Constants.FPGAsession.write(query_threshold);
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(query_threshold.getContent()));
             }
@@ -932,9 +892,7 @@ public class ToServerMinaService extends Service {
             ////////////////////////////////////////////
             //异常频点功率谱上传查询
             if (message instanceof Query_UploadDataStart) {
-                Query_UploadDataStart uploadData = new Query_UploadDataStart();
-                uploadData = (Query_UploadDataStart) message;
-                //Constants.FPGAsession.write(uploadData);
+                Query_UploadDataStart uploadData = (Query_UploadDataStart) message;
                 Log.d("trans", "SeverSession 转发查询" + Arrays.toString(uploadData.getContent()));
                 ///////直接回给中心站
                 UploadData data = new UploadData();
@@ -945,37 +903,37 @@ public class ToServerMinaService extends Service {
             if (message instanceof POA) {
                 POA poa= (POA) message;
                 Constants.FPGAsession.write(poa);
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getBaseContext(), "POA定位已设定", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                Handler handler = new Handler(Looper.getMainLooper());
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(getBaseContext(), "POA定位已设定", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
             //TDOA定位设置帧
             if (message instanceof TDOA) {
                 TDOA td= (TDOA) message;
                 Constants.FPGAsession.write(td);
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getBaseContext(), "TDOA定位已设定", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                Handler handler = new Handler(Looper.getMainLooper());
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(getBaseContext(), "TDOA定位已设定", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
             //结束异常辐射源定位
             if (message instanceof StopPOAandTDOA) {
                 StopPOAandTDOA td= (StopPOAandTDOA) message;
                 Constants.FPGAsession.write(td);
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getBaseContext(), "异常辐射源定位已结束", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                Handler handler = new Handler(Looper.getMainLooper());
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(getBaseContext(), "异常辐射源定位已结束", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
 
             //======================================================================================================

@@ -1,7 +1,9 @@
 package com.hust.radiofeeler.Mina;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -135,8 +137,6 @@ public class MainActivity extends AppCompatActivity
         stopService(stopIntent2);
         Intent stopIntent3 = new Intent(this, ToFileMinaService.class);
         stopService(stopIntent3);
-
-        Log.d("Main","stopservice");
 
     }
 

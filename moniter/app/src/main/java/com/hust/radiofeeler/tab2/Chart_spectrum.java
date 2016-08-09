@@ -37,8 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+
 
 
 /**
@@ -46,6 +45,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 
 public class Chart_spectrum extends Activity {
+    private final int POINT_Num=1024;//点数
     //下拉条
     private Spinner spin;
     private List<String> list;
@@ -68,16 +68,16 @@ public class Chart_spectrum extends Activity {
     private int[] color = new int[]{Color.RED, Color.GREEN};
     private PointStyle style = PointStyle.CIRCLE;
 
-    int count = 0;//段数计数器
     private int totalseries = 2;//画图线条总数
     private double startFrq = 0, endFrq = 0;
 
     private List<float[]> listdata=null;
     private List<float[]> backdata=null;
-    private double[] xv = new double[1024];
-    private double[] yv = new double[1024];
-    private double[] xv_back = new double[1024];
-    private double[] yv_back = new double[1024];
+    private double[] xv = new double[POINT_Num];
+    private double[] yv = new double[POINT_Num];
+//    private double[] xv_back = new double[POINT_Num];
+//    private double[] yv_back = new double[POINT_Num];
+
     private int band=0;
 
     private Handler handler = new Handler() {
@@ -209,9 +209,18 @@ public class Chart_spectrum extends Activity {
                          start=Constants.SweepParaList.get(0).getStartNum();
                          end=Constants.SweepParaList.get(Constants.SweepParaList.size() - 1).getEndNum();
                     }
-                    setChartSettings(renderer, "频率值", "功率值", startFrq, endFrq, -150, 10, Color.WHITE, Color.WHITE);
+                    band= Constants.drawSpectrumBands;
+                    String st=null;
+                    if (endFrq - startFrq <= 1000) {
+
+                        st= "频率值"+"     "+"VBW=10*RBW  RBW=24.414KHZ";
+                    }else{
+
+                        st= "频率值"+"     "+"VBW=10*RBW  RBW=781.25KHZ";
+                    }
+                    setChartSettings(renderer, st, "功率值", startFrq, endFrq, -150, 10, Color.WHITE, Color.WHITE);
                     Log.d("chart","起始频率："+startFrq+"；终止频率："+endFrq);
-                    band=end-start+1;
+
 
                     task = new TimerTask() {
                         @Override
@@ -234,21 +243,15 @@ public class Chart_spectrum extends Activity {
     }
 
     private void updateChart() {
-
         //背景频谱（整段画）
-        Lock lock = new ReentrantLock(); //锁对象
-        lock.lock();
         try {
             if (!Constants.Queue_BackgroundSpectrum.isEmpty()) {
-                int size = Constants.Queue_BackgroundSpectrum.size();
-                Log.d("chart", "背景频谱的段数:" + size);
+//                int size = Constants.Queue_BackgroundSpectrum.size();
+//                Log.d("chart", "背景频谱的段数:" + size);
                 backdata = Constants.Queue_BackgroundSpectrum.poll();
             }
-
         } catch (Exception e) {
-
-        } finally {
-            lock.unlock();
+            e.printStackTrace();
         }
 
         //避免图形缺失,背景频谱没有重传
@@ -256,8 +259,10 @@ public class Chart_spectrum extends Activity {
             for (int mj = 0; mj <band; mj++) {
                 float[] data = backdata.get(mj);
                 int total = (int) data[0];
-                int circle = 1024 / total;
-                double dataX = (data[1] - 1) * 25 + 70;
+                int circle = POINT_Num / total;
+                double dataX=0;
+                dataX = (data[1] - 1) * 25 + 70;
+
                 int flag = 0;
                 //抽取
                 for (int i = 0; i < circle; i++) {
@@ -270,38 +275,35 @@ public class Chart_spectrum extends Activity {
                     }
                     if (endFrq - startFrq <= 1000) {
                         //细扫频
-                        xv_back[i + mj * circle] = dataX + flag * 25.0 / 1024.0;
+                        xv[i + mj * circle] = dataX + flag * 25.0 / POINT_Num;
                     } else {
                         //粗扫频
-                        xv_back[i + mj * circle] = dataX + flag * 800 / 1024.0;
+                        xv[i + mj * circle] = dataX + flag * 800 / POINT_Num;
                     }
-                    yv_back[i + mj * circle] = max;
+                    yv[i + mj * circle] = max;
                 }
             }
             series = mDataset.getSeriesAt(0);
             mDataset.removeSeries(0);
             series.clear();
-            for (int k = 0; k < 1024; k++) {
-                series.add(xv_back[k], yv_back[k]);
+            for (int k = 0; k < POINT_Num; k++) {
+                series.add(xv[k], yv[k]);
             }
             // 在数据集中添加新的点集
             mDataset.addSeries(0, series);
-            chart.invalidate();
+            chart.postInvalidate();
         }
 
         //实时频谱（整段画）
-        Lock lock1 = new ReentrantLock(); //锁对象
-        lock1.lock();
+
         try {
             if (!Constants.Queue_DrawRealtimeSpectrum.isEmpty()) {
-                int size=Constants.Queue_DrawRealtimeSpectrum.size();
-                Log.d("chart","实时频谱的段数:"+size);
+//                int size=Constants.Queue_DrawRealtimeSpectrum.size();
+//                Log.d("chart","实时频谱的段数:"+size);
                 listdata = Constants.Queue_DrawRealtimeSpectrum.poll();
             }
         } catch (Exception e) {
-
-        } finally {
-            lock1.unlock();
+            e.printStackTrace();
         }
 
         if(listdata==null)
@@ -312,8 +314,13 @@ public class Chart_spectrum extends Activity {
             for (int mj = 0; mj < band; mj++) {
                 float[] data = listdata.get(mj);
                 int total = (int) data[0];
-                int circle = 1024 / total;
-                double dataX = (data[1] - 1) * 25 + 70;
+                int circle = POINT_Num / total;
+                double dataX=0;
+                if((startFrq-70)%25==0){
+                    dataX=startFrq;
+                }else {
+                    dataX = (data[1] - 1) * 25 + 70;
+                }
                 int flag = 0;
                 //抽取
                 for (int i = 0; i < circle; i++) {
@@ -326,10 +333,10 @@ public class Chart_spectrum extends Activity {
                     }
                     if (endFrq - startFrq <= 1000) {
                         //细扫频
-                        xv[i + mj * circle] = dataX + flag * 25.0 / 1024.0;
+                        xv[i + mj * circle] = dataX + flag * 25.0 / POINT_Num;
                     } else {
                         //粗扫频
-                        xv[i + mj * circle] = dataX + flag * 800 / 1024.0;
+                        xv[i + mj * circle] = dataX + flag * 800 / POINT_Num;
                     }
                     yv[i + mj * circle] = max;
                 }
@@ -339,16 +346,13 @@ public class Chart_spectrum extends Activity {
             mDataset.removeSeries(1);
             // 点集先清空，为了做成新的点集而准备
             series.clear();
-            for (int k = 0; k < 1024; k++) {
+            for (int k = 0; k < POINT_Num; k++) {
                 series.add(xv[k], yv[k]);
             }
             // 在数据集中添加新的点集
             mDataset.addSeries(1, series);
-            chart.invalidate();
-
+            chart.postInvalidate();
         }
-
-
     }
 
     private void DateEvent() {
@@ -392,8 +396,7 @@ public class Chart_spectrum extends Activity {
 
     protected XYMultipleSeriesDataset buildDataset(String titles, int mtotalseries) {
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        int length = mtotalseries;            //有几条线
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < mtotalseries; i++) {
             XYSeries series = new XYSeries(titles);    //根据每条线的名称创建
             dataset.addSeries(series);
         }
@@ -455,7 +458,7 @@ public class Chart_spectrum extends Activity {
         //设定背景颜色
         renderer.setApplyBackgroundColor(true);
         renderer.setBackgroundColor(Color.BLACK);
-        //renderer.setBarSpacing(1);
+
     }
 
     public static String getTime(Date date) {

@@ -99,18 +99,30 @@ public class ComputePara {
     }
 
     //计算输入扫频范围的起点、终点所对应硬件当中的段号
-    public int ComputeSegNumber(double frequence){
+    public int ComputeSegNumber(int frequence){
         int segNumber=0;
-        segNumber=(int) ((frequence-70)/25+1);
+        if(frequence==70) {
+            segNumber = 1;
+        }else if((frequence-70)%25==0) {
+            segNumber = (frequence - 70) / 25;
+        }else {
+            segNumber = (frequence - 70) / 25 + 1;
+        }
         return segNumber;
 
     }
 
 
     //计算偏移量
-    public int ComputeSegOffset(double frequence){
+    public int ComputeSegOffset(int frequence){
         int segOffset=0;
-        segOffset=(int) ((frequence-70)%25*(1024.0/25.0));//50MHz带宽的计算
+        if(frequence==70) {
+            segOffset = 0;
+        }else if((frequence-70)%25==0) {
+            segOffset = 1023;
+        }else {
+            segOffset = (int) ((frequence - 70) % 25 * (1024.0 / 25.0));//50MHz带宽的计算
+        }
         return segOffset;
     }
     /**

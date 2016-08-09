@@ -34,8 +34,8 @@ public class InteractionSweepmodeEncoder  implements MessageEncoder<InteractionS
 
     private byte[] GetBytes(InteractionSweepModeRequest sweep){
         byte[] data=new byte[24];
-        int startOffset=compute.ComputeSegOffset(sweep.getStartFreq());//起点段内偏移量，偏移量最多只占10位
-        int endOffset=compute.ComputeSegOffset(sweep.getEndFreq());
+        int startOffset=compute.ComputeSegOffset((int) sweep.getStartFreq());//起点段内偏移量，偏移量最多只占10位
+        int endOffset=compute.ComputeSegOffset((int) sweep.getEndFreq());
         int thred=Math.abs(sweep.getFixThreshold());//固定门限是有符号的数
         data[0]=0x55;
         data[1]= (byte) 0xAD;
@@ -48,12 +48,12 @@ public class InteractionSweepmodeEncoder  implements MessageEncoder<InteractionS
         data[7]= (byte) (sweep.getTotalBand()&0xff);//针对离散和多频段扫频的频段总数(N)
         data[8]= (byte) (sweep.getBandNum()&0xff);//频段序号(1~N)
 
-        data[9]= (byte) compute.ComputeSegNumber(sweep.getStartFreq());
+        data[9]= (byte) compute.ComputeSegNumber((int) sweep.getStartFreq());
         //偏移量至多只占10bit，因此只取前两个字节即可
         data[10]=(byte) ((startOffset >> 8) & 0xff); //偏移量高位，
         data[11]=(byte) (startOffset & 0xff);//偏移量低8位
 
-        data[12]= (byte) compute.ComputeSegNumber(sweep.getEndFreq());
+        data[12]= (byte) compute.ComputeSegNumber((int) sweep.getEndFreq());
         data[13]=(byte) ((endOffset >> 8) & 0xff); //偏移量高位，
         data[14]=(byte) (endOffset & 0xff);//偏移量低8位
 

@@ -28,11 +28,11 @@ public class POAdataDecoder implements MessageDecoder {
     private int k;
     private ReceiveRight mReceiveRight = new ReceiveRight();
     private ReceiveWrong mReceiveWrong = new ReceiveWrong();
-    private int num=0;
+
 
     @Override
     public MessageDecoderResult decodable(IoSession session, IoBuffer in) {
-
+        Log.d("abcd", "尝试POAdataDecoder谱解码器");
         if (in.remaining() < 2) {
             return MessageDecoderResult.NEED_DATA;
         } else {
@@ -97,7 +97,7 @@ public class POAdataDecoder implements MessageDecoder {
                 Timer timer = new Timer();
                 timer.schedule(task, 20);
                 out.write(poa);
-                Log.d("POAdataDecoder", "异常频点的个数：" + num);
+
                 Log.d("POAdataDecoder", "当前帧总共段数：" + poa.getTotalBand());
                 Log.d("POAdataDecoder", "当前帧所在序号：" + poa.getNumN());
 
@@ -146,7 +146,9 @@ public class POAdataDecoder implements MessageDecoder {
         poa.setTotalBand((bytes[23] & 0xff));
         poa.setNumN((bytes[24] & 0xff));//扫频总段数的序号
 
-        num = bytes[22] & 0xff;//异常频点的个数
+        int num=bytes[22] & 0xff;
+        Log.d("POAdataDecoder", "异常频点的个数：" + num);
+        poa.setAblNum(num);//异常频点的个数
         if (num != 0) {
             byte[] ab = new byte[num * 5];//异常频点有效信息
             System.arraycopy(bytes, 25, ab, 0, num * 5);

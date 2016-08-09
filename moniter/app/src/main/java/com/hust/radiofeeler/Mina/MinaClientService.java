@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -83,7 +84,6 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class MinaClientService extends Service {
     public static final String TAG = "MinaClientService";
-    private final TowerBinder mBinder = new TowerBinder();
     private  static IoSession session=null;
     private static  IoConnector connector = new NioSocketConnector();
     private SQLiteDatabase db = null;
@@ -92,27 +92,16 @@ public class MinaClientService extends Service {
     ComputePara computePara = new ComputePara();
     private int hasfile_count = 0;
 
-    private Boolean Ispsfull = false;//queshao
-    /*************Fpga的IP*************/
-  //private static String IP="192.168.43.29"; //HUAWEIAP5  ID=15
-    //private static String IP="192.168.43.61"; //HUAWEIAP4,ID为14
-    //private static String IP="192.168.43.34";//HUAWEIAP3,ID为13
-  // private static String IP="192.168.43.245";//HUAWEIAP2  ID=12
-    //private static String IP="192.168.43.195";//HUAWEIAP1  ID=11
-
     private static int PORT=8899;
-    private String FpgaIP;
 
     private float firstMax = 0, secMax = 0;//需要压制的频点
     List<byte[]> temp_powerSpectrum;
     List<byte[]> temp_abnormalPoint;
     List<float[]> temp_drawSpectrum;
-   // List<float[]> temp_drawWaterfall;
     List<float[]> temp_drawBackSpectrum;
-    Map<Float, Float> map_abnormal;
-
+    ArrayMap<Float, Float> map_abnormal;
     List<byte[]> temp_IQwave;
-    int SweepParaList_length;
+
 
     private int total;
     private int num;
@@ -161,392 +150,335 @@ public class MinaClientService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            switch(action){
+                case ConstantValues.InGainSet:
+                    InGain data = intent.getParcelableExtra("InGainSet");
+                    if (data == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(data);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.InGainQuery:
+                    Query query = intent.getParcelableExtra("InGainQuery");
 
-            if (action.equals(ConstantValues.InGainSet)) {
-                InGain data = intent.getParcelableExtra("InGainSet");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
+                    if (query == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(query);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                break;
+                case ConstantValues.SweepRangeQuery:
+                    Query see = intent.getParcelableExtra("SweepRangeQuery");
+                    if (see == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(see);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                break;
+                case ConstantValues.SweepRangeSet:
+                    SweepRange set = intent.getParcelableExtra("SweepRangeSet");
+                    if (set == null) {
+                        return;
+                    }
+                    try {
 
+                        Constants.FPGAsession.write(set);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+
+                case ConstantValues.OutGainSet:
+                    OutGain out = intent.getParcelableExtra("OutGainSet");
+                    if (out == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(out);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.OutGainQuery:
+                    Query gain = intent.getParcelableExtra("OutGainQuery");
+                    if (gain == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(gain);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.ThresholdSet:
+                    Threshold thre = intent.getParcelableExtra("ThresholdSet");
+                    if (thre == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(thre);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.ThresholdQuery:
+                    Query thresholdQuery = intent.getParcelableExtra("ThresholdQuery");
+                    if (thresholdQuery == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(thresholdQuery);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.FixCentralFreqSet:
+                    FixCentralFreq fix = intent.getParcelableExtra("FixCentralFreqSet");
+
+                    if (fix == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(fix);
+                        Toast.makeText(getBaseContext(), "定频模式已设定", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.FixCentralFreqQuery:
+                    Query fixq = intent.getParcelableExtra("FixCentralFreqQuery");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (fixq == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(fixq);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.FixSettingSet:
+                    FixSetting fixs = intent.getParcelableExtra("FixSettingSet");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (fixs == null) {
+                        return;
+                    }
+                    try {
+
+                        Constants.FPGAsession.write(fixs);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.FixSettingQuery:
+                    Query fixSettingQuery = intent.getParcelableExtra("FixSettingQuery");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (fixSettingQuery == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(fixSettingQuery);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.PressSet:
+                    Press press = intent.getParcelableExtra("PressSet");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (press == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(press);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.PressQuery:
+                    Query pressQuery = intent.getParcelableExtra("PressQuery");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (pressQuery == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(pressQuery);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+
+                case ConstantValues.PressSettingSet:
+                    PressSetting pressSetting = intent.getParcelableExtra("PressSettingSet");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (pressSetting == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(pressSetting);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+
+                case ConstantValues.PressSettingQuery:
+                    Query pressSettingQuery = intent.getParcelableExtra("PressSettingQuery");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (pressSettingQuery == null) {
+                        return;
+                    }
+                    try {
+
+                        Constants.FPGAsession.write(pressSettingQuery);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.StationStateQuery:
+                    Query stationStateQuery = intent.getParcelableExtra("StationStateQuery");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (stationStateQuery == null) {
+                        return;
+                    }
+                    try {
+
+                        Constants.FPGAsession.write(stationStateQuery);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.uploadQuery:
+                    Query uploadQuery = intent.getParcelableExtra("uploadQuery");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (uploadQuery == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(uploadQuery);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.uploadDataSet:
+                    UploadData uploadData = intent.getParcelableExtra("uploadDataSet");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (uploadData == null) {
+                        return;
+                    }
+                    try {
+
+                        Constants.FPGAsession.write(uploadData);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.ConnectPCB:
+                    Connect connect = intent.getParcelableExtra("connectPCB");
+                    if (connect == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(connect);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.ConnectPCBQuery:
+                    Query connectPCBQuery = intent.getParcelableExtra("ConnectPCBQuery");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (connectPCBQuery == null) {
+                        return;
+                    }
+                    try {
+
+                        Constants.FPGAsession.write(connectPCBQuery);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case ConstantValues.IsOnlieQuery:
+                    Query onlieQuery = intent.getParcelableExtra("IsOnlieQuery");
+                    /**
+                     * 在这里把activity的消息转发给服务器
+                     */
+                    if (onlieQuery == null) {
+                        return;
+                    }
+                    try {
+                        Constants.FPGAsession.write(onlieQuery);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
             }
-            if (action.equals(ConstantValues.InGainQuery)) {
-                Query data = intent.getParcelableExtra("InGainQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-            if (action.equals(ConstantValues.SweepRangeQuery)) {
-                Query data = intent.getParcelableExtra("SweepRangeQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
 
-            if (action.equals(ConstantValues.SweepRangeSet)) {
-                SweepRange data = intent.getParcelableExtra("SweepRangeSet");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-
-                    Constants.FPGAsession.write(data);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.OutGainSet)) {
-                OutGain data = intent.getParcelableExtra("OutGainSet");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.OutGainQuery)) {
-                Query data = intent.getParcelableExtra("OutGainQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.ThresholdSet)) {
-                Threshold data = intent.getParcelableExtra("ThresholdSet");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-            if (action.equals(ConstantValues.ThresholdQuery)) {
-                Query data = intent.getParcelableExtra("ThresholdQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-            if (action.equals(ConstantValues.FixCentralFreqSet)) {
-                FixCentralFreq data = intent.getParcelableExtra("FixCentralFreqSet");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                    Toast.makeText(getBaseContext(), "定频模式已设定", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-            if (action.equals(ConstantValues.FixCentralFreqQuery)) {
-                Query data = intent.getParcelableExtra("FixCentralFreqQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.FixSettingSet)) {
-                FixSetting data = intent.getParcelableExtra("FixSettingSet");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-
-                    Constants.FPGAsession.write(data);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.FixSettingQuery)) {
-                Query data = intent.getParcelableExtra("FixSettingQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.PressSet)) {
-                Press data = intent.getParcelableExtra("PressSet");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.PressQuery)) {
-                Query data = intent.getParcelableExtra("PressQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.PressSettingSet)) {
-                PressSetting data = intent.getParcelableExtra("PressSettingSet");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.PressSettingQuery)) {
-                Query data = intent.getParcelableExtra("PressSettingQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-
-                    Constants.FPGAsession.write(data);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.StationStateQuery)) {
-                Query data = intent.getParcelableExtra("StationStateQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-
-                    Constants.FPGAsession.write(data);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.uploadQuery)) {
-                Query data = intent.getParcelableExtra("uploadQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            if (action.equals(ConstantValues.uploadDataSet)) {
-                UploadData data = intent.getParcelableExtra("uploadDataSet");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-
-                    Constants.FPGAsession.write(data);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-            if (action.equals(ConstantValues.ConnectPCB)) {
-                Connect data = intent.getParcelableExtra("connectPCB");
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-            if (action.equals(ConstantValues.ConnectPCBQuery)) {
-                Query data = intent.getParcelableExtra("ConnectPCBQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-
-                    Constants.FPGAsession.write(data);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-            if (action.equals(ConstantValues.IsOnlieQuery)) {
-                Query data = intent.getParcelableExtra("IsOnlieQuery");
-                /**
-                 * 在这里把activity的消息转发给服务器
-                 */
-                if (data == null) {
-                    return;
-                }
-                try {
-                    Constants.FPGAsession.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getBaseContext(), "请连接硬件", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
         }
     };
 
 
     @Override
     public void onCreate() {
-        Constants.sevCount++;
         dbHelper=DatabaseHelper.getInstance(this);//单例模式
         db = dbHelper.getWritableDatabase();
         myApplication = (MyApplication) getApplication();
@@ -596,26 +528,25 @@ public class MinaClientService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy() executed");
         unregisterReceiver(ActivityReceiver);
         ActivityReceiver = null;
         db.close();
         super.onDestroy();
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand() executed");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
 
-
-//                    ArrayList<String> ipList = getConnectIp();
-//                    FpgaIP = (String) ipList.get(1);
-//                    ConnectFuture future = connector.connect
-//                            (new InetSocketAddress(FpgaIP, PORT));
                     while(true) {
                         try {
                             Thread.sleep(300);
@@ -651,20 +582,7 @@ public class MinaClientService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
-    class TowerBinder extends Binder {
-        public MinaClientService getService() {
-            return MinaClientService.this;
-        }
 
-        public void doSomething() {
-            Log.d(TAG, "doSomething() executed");
-        }
-    }
 
 
     public class MyClientHandler extends IoHandlerAdapter {
@@ -674,11 +592,7 @@ public class MinaClientService extends Service {
 
             //==========================================功率谱解析
             if (message instanceof PowerSpectrumAndAbnormalPonit) {
-                SweepParaList_length = Constants.SweepParaList.size();
-                final int firstart = Constants.SweepParaList.get(0).getStartNum();//输入扫频范围第一组的起点对应的段号
-                final int lastend = Constants.SweepParaList.get(SweepParaList_length - 1).getEndNum();//输入扫频范围最后
-                myApplication.setSweepStart((firstart-1)*25+70);
-                myApplication.setSweepEnd(lastend*25+70);
+
                 final PowerSpectrumAndAbnormalPonit PSAP = (PowerSpectrumAndAbnormalPonit) message;
                 if (PSAP != null) {
 
@@ -695,15 +609,15 @@ public class MinaClientService extends Service {
                                 temp_powerSpectrum = new ArrayList<>();
                                 temp_abnormalPoint = new ArrayList<>();
                                 temp_drawSpectrum = new ArrayList<float[]>();
-                               // temp_drawWaterfall = new ArrayList<float[]>();
-                                map_abnormal = new HashMap<Float, Float>();
 
                                 //存数据
-                                byte[] byte1 = powerSpec2File(true, PSAP);//填入频段序号和功率谱值
-                                temp_powerSpectrum.add(byte1);
-                                //异常频点存入写文件
-                                byte[] byteAb1 = aP2File(PSAP);
-                                temp_abnormalPoint.add(byteAb1);
+                                if(Constants.isWriteFile) {
+                                    byte[] byte1 = powerSpec2File(true, PSAP);//填入频段序号和功率谱值
+                                    temp_powerSpectrum.add(byte1);
+                                    //异常频点存入写文件
+                                    byte[] byteAb1 = aP2File(PSAP);
+                                    temp_abnormalPoint.add(byteAb1);
+                                }
                                 //存入画频谱图图
                                 float[] pow = new float[1026];
                                 pow[0] = PSAP.getTotalBand();//填入总帧数
@@ -718,8 +632,8 @@ public class MinaClientService extends Service {
 //                                temp_drawWaterfall.add(water);
                                 //异常频点
                                 ////////////////存入显示列表
-                                Map<Float, Float> map = abnormalToList(PSAP, firstMax, secMax);
-                                map_abnormal.putAll(map);
+
+                                map_abnormal= abnormalToList(PSAP, firstMax, secMax);
                                 Constants.Queue_Abnormal.offer(map_abnormal);
                                 //下发自动压制帧
                                 if (Constants.pressModel == 1) {
@@ -740,18 +654,20 @@ public class MinaClientService extends Service {
                                         Constants.FPGAsession.write(Constants.press);
                                     }
                                 }
-                                if(Constants.sendMode==1){
-                                    //手动上传
-                                    writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
-                                }else if ((Constants.sendMode==2)&&(PSAP.getIsChange() == 0x0f)) {
-                                    fileIsChanged = 1;
-                                    //自动抽取上传模式，有变化就存文件
-                                    //判断是否为有变化的文件
-                                    writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
-                                }else if(Constants.sendMode==3&&Constants.SELECT_COUNT==1){
-                                    //抽取上传
-                                    writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
-                                }
+
+                                    if (Constants.sendMode == 1) {
+                                        //手动上传
+                                        writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                    } else if ((Constants.sendMode == 2) && (PSAP.getIsChange() == 0x0f)) {
+                                        fileIsChanged = 1;
+                                        //自动抽取上传模式，有变化就存文件
+                                        //判断是否为有变化的文件
+                                        writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                    } else if (Constants.sendMode == 3 && Constants.SELECT_COUNT == 1) {
+                                        //抽取上传
+                                        writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
+                                    }
+
 
                                 Lock lock = new ReentrantLock(); //锁对象
                                 lock.lock();
@@ -774,7 +690,7 @@ public class MinaClientService extends Service {
                                     temp_abnormalPoint = new ArrayList<>();
                                     temp_drawSpectrum = new ArrayList<float[]>();
                                    // temp_drawWaterfall = new ArrayList<float[]>();
-                                    map_abnormal = new HashMap<Float, Float>();
+                                    map_abnormal = new ArrayMap<Float, Float>();
                                     if (PSAP.getIsChange() == 0x0f) {
                                         fileIsChanged = 1;
                                     }
@@ -826,22 +742,22 @@ public class MinaClientService extends Service {
                                         float[] f1 = computePara.Bytes2Power(PSAP.getPSpower());
                                         System.arraycopy(f1, 0, pow, 2, 1024);//填入功率谱值
                                         temp_drawSpectrum.add(pow);
-                                        //瀑布图
-                                      //  temp_drawWaterfall.add(f1);
+
                                         Constants.spectrumCount++;
                                     } else {
                                         if (temp_powerSpectrum != null) {
                                             temp_powerSpectrum.clear();
+
                                         }
                                         if (temp_abnormalPoint != null) {
                                             temp_abnormalPoint.clear();
+
                                         }
                                         if (temp_drawSpectrum != null) {
                                             temp_drawSpectrum.clear();
+
                                         }
-//                                        if (temp_drawWaterfall != null) {
-//                                            temp_drawWaterfall.clear();
-//                                        }
+//
                                         fileIsChanged = 0;
                                         Constants.spectrumCount = 0;
                                     }
@@ -850,7 +766,6 @@ public class MinaClientService extends Service {
                                     //结束
                                     if ((temp_powerSpectrum.size() == total) && (temp_abnormalPoint.size() == total)) {
                                         long t1= System.currentTimeMillis();
-                                        Log.d("file","写文件开始时间："+t1);
                                         if(Constants.sendMode==1){
                                             //手动上传
                                             writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
@@ -863,19 +778,9 @@ public class MinaClientService extends Service {
                                             //抽取上传
                                             writeFlie(PSAP, temp_powerSpectrum, temp_abnormalPoint);//写文件
                                         }
-                                        long t2= System.currentTimeMillis();
-                                        Log.d("file","写文件结束时间："+t2);
-                                        Log.d("file","写文件耗时："+(t2-t1));
-                                        Lock lock = new ReentrantLock(); //锁对象
-                                        lock.lock();
-                                        try {
-                                            Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
-                                           // Constants.Queue_DrawRealtimewaterfall.offer(temp_drawWaterfall);
-                                        }catch (Exception e) {
 
-                                        } finally {
-                                            lock.unlock();
-                                        }
+                                            Constants.Queue_DrawRealtimeSpectrum.offer(temp_drawSpectrum);
+
                                     }
                                     Constants.Queue_Abnormal.offer(map_abnormal);
                                     //下发自动压制帧
@@ -902,6 +807,7 @@ public class MinaClientService extends Service {
                                 }
                             }
                             //定时清除缓存
+                            Log.d("MainClient","shishi："+Constants.Queue_DrawRealtimeSpectrum.size());
                             if(Constants.Queue_DrawRealtimeSpectrum.size()>10){
                                 Constants.Queue_DrawRealtimeSpectrum.clear();
                             }
@@ -974,20 +880,13 @@ public class MinaClientService extends Service {
                         } else {
                             if (temp_drawBackSpectrum != null) {
                                 temp_drawBackSpectrum.clear();
+
                             }
                         }
                     }
                     if ((back.getNumN() == back.getTotalBand()) && (Constants.BackgroundCount == back.getTotalBand() )) {
-                        //结束
-                        Lock lock = new ReentrantLock(); //锁对象
-                        lock.lock();
-                        try {
-                            Constants.Queue_BackgroundSpectrum.offer(temp_drawBackSpectrum);
-                        }catch (Exception e) {
 
-                        } finally {
-                            lock.unlock();
-                        }
+                            Constants.Queue_BackgroundSpectrum.offer(temp_drawBackSpectrum);
                         Constants.BackgroundCount = 0;
                     }
 
@@ -1177,10 +1076,11 @@ public class MinaClientService extends Service {
                              */
                             if (total == 1) {
                                 temp_abnormalPoint = new ArrayList<>();
-                                if(poa.getAbnormalInfo()==null||poa.getAbnormalInfo().length==0) {
+                                if(poa.getAblNum()==0) {
                                     //没有异常频点
                                     return;
                                 }
+                                Constants.POAabNum=poa.getAblNum();
                                 temp_abnormalPoint.add(poa.getAbnormalInfo());
                                 writePOAfile(poa,temp_abnormalPoint);
                             } else {
@@ -1190,9 +1090,10 @@ public class MinaClientService extends Service {
                                 if (num == 1) {
                                     //判断起始段
                                     temp_abnormalPoint = new ArrayList<>();
-                                    if(poa.getAbnormalInfo()!=null){
+                                    if(poa.getAblNum()!=0){
                                         //有异常频点
                                         temp_abnormalPoint.add(poa.getAbnormalInfo());
+                                        Constants.POAabNum=poa.getAblNum();
                                     }
                                     Constants.spectrumCount++;
 
@@ -1201,6 +1102,7 @@ public class MinaClientService extends Service {
                                         if(poa.getAbnormalInfo()!=null) {
                                             //有异常频点
                                             temp_abnormalPoint.add(poa.getAbnormalInfo());
+                                            Constants.POAabNum+=poa.getAblNum();
                                         }
                                         Constants.spectrumCount++;
                                     } else {
@@ -1239,49 +1141,15 @@ public class MinaClientService extends Service {
             if (message instanceof TDOAdata) {
                 TDOAdata td = (TDOAdata) message;
                 if (td != null) {
-                    if (td.getTotalBands() == 1) {
-                        //只有一个数据块
-                        temp_IQwave = new ArrayList<>();
+
+                        //一个数据块一个文件
                         byte[] byte1 = new byte[6015];
                         System.arraycopy(td.getLocation(), 0, byte1, 0, 9);
                         System.arraycopy(td.getIQpara(), 0, byte1, 9, 5);
                         System.arraycopy(td.getIQwave(), 0, byte1, 14, 6001);
-                        temp_IQwave.add(byte1);
-                        writeTDOAFlie(td, temp_IQwave);
-                    } else {
-                        if (td.getNowNum() == 1) {
-                            temp_IQwave = new ArrayList<>();
-                            Constants.IQCount = 0;
-                            Constants.IQCount++;
-                            byte[] byte1 = new byte[6015];
-                            System.arraycopy(td.getLocation(), 0, byte1, 0, 9);
-                            System.arraycopy(td.getIQpara(), 0, byte1, 9, 5);
-                            System.arraycopy(td.getIQwave(), 0, byte1, 14, 6001);
-                            temp_IQwave.add(byte1);
-                        } else {
 
-                            if (td.getNowNum() == (Constants.IQCount + 1)) {
-                                //从第二块开始
-                                Constants.IQCount++;
-                                byte[] byte1 = new byte[6001];
-                                System.arraycopy(td.getIQwave(), 0, byte1, 0, 6001);
-                                temp_IQwave.add(byte1);
-                            } else {
-                                if (temp_IQwave != null) {
-                                    temp_IQwave.clear();
-                                }
-                                Constants.IQCount = 0;
-                            }
+                        writeTDOAFlie(td, byte1);
 
-                        }
-                        if ((td.getNowNum() == td.getTotalBands()) && (Constants.IQCount == td.getTotalBands())) {
-                            //结束
-                            if (temp_IQwave.size() == td.getTotalBands()) {
-                                writeTDOAFlie(td, temp_IQwave);
-                            }
-                            Constants.IQCount = 0;
-                        }
-                    }
                     if(Constants.FILEsession!=null){
                         task = new TimerTask() {
                             @Override
@@ -1310,7 +1178,7 @@ public class MinaClientService extends Service {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
-
+           Log.d("MinaClientService","FPGA  SESSION CLOSE");
             while(true) {
                 try {
                     Thread.sleep(3000);
@@ -1335,7 +1203,6 @@ public class MinaClientService extends Service {
         public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
             super.sessionIdle(session, status);
             final ReceiveWrong mReceiveWrong = new ReceiveWrong();
-            final ReceiveRight mReceiveRight = new ReceiveRight();
             //频谱数据超时重传
             if (Constants.NotFill) {
                 Constants.FPGAsession.write(mReceiveWrong);
@@ -1364,20 +1231,6 @@ public class MinaClientService extends Service {
     }
 
 
-
-
-    private String getFileName(String path) {
-
-        int start = path.lastIndexOf("/");
-        int end = path.lastIndexOf(".");
-        if (start != -1 && end != -1) {
-            return path.substring(start + 1, end);
-        } else {
-            return null;
-        }
-
-    }
-
     /**
      * 写功率谱文件
      *
@@ -1388,105 +1241,112 @@ public class MinaClientService extends Service {
     private void writeFlie(PowerSpectrumAndAbnormalPonit PASP, List<byte[]> mlist, List<byte[]> ablist) {
         int times=0;//辅助传输
 
-        //取出时间
-        byte[] bytes = PASP.getLocationandTime();
-        //location
-        String location=null;
-        if(bytes[0]==0){
-            location="E";
-        }else{
-            location="W";
-        }
-        float longtitude= (float) ((bytes[1] &0xff)+((bytes[2]>>2)&0x3f)/60.0+
-                (((bytes[2]&0x03)<<8)+(bytes[3]&0xff))/60000.0);
+             //取出时间
+             byte[] bytes = PASP.getLocationandTime();
+             //location
+             String location = null;
+             if (bytes[0] == 0) {
+                 location = "E";
+             } else {
+                 location = "W";
+             }
+             float longtitude = (float) ((bytes[1] & 0xff) + ((bytes[2] >> 2) & 0x3f) / 60.0 +
+                     (((bytes[2] & 0x03) << 8) + (bytes[3] & 0xff)) / 60000.0);
 
-        float latitude= (float) ((bytes[4]&0x7f)+((bytes[5]>>2)&0x3f)/60.0+
-                (((bytes[5]&0x03)<<8)+(bytes[6]&0xff))/60000.0);
+             float latitude = (float) ((bytes[4] & 0x7f) + ((bytes[5] >> 2) & 0x3f) / 60.0 +
+                     (((bytes[5] & 0x03) << 8) + (bytes[6] & 0xff)) / 60000.0);
 
-        java.text.DecimalFormat df = new java.text.DecimalFormat("0.000000");
-        if(longtitude!=0) {
-            location+= df.format(longtitude);//截小数点后6位，返回为String
-        }
-        if((bytes[4] >> 7)==0){
-            location+=",N";
-        }else{
-            location+=",S";
-        }
-        if(latitude!=0) {
-            location+= df.format(latitude);//截小数点后6位，返回为String
-        }
+             java.text.DecimalFormat df = new java.text.DecimalFormat("0.000000");
+             if (longtitude != 0) {
+                 location += df.format(longtitude);//截小数点后6位，返回为String
+             }
+             if ((bytes[4] >> 7) == 0) {
+                 location += ",N";
+             } else {
+                 location += ",S";
+             }
+             if (latitude != 0) {
+                 location += df.format(latitude);//截小数点后6位，返回为String
+             }
+             Date date = new Date();
+             long timeSec = date.getTime() / 1000;//存储到秒
 
+             int year = ((bytes[9] & 0xff) << 4) + ((bytes[10] >> 4) & 0x0f);
+             int month = (bytes[10] & 0x0f);
+             int day = ((bytes[11] >> 3) & 0x1f);
+             int hour = ((bytes[11] & 0x07) << 2) + (bytes[12] & 0x03) + 8;//UTC转北京时间
+             int min = (bytes[12] >> 2) & 0x3f;
+             int sec = (bytes[13]) & 0xff;
+             StringBuilder sb = new StringBuilder();
+             sb.append(year);
+             sb.append("-");
+             sb.append((month < 10 ? "0" + month : month));
+             sb.append("-");
+             sb.append((day < 10 ? "0" + day : day));
+             sb.append("-");
+             sb.append((hour < 10 ? "0" + hour : hour));
+             sb.append("-");
+             sb.append((min < 10 ? "0" + min : min));
+             sb.append("-");
+             sb.append((sec < 10 ? "0" + sec : sec));
+             if (sec != sec_count) {
+                 sec_count = sec;
+                 hasfile_count = 0;
+             } else {
+                 hasfile_count++;
+             }
+             sb.append(hasfile_count);
+             sb.append(Constants.ID);
 
-        int year =  ((bytes[9] & 0xff) << 4) + ((bytes[10] >> 4) & 0x0f);
-        int month =(bytes[10] & 0x0f);
-        int day =((bytes[11] >> 3) & 0x1f);
-        int hour =((bytes[11] & 0x07) << 2) + (bytes[12] & 0x03)+8;//UTC转北京时间
-        int min = (bytes[12] >> 2) & 0x3f;
-        int sec = (bytes[13]) & 0xff;
-        String Syear = String.valueOf(year);
-        String smonth = String.valueOf(month< 10 ? "0" + month :month);
-        String Sday = String.valueOf(day< 10 ? "0" + day : day);
-
-        String Shour = String.valueOf(hour< 10 ? "0" + hour : hour);
-        String Smin = String.valueOf(min< 10 ? "0" + min : min);
-        String SEC = String.valueOf(sec< 10 ? "0" + sec : sec);
-
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        Date date=new Date();
-//        String time = sdf.format(date);
-        long timeSec=date.getTime()/1000;//存储到秒
-//        String fname = null;
-        String name = null;
-        // int count = 0;
-        String time=Syear + "-" + smonth + "-" + Sday + "-" + Shour + "-" + Smin+"-"+SEC ;
-        if(sec!=sec_count){
-            sec_count=sec;
-            hasfile_count=0;
-        }else{
-            hasfile_count++;
-        }
-        //创建文件
-        if (PASP.getStyle() == 0) {
-
-            name = time + "-" + String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "fine", "pwr");
-
-        } else if (PASP.getStyle() == 1) {
-
-            name = time + "-" +  String.format("%d-%d-%s.%s", hasfile_count, Constants.ID, "coarse", "pwr");
-
-        }
-        if(name == null)
-            return ;
-
-        if(Constants.isUpload!=0){
-            //上传关闭
-            //本地路径入库，不生成文件
-            times=2;
-        }else {
-            File PSdir = new File(PSFILE_PATH);
-            if (!PSdir.exists()) {
-                PSdir.mkdirs();//mkdir()不能创建多个目录
-            }
-            File file = new File(PSdir, name);
-            //获取文件写入流
-            try {
-                dos = new DataOutputStream(new FileOutputStream(file));
-                dos.write((byte) 0x00);
-                for (int j = 0; j < mlist.size(); j++) {
-                    dos.write(mlist.get(j));
-                }
-                dos.write(0xff);
-                for (int k = 0; k < ablist.size(); k++) {
-                    dos.write(ablist.get(k));
-                }
-                dos.write(0x00);
-                dos.close();
+             //创建文件
+             if (PASP.getStyle() == 0) {
+                 sb.append("fine");
+             } else if (PASP.getStyle() == 1) {
+                 sb.append("coarse");
+             }
+             sb.append("pwr");
+             String name = sb.toString();
+             if (name == null)
+                 return;
+        if(mlist.size()!=0) {
+             if (Constants.isUpload != 0) {
+                 //上传关闭
+                 //本地路径入库，不生成文件
+                 times = 2;
+             } else {
+                 File PSdir = new File(PSFILE_PATH);
+                 if (!PSdir.exists()) {
+                     PSdir.mkdirs();//mkdir()不能创建多个目录
+                 }
+                 File file = new File(PSdir, name);
+                 //获取文件写入流
+                 try {
+                     dos = new DataOutputStream(new FileOutputStream(file));
+                     dos.write((byte) 0x00);
+                     for (int j = 0; j < mlist.size(); j++) {
+                         dos.write(mlist.get(j));
+                     }
+                     dos.write(0xff);
+                     for (int k = 0; k < ablist.size(); k++) {
+                         dos.write(ablist.get(k));
+                     }
+                     dos.write(0x00);
+                     dos.close();
 
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 } finally {
+                     try {
+                         if (dos != null) {
+                             dos.close();
+                         }
+                     } catch (IOException e) {
+                         e.printStackTrace();
+                     }
+                 }
+             }
+         }
         try {
             //在此将文件的信息插入数据库===================
             ContentValues cv = new ContentValues();
@@ -1506,7 +1366,7 @@ public class MinaClientService extends Service {
             cv.put("fileTime",timeSec);
             db.insert("localFile", null, cv);
         }catch(Exception e){
-
+            e.printStackTrace();
         }
 
     }
@@ -1621,6 +1481,14 @@ public class MinaClientService extends Service {
 
             } catch (Exception e) {
                 e.printStackTrace();
+            }finally {
+                try {
+                    if (dos != null) {
+                        dos.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -1684,7 +1552,13 @@ public class MinaClientService extends Service {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }finally {
-
+                    try {
+                        if (fis != null) {
+                            fis.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -1695,8 +1569,8 @@ public class MinaClientService extends Service {
 
 
 
-    private Map<Float, Float> abnormalToList(PowerSpectrumAndAbnormalPonit PSAP, float fisMax, float secMax) {
-        Map<Float, Float> map = new HashMap<>();
+    private ArrayMap<Float, Float> abnormalToList(PowerSpectrumAndAbnormalPonit PSAP, float fisMax, float secMax) {
+        ArrayMap<Float, Float> map = new ArrayMap<>();
         List<Float> mlist = new ArrayList<>();
         if (PSAP.getAPnum() > 0 && PSAP.getAPnum() <= 10) {
             int start = (PSAP.getAPbandNum() - 1) * 25 + 70;
@@ -1886,13 +1760,13 @@ public class MinaClientService extends Service {
                 dos = new DataOutputStream(new FileOutputStream(file));
                 dos.write((byte) 0x00);
                 dos.write(poa.getLocation());
-                dos.write((byte) 0x00);//异常信号的总个数，暂时忽略
+                dos.write((byte)Constants.POAabNum);//异常信号的总个数
                 for (int j = 0; j < mlist.size(); j++) {
                     dos.write(mlist.get(j));
                 }
                 dos.write(0x00);
                 dos.close();
-
+                Constants.POAabNum=0;
                 //在此将文件的信息插入数据库===================
                 ContentValues cv = new ContentValues();
                 cv.put("filename", name);
@@ -1902,6 +1776,14 @@ public class MinaClientService extends Service {
 
             } catch (Exception e) {
                 e.printStackTrace();
+            }finally {
+                try {
+                    if (dos != null) {
+                        dos.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -1910,9 +1792,9 @@ public class MinaClientService extends Service {
      * TDOA存文件
      *
      * @param td
-     * @param mlist
+     * @param
      */
-    private void writeTDOAFlie(TDOAdata td, List<byte[]> mlist) {
+    private void writeTDOAFlie(TDOAdata td, byte[] mbyte) {
 
         File PSdir = new File(TDOA_PATH);
         if (!PSdir.exists()) {
@@ -1943,13 +1825,12 @@ public class MinaClientService extends Service {
 
         if (name != null) {
             File file = new File(PSdir, name);
+
             //获取文件写入流
             try {
                 dos = new DataOutputStream(new FileOutputStream(file));
                 dos.write((byte) 0x00);
-                for (int j = 0; j < mlist.size(); j++) {
-                    dos.write(mlist.get(j));
-                }
+                dos.write(mbyte);
                 dos.write(0x00);
                 dos.close();
 
@@ -1962,6 +1843,14 @@ public class MinaClientService extends Service {
 
             } catch (Exception e) {
                 e.printStackTrace();
+            }finally {
+                try {
+                    if (dos != null) {
+                        dos.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -1997,6 +1886,22 @@ public class MinaClientService extends Service {
                 //如果文件不存在，从数据库删除记录
                 db.delete("poaFile","filename=?", new String[]{name});
             }else {
+//                long bufferszie = Constants.FILEsession.getScheduledWriteBytes();
+//                System.out.println("内存缓冲区大小：" + bufferszie);
+//                if (bufferszie > 50* 1024 * 1024)
+//                    try {
+//                        System.out.println("内存缓冲区的数据过多");
+//                        while (true) {
+//                            Thread.sleep(2 * 1000);
+//                            System.out.println(
+//                                    "内存缓冲区大小：" + Constants.FILEsession.getScheduledWriteBytes());
+//                            if (Constants.FILEsession.getScheduledWriteBytes() < 5 * 1024 * 1024)
+//                                break;
+//                        }
+//                    } catch (InterruptedException e1) {
+//                        e1.printStackTrace();
+//                    }
+
                 FileInputStream fis = null;
                 try {
                     fis = new FileInputStream(file);
@@ -2025,7 +1930,13 @@ public class MinaClientService extends Service {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }finally {
-
+                    try {
+                        if (fis != null) {
+                            fis.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -2092,7 +2003,13 @@ public class MinaClientService extends Service {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }finally {
-
+                    try {
+                        if (fis != null) {
+                            fis.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

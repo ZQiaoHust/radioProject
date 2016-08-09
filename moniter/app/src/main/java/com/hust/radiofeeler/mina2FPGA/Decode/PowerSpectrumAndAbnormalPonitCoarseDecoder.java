@@ -50,6 +50,7 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
             byte functionCode = Constants.buffer.get();
             if (functionCode == 0x56 | functionCode == 0x58) {
                 Constants.Isstop=false;
+                Constants.flag=false;
                 return MessageDecoderResult.OK;
 
             } else {
@@ -93,7 +94,7 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
             Constants.buffer.limit(Constants.positionValue);
             buffer.put(Constants.buffer);
             matchCount=Constants.positionValue;
-            Constants.buffer.clear();
+            Constants.buffer.sweep();
             Constants.flag=false;
             Constants.positionValue=0;
         }
@@ -172,7 +173,9 @@ public class PowerSpectrumAndAbnormalPonitCoarseDecoder implements MessageDecode
         PSAP.setSweepModel(((bytes[18] >> 6) & 0x03));
         PSAP.setFileSendmodel(((bytes[18] >> 4) & 0x03));
         PSAP.setIsChange((bytes[18] & 0x0f));
-        PSAP.setTotalBand((bytes[19] & 0xff));
+        int total=bytes[19] & 0xff;
+        PSAP.setTotalBand(total);
+        Constants.drawSpectrumBands=total;
         PSAP.setNumN((bytes[20] & 0xff));//扫频总段数的序号
         PSAP.setPSbandNum((bytes[21] & 0xff));
         byte[] b2 = new byte[1536];

@@ -131,12 +131,7 @@ public class Chart_waterfall extends Activity {
             public void run() {
                 Message message = new Message();
                 message.what = 1;
-                int mdata=endFreq-startFrq;
-                if(mdata<=1000){//fine
-                    message.arg1 = (endFreq-70)/25-(startFrq-70)/25+ 1;
-                }else {//coarse
-                    message.arg1= (endFreq-70)/800-(startFrq-70)/800 + 1;
-                }
+                message.arg1 = Constants.drawSpectrumBands;
                 handler.sendMessage(message);
             }
         };

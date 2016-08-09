@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +29,7 @@ public class Service_fragment extends Fragment implements
         AdapterView.OnItemClickListener {
 
     private List<String> imageUrls;
-
-
     private GridView  gridView;
-
     private List<Map<String,Object>> dataList;
 
     private int[] icon={R.drawable.ditu2,R.drawable.location,
@@ -42,10 +40,6 @@ public class Service_fragment extends Fragment implements
     private SimpleAdapter adapter;
 
 
-    public  void onResume(){
-        super.onResume();
-
-    }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -66,13 +60,13 @@ public class Service_fragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.service_fragment,container,false);
-
-
-
     }
 
-
-
+    @Override
+    public void onDestroy() {
+        adapter=null;
+        super.onDestroy();
+    }
 
     private void InitFlash(){
         FlashView flash= (FlashView) getActivity().findViewById(R.id.flash);
@@ -91,7 +85,7 @@ public class Service_fragment extends Fragment implements
 
         for(int i=0;i<icon.length;i++) {
 
-            Map<String, Object>map = new HashMap<String, Object>();
+            ArrayMap<String, Object> map = new ArrayMap<String, Object>();
             map.put("image",icon[i]);
             map.put("text",iconName[i]);
             dataList.add(map);

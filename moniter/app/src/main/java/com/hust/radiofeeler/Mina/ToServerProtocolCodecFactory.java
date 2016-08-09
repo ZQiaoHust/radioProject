@@ -129,9 +129,7 @@ public class ToServerProtocolCodecFactory extends DemuxingProtocolCodecFactory {
         super.addMessageDecoder(Simple_UploadDataStartDecoder.class);
         super.addMessageDecoder(FileSettingFixCentralDecoder.class);
         super.addMessageDecoder(FileSettingFixDecoder.class);
-        super.addMessageDecoder(POAsettingDecoder.class);
-        super.addMessageDecoder(TDOAsettingDecoder.class);
-        super.addMessageDecoder(stopPOAandTDOADecoder.class);
+
         //查询
         super.addMessageDecoder(Query_ConnectDecoder.class);
         super.addMessageDecoder(Query_FixCentralFreqDecoder.class);
@@ -209,5 +207,9 @@ public class ToServerProtocolCodecFactory extends DemuxingProtocolCodecFactory {
         super.addMessageEncoder(HEARTBEATREQUEST.class, RequestEncoder.class);
         super.addMessageDecoder(ResponseDecoder.class);
         super.addMessageEncoder(RequestNetworkAgain.class, RequstNetworkAgainEncoder.class);
+
+        super.addMessageDecoder(POAsettingDecoder.class);
+        super.addMessageDecoder(TDOAsettingDecoder.class);
+        super.addMessageDecoder(stopPOAandTDOADecoder.class);
     }
 }

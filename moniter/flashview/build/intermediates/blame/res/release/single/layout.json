@@ -12,8 +12,16 @@
         "source": "E:\\Android project\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     },
     {
+        "merged": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\build\\intermediates\\res\\merged\\release\\layout\\layout_slideshow.xml",
+        "source": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+    },
+    {
         "merged": "E:\\project\\testSliding_0628_service\\flashview\\build\\intermediates\\res\\merged\\release\\layout\\layout_slideshow.xml",
         "source": "E:\\project\\testSliding_0628_service\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+    },
+    {
+        "merged": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\layout\\layout_slideshow.xml",
+        "source": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     },
     {
         "merged": "E:\\Android project\\my project\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\layout\\layout_slideshow.xml",
@@ -22,6 +30,10 @@
     {
         "merged": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\layout\\layout_slideshow.xml",
         "source": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
+    },
+    {
+        "merged": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\layout\\layout_slideshow.xml",
+        "source": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\layout\\layout_slideshow.xml"
     },
     {
         "merged": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\res\\merged\\release\\layout\\layout_slideshow.xml",

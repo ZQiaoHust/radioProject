@@ -9,6 +9,7 @@ public class POAdata {
     private byte[] location;//地理位置坐标数组
     private int totalBand;//扫频的频段总数
     private int numN;//扫频总数据帧的序号
+    private int ablNum;//异常频点的个数
     private byte[] abnormalInfo;//有效的异常频点信息，去除为0的部分
 
     public byte[] getTime() {
@@ -41,6 +42,14 @@ public class POAdata {
 
     public void setNumN(int numN) {
         this.numN = numN;
+    }
+
+    public int getAblNum() {
+        return ablNum;
+    }
+
+    public void setAblNum(int ablNum) {
+        this.ablNum = ablNum;
     }
 
     public byte[] getAbnormalInfo() {

@@ -43,6 +43,49 @@
         ]
     },
     {
+        "outputFile": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 405,
+                    "endColumn": 46,
+                    "endOffset": 447
+                },
+                "from": {
+                    "file": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 405,
+                        "endColumn": 46,
+                        "endOffset": 447
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 452,
+                    "endColumn": 52,
+                    "endOffset": 500
+                },
+                "from": {
+                    "file": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 452,
+                        "endColumn": 52,
+                        "endOffset": 500
+                    }
+                }
+            }
+        ]
+    },
+    {
         "outputFile": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
         "map": [
             {
@@ -129,6 +172,49 @@
         ]
     },
     {
+        "outputFile": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 405,
+                    "endColumn": 46,
+                    "endOffset": 447
+                },
+                "from": {
+                    "file": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 405,
+                        "endColumn": 46,
+                        "endOffset": 447
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 452,
+                    "endColumn": 52,
+                    "endOffset": 500
+                },
+                "from": {
+                    "file": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 452,
+                        "endColumn": 52,
+                        "endOffset": 500
+                    }
+                }
+            }
+        ]
+    },
+    {
         "outputFile": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
         "map": [
             {
@@ -203,6 +289,49 @@
                 },
                 "from": {
                     "file": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 452,
+                        "endColumn": 52,
+                        "endOffset": 500
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "outputFile": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 405,
+                    "endColumn": 46,
+                    "endOffset": 447
+                },
+                "from": {
+                    "file": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 405,
+                        "endColumn": 46,
+                        "endOffset": 447
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 452,
+                    "endColumn": 52,
+                    "endOffset": 500
+                },
+                "from": {
+                    "file": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 4,
                         "startColumn": 4,

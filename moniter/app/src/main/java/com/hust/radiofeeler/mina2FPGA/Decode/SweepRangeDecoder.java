@@ -53,6 +53,7 @@ public class SweepRangeDecoder implements MessageDecoder {
                 sweepRange.setaSweepMode((accept[4] & 0xff) >> 2);
                 sweepRange.setaSendMode(accept[4] & 0x03);
                 sweepRange.setaTotalOfBands(accept[5] & 0xff);
+
                 sweepRange.setaBandNumber(accept[6] & 0xff);
                 double start=Math.ceil(((accept[7]&0xff)-1)*25+70+(((accept[8]&0x03)<<8)+(accept[9]&0xff))*25/1024.0);
                 sweepRange.setStartFrequence(start);

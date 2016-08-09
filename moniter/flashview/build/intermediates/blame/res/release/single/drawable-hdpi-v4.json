@@ -8,12 +8,12 @@
         "source": "E:\\project\\testSliding_0628_service\\flashview\\src\\main\\res\\drawable-hdpi\\dot_white.png"
     },
     {
-        "merged": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
-        "source": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
-    },
-    {
         "merged": "E:\\project\\radiofeeler_0721\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_launcher.png",
         "source": "E:\\project\\radiofeeler_0721\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
+        "source": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
     },
     {
         "merged": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_white.png",
@@ -32,6 +32,14 @@
         "source": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\src\\main\\res\\drawable-hdpi\\dot_light.png"
     },
     {
+        "merged": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_white.png",
+        "source": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\src\\main\\res\\drawable-hdpi\\dot_white.png"
+    },
+    {
+        "merged": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_light.png",
+        "source": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\dot_light.png"
+    },
+    {
         "merged": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
         "source": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
     },
@@ -48,36 +56,56 @@
         "source": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\dot_white.png"
     },
     {
-        "merged": "E:\\project\\testSliding_0628_service\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
-        "source": "E:\\project\\testSliding_0628_service\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
-    },
-    {
         "merged": "E:\\project\\radiofeeler_0721\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
         "source": "E:\\project\\radiofeeler_0721\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
+    },
+    {
+        "merged": "E:\\project\\testSliding_0628_service\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
+        "source": "E:\\project\\testSliding_0628_service\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
     },
     {
         "merged": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_light.png",
         "source": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\dot_light.png"
     },
     {
-        "merged": "E:\\project\\testSliding_0625_ing\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_launcher.png",
-        "source": "E:\\project\\testSliding_0625_ing\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
+        "merged": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
     },
     {
         "merged": "E:\\project\\testSliding_0628_service\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_light.png",
         "source": "E:\\project\\testSliding_0628_service\\flashview\\src\\main\\res\\drawable-hdpi\\dot_light.png"
     },
     {
+        "merged": "E:\\project\\testSliding_0625_ing\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\testSliding_0625_ing\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
+    },
+    {
         "merged": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_launcher.png",
         "source": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
+        "source": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
+    },
+    {
+        "merged": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\defaultflashview.png",
+        "source": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
     },
     {
         "merged": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\defaultflashview.png",
         "source": "E:\\Android project\\my project\\testSliding_0525_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
     },
     {
-        "merged": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\defaultflashview.png",
-        "source": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
+        "merged": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_white.png",
+        "source": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\dot_white.png"
+    },
+    {
+        "merged": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_light.png",
+        "source": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\src\\main\\res\\drawable-hdpi\\dot_light.png"
+    },
+    {
+        "merged": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\defaultflashview.png",
+        "source": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
     },
     {
         "merged": "E:\\Android project\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\defaultflashview.png",
@@ -92,8 +120,16 @@
         "source": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\dot_light.png"
     },
     {
+        "merged": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
+    },
+    {
         "merged": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
         "source": "E:\\Android project\\my project\\testSliding_heartBeats_sendFile\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
+    },
+    {
+        "merged": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_white.png",
+        "source": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\dot_white.png"
     },
     {
         "merged": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_white.png",
@@ -110,6 +146,10 @@
     {
         "merged": "E:\\Android project\\my project\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
         "source": "E:\\Android project\\my project\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
+    },
+    {
+        "merged": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\defaultflashview.png",
+        "source": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
     },
     {
         "merged": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_white.png",
@@ -134,6 +174,10 @@
     {
         "merged": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\defaultflashview.png",
         "source": "E:\\Android project\\my project\\testSliding_sendFile_instertMap\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
+    },
+    {
+        "merged": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_light.png",
+        "source": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\dot_light.png"
     },
     {
         "merged": "E:\\Android project\\my project\\testSliding_0615_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\dot_white.png",
@@ -196,7 +240,23 @@
         "source": "E:\\Android project\\project_over\\testSliding_0615_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
     },
     {
+        "merged": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
+        "source": "E:\\project\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
+    },
+    {
+        "merged": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\defaultflashview.png",
+        "source": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
+    },
+    {
         "merged": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\defaultflashview.png",
         "source": "E:\\Android project\\my project\\testSliding_0526_realtimeRoute\\flashview\\src\\main\\res\\drawable-hdpi\\defaultflashview.png"
+    },
+    {
+        "merged": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\image_holder.xml",
+        "source": "E:\\project\\project_over\\radiofeeler_0723_POAtest_oneTime\\flashview\\src\\main\\res\\drawable-hdpi\\image_holder.xml"
+    },
+    {
+        "merged": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4\\ic_launcher.png",
+        "source": "E:\\project\\project_over\\radiofeeler_POA&TDOA_0806\\flashview\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
     }
 ]

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:custom="http://schemas.android.com/tools"
+
+    android:layout_height="match_parent">
+    <com.hust.radiofeeler.view.MyTopBar
+        android:id="@+id/topbar_freqchart"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        custom:leftBackground="@drawable/ic_menu_back"
+        custom:titleText="标准业务频段表"
+        custom:titleText_Color="#ffffff"
+        custom:titleTextSize="8sp">
+
+    </com.hust.radiofeeler.view.MyTopBar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/tv_startfreq"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:layout_weight="2"
+            android:text="起始频率"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+        <View
+            android:background="#cccccc"
+            android:layout_width="1dp"
+            android:layout_height="match_parent">
+
+        </View>
+        <TextView
+            android:id="@+id/tv_endfreq"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:layout_weight="2"
+            android:text="终止频率"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+        <View
+            android:background="#cccccc"
+            android:layout_width="1dp"
+            android:layout_height="match_parent">
+
+        </View>
+        <TextView
+            android:id="@+id/tv_service_attr"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:layout_weight="4"
+            android:text="业务属性"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+    <View
+        android:textColor="#000000"
+        android:background="#cccccc"
+        android:layout_width="match_parent"
+        android:layout_height="1dp">
+
+    </View>
+    <ListView
+        android:id="@+id/servicefreq_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
+</LinearLayout>

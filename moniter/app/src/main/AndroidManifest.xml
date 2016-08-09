@@ -98,6 +98,7 @@
         <activity android:name="com.hust.radiofeeler.tab2.Chart_spectrum"></activity>
         <activity android:name="com.hust.radiofeeler.tab2.Chart_waterfall"></activity>
         <activity android:name="com.hust.radiofeeler.tab2.Chart_Abnormal"></activity>
+        <activity android:name=".SlideMenu.freq_chart"></activity>
 
 
         <activity android:name="org.achartengine.GraphicalActivity" />

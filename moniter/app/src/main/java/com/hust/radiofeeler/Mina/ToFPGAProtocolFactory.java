@@ -135,7 +135,7 @@ public class ToFPGAProtocolFactory extends DemuxingProtocolCodecFactory {
         super.addMessageEncoder(File_ModifyAntenna.class, ModifyAntennaEncoder.class);
 
         //上传服务器的功率谱文件编码器
-        super.addMessageEncoder(ToServerPowerSpectrumAndAbnormalPoint.class, ToServerPowerSpectrumAndAbnormalPointEncoder.class);
+//        super.addMessageEncoder(ToServerPowerSpectrumAndAbnormalPoint.class, ToServerPowerSpectrumAndAbnormalPointEncoder.class);
 
         super.addMessageDecoder(CllearDecoder.class);//注意该解码器的位置
         super.addMessageDecoder(InGainDecoder.class);

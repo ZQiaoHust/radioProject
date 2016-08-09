@@ -16,14 +16,14 @@ import org.apache.mina.filter.codec.demux.MessageDecoderResult;
 public class CllearDecoder implements MessageDecoder {
     @Override
     public MessageDecoderResult decodable(IoSession ioSession, IoBuffer ioBuffer) {
-        if(Constants.Isstop) {
+//        if(Constants.Isstop) {
             ioBuffer.sweep();
            // ioBuffer=null;
-           int n=ioBuffer.remaining();
+
             Constants.buffer.sweep();//buffer中的是错误帧，此时也找不到解码器
             Constants.flag=false;
             Log.d("abcd", "clear解码器清空数据");
-        }
+//        }
         return MessageDecoderResult.OK;
     }
 
